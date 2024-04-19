@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "771592361046",
+    "project_id": "roccarent",
+    "storage_bucket": "roccarent.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771592361046:android:458e1d441e6d117d0097f7",
+        "android_client_info": {
+          "package_name": "com.roccarent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD4g18kE6RUjIgdY6OOOeULbCiCGvoROg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
