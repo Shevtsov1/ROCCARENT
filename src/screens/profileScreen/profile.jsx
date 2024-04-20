@@ -1,8 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { Button } from "@rneui/base";
+import { heightPercentageToDP } from "react-native-responsive-screen";
 
-const Profile = () => {
+const Profile = ({theme, toggleMode}) => {
 
 
   const styles = StyleSheet.create({
@@ -13,6 +14,7 @@ const Profile = () => {
       flex:1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: theme.colors.secondary,
     },
 
     /* BODY END */
@@ -22,7 +24,7 @@ const Profile = () => {
     <View style={{flex: 1}}>
       <View style={styles.body}>
         <Text>P R O F I L E</Text>
-        <Button title={'Change color mode'}/>
+        <Button onPress={toggleMode} title={'Change color mode'}/>
       </View>
     </View>
   );

@@ -1,13 +1,14 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from "@react-navigation/native";
 import React, {useEffect, useRef} from 'react';
-import {SafeAreaView, StyleSheet, TouchableOpacity, Text, Animated, View} from 'react-native';
+import {SafeAreaView, StyleSheet, TouchableOpacity, Animated, View, Text} from 'react-native';
 import Icon, {Icons} from '../assets/images/bottomTab/TabBarIcons';
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
+import { LinearGradient } from "expo-linear-gradient";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
@@ -63,10 +64,10 @@ const TabButton = React.memo((props) => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const translateYValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
-  const activeTabBarIconColor = theme.colors.primary;
-  const inActiveTabBarIconColor = theme.colors.grey0;
+  const activeTabBarIconColor = theme.colors.accent;
+  const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : '';
-  const accentColor = theme.colors.primary;
+  const accentColor = theme.colors.accent;
   const bgColor = theme.colors.background;
 
   const rotateInterpolation = rotation.interpolate({
@@ -114,6 +115,13 @@ const TabButton = React.memo((props) => {
         style={[styles.container, { flex: 0.8, alignItems: 'center', backgroundColor: bgColor }]}
       >
         <View style={{ justifyContent: 'center', alignItems: 'center', bottom: 26, width: '100%', height: 64 }}>
+          <LinearGradient
+            colors={['transparent', theme.colors.secondary]}
+            locations={[0.43, 0]}
+            start={[0.5, 0]}
+            end={[0.5, 1]}
+            style={{ flex: 1, width: '100%', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}
+          >
             <View
               style={
                 {
@@ -123,17 +131,19 @@ const TabButton = React.memo((props) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: accentColor,
-                }}
+                }
+              }
             >
               <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
                 <Icon
                   type={item.type}
                   name={focused ? item.activeIcon : item.inActiveIcon}
-                  color={theme.colors.background}
+                  color={bgColor}
                   size={30}
                 />
               </Animated.View>
             </View>
+          </LinearGradient>
         </View>
       </TouchableOpacity>
     );
@@ -179,9 +189,9 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
           tabBarStyle: {
             borderTopWidth: 0,
             elevation: 5,
-            shadowColor: theme.colors.background,
+            shadowColor: theme.colors.secondary,
             height: 60,
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.secondary,
           },
         }}
       >

@@ -4,7 +4,7 @@ import Auth from "../screens/authScreen/auth";
 
 const Stack = createNativeStackNavigator();
 
-export const ProfileStackNavigator = ({user, theme, isDarkMode, setInitializing}) => (
+export const ProfileStackNavigator = ({user, theme, toggleMode, isDarkMode, setInitializing}) => (
   <Stack.Navigator
     initialRouteName={'Profile'}
     screenOptions={{
@@ -18,7 +18,7 @@ export const ProfileStackNavigator = ({user, theme, isDarkMode, setInitializing}
       headerTintColor: theme.colors.text,
     }}>
     <Stack.Screen name="Profile" options={{title: 'Профиль', headerShown: false}} >{(props) =>
-      <Profile {...props} user={user} theme={theme} isDarkMode={isDarkMode} setInitializing={setInitializing}/>}</Stack.Screen>
+      <Profile {...props} user={user} theme={theme} isDarkMode={isDarkMode} toggleMode={toggleMode} setInitializing={setInitializing}/>}</Stack.Screen>
     <Stack.Screen name="Auth" options={{title: 'Вход и регистрация', headerShown: false}}>{(props) =>
       <Auth {...props} user={user} theme={theme} isDarkMode={isDarkMode} setInitializing={setInitializing}/>}</Stack.Screen>
   </Stack.Navigator>

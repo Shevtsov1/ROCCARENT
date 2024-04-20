@@ -1,4 +1,7 @@
 {
   "name": "ROCCARENT",
-  "displayName": "ROCCARENT"
+  "displayName": "ROCCARENT",
+  "plugins": [
+    "expo-font"
+  ]
 }
