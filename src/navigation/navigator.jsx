@@ -6,9 +6,8 @@ import Icon, {Icons} from '../assets/images/bottomTab/TabBarIcons';
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
-import Profile from "../screens/profileScreen/profile";
 import CreateAd from "../screens/createAdScreen/createAd";
-import { useCustomTheme } from "../assets/theme/theme";
+import { ProfileStackNavigator } from "./profileStackNavigator";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
@@ -50,7 +49,7 @@ const TabArr = [
     type: Icons.Profile,
     activeIcon: Icons.Profile.activeIcon,
     inActiveIcon: Icons.Profile.inActiveIcon,
-    component: Profile
+    component: ProfileStackNavigator
   },
 ];
 
@@ -171,7 +170,7 @@ const TabButton = React.memo((props) => {
 });
 
 // Компонент нижней навигации по вкладкам
-const BottomTabNavigator = ({user, theme, isDarkMode, setInitializing}) => {
+const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializing}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Tab.Navigator
@@ -196,7 +195,7 @@ const BottomTabNavigator = ({user, theme, isDarkMode, setInitializing}) => {
                           ),
                         }}
             >
-              {(props) => <item.component {...props} user={user} theme={theme} isDarkMode={isDarkMode} setInitializing={setInitializing}/>}
+              {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode} isDarkMode={isDarkMode} setInitializing={setInitializing}/>}
             </Tab.Screen>
           )
         })}
@@ -206,9 +205,9 @@ const BottomTabNavigator = ({user, theme, isDarkMode, setInitializing}) => {
 }
 
 // Компонент навигации приложения
-const AppNavigator = ({theme}) => (
+const AppNavigator = ({theme, toggleMode}) => (
   <NavigationContainer>
-    <BottomTabNavigator theme={theme}/>
+    <BottomTabNavigator theme={theme} toggleMode={toggleMode}/>
   </NavigationContainer>
 );
 

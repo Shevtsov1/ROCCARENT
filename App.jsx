@@ -5,11 +5,11 @@ import { useCustomTheme } from "./src/assets/theme/theme";
 
 const App = () => {
 
-  const { theme } = useCustomTheme();
+  const { theme, toggleMode } = useCustomTheme();
 
   return (
     <SafeAreaProvider>
-      <AppNavigator  theme={theme}/>
+      <AppNavigator  theme={theme} toggleMode={toggleMode}/>
     </SafeAreaProvider>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { Button } from "@rneui/base";
 
-const Profile = () => {
+const Auth = () => {
 
 
   const styles = StyleSheet.create({
@@ -21,11 +21,11 @@ const Profile = () => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.body}>
-        <Text>P R O F I L E</Text>
+        <Text>A U T H</Text>
         <Button title={'Change color mode'}/>
       </View>
     </View>
   );
 };
 
-export default Profile;
+export default Auth;
