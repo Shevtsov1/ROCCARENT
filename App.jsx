@@ -1,8 +1,8 @@
 import React from 'react';
-import { View } from 'react-native';
-import { ThemeProvider, Button } from '@rneui/themed';
+import { ThemeProvider } from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useCustomTheme } from "./src/assets/theme/theme";
+import AppNavigator from "./src/navigation/navigator";
 
 const App = () => {
   const { theme, toggleMode } = useCustomTheme();
@@ -10,16 +10,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaProvider>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'white',
-          }}
-        >
-          <Button onPress={toggleMode} title={theme.mode} />
-        </View>
+        <AppNavigator/>
       </SafeAreaProvider>
     </ThemeProvider>
   );
