@@ -3,8 +3,11 @@ import {View, Text, StyleSheet} from 'react-native';
 import { Button } from "@rneui/base";
 import { heightPercentageToDP } from "react-native-responsive-screen";
 
-const Profile = ({theme, toggleMode}) => {
+const Profile = ({theme, toggleMode, navigation}) => {
 
+  const handleAuthBtnPress = () => {
+    navigation.navigate('Auth');
+  }
 
   const styles = StyleSheet.create({
 
@@ -24,6 +27,7 @@ const Profile = ({theme, toggleMode}) => {
     <View style={{flex: 1}}>
       <View style={styles.body}>
         <Text>P R O F I L E</Text>
+        <Button onPress={handleAuthBtnPress} title={'Go to Auth'}/>
         <Button onPress={toggleMode} title={'Change color mode'}/>
       </View>
     </View>

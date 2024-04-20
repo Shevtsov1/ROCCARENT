@@ -1,28 +1,24 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import { Button } from "@rneui/base";
+import React, {useRef, useState} from 'react';
+import {Animated, View} from 'react-native';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import LogIn from "./components/logIn";
+import LogUp from "./components/logUp";
+import {widthPercentageToDP as wp, widthPercentageToDP} from "react-native-responsive-screen";
+import { Button, Text } from "@rneui/base";
 
-const Auth = () => {
+const Auth = ({theme, isDarkMode, user, navigation, setInitializing}) => {
+  const [activeAuthBtn, setActiveAuthBtn] = useState('Вход');
+  const activeAuthBtnAnimatedValue = useRef(new Animated.Value(0)).current;
 
-
-  const styles = StyleSheet.create({
-
-    /* BODY BEGIN */
-
-    body: {
-      flex:1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-
-    /* BODY END */
-  });
+  const Tab = createMaterialTopTabNavigator();
 
   return (
     <View style={{flex: 1}}>
-      <View style={styles.body}>
+      <View style={{flex:1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: theme.colors.secondary}}>
         <Text>A U T H</Text>
-        <Button title={'Change color mode'}/>
       </View>
     </View>
   );
