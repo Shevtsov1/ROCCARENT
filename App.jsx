@@ -1,18 +1,16 @@
-import React from 'react';
-import { ThemeProvider } from '@rneui/themed';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useCustomTheme } from "./src/assets/theme/theme";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
+import { useCustomTheme } from "./src/assets/theme/theme";
 
 const App = () => {
-  const { theme, toggleMode } = useCustomTheme();
+
+  const { theme } = useCustomTheme();
 
   return (
-    <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        <AppNavigator/>
-      </SafeAreaProvider>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <AppNavigator  theme={theme}/>
+    </SafeAreaProvider>
   );
 };
 

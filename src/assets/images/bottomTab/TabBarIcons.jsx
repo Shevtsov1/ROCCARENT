@@ -45,15 +45,15 @@ export interface IconProps {
 const Icon = ({ type, name, color, size = 22, style }: IconProps) => {
 
     return (
-        <>
-            {type && name && (
-                <Image
-                    source={name}
-                    style={[{ tintColor: color, width: size, height: size }, style]}
-                    resizeMode={"contain"}
-                />
-            )}
-        </>
+      <>
+          {type && name && (
+            <Image
+              source={name}
+              style={[{ tintColor: color, width: size, height: size }, style]}
+              resizeMode={"contain"}
+            />
+          )}
+      </>
     );
 };
 
