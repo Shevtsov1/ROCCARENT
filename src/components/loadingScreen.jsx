@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator, Image, View } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 
 const LoadingScreen = ({theme}) => {
   return (
@@ -15,11 +15,13 @@ const LoadingScreen = ({theme}) => {
         marginBottom: 20
       }}>
         {theme.mode === 'dark' ? (
-          <Image
-            source={require('../assets/images/logo/logo-dark.png')}
-            style={{width: wp('70%')}}
-            resizeMode={"contain"}
-          />
+          <>
+            <Image
+              source={require('../assets/images/logo/logo-dark.png')}
+              style={{width: wp('70%')}}
+              resizeMode={"contain"}
+            />
+          </>
         ) : (
           <Image
             source={require('../assets/images/logo/logo-light.png')}

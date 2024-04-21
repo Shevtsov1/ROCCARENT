@@ -56,8 +56,11 @@ const App = () => {
       require('./src/assets/images/screens/profile/settings.png'),
     ];
 
-    const cacheImages = images.map((image) => {
-      return Asset.fromModule(image).downloadAsync();
+    const cacheImages = images.map(async (image) => {
+      const imageAsset = Asset.fromModule(image);
+      await imageAsset.downloadAsync();
+      const localUri = imageAsset.localUri;
+      await AsyncStorage.setItem(image.toString(), localUri);
     });
 
     return Promise.all(cacheImages);
@@ -76,10 +79,15 @@ const App = () => {
     }
   };
 
-  // Handle user state changes
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
+  async function onAuthStateChanged(user) {
+    if (user) {
+      // Пользователь вошел в аккаунт
+      setUser(user);
+      if (initializing) setInitializing(false);
+    } else {
+      // Пользователь не вошел в аккаунт, предлагаем выбрать аккаунт Google
+      await auth().signInAnonymously();
+    }
   }
 
   useEffect(() => {

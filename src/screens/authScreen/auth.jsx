@@ -11,28 +11,13 @@ import { Text } from "@rneui/base";
 
 const Auth = ({ theme, isDarkMode, user, navigation, setInitializing }) => {
 
-  GoogleSignin.configure({
-    webClientId: '771592361046-c50gd0p0heu9i02kp2j8j3s27m45h8cl.apps.googleusercontent.com',
-  });
 
-  async function onGoogleButtonPress() {
-    // Check if your device supports Google Play
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // Get the users ID token
-    const { idToken } = await GoogleSignin.signIn();
-
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(googleCredential);
-  }
 
   const Tab = createMaterialTopTabNavigator();
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView>
         <Tab.Navigator
           initialRouteName={'LogIn'}
           screenOptions={{
