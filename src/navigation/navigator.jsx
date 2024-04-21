@@ -205,7 +205,7 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
                           ),
                         }}
             >
-              {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode} isDarkMode={isDarkMode} setInitializing={setInitializing}/>}
+              {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}/>}
             </Tab.Screen>
           )
         })}
@@ -215,9 +215,9 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
 }
 
 // Компонент навигации приложения
-const AppNavigator = ({theme, toggleMode}) => (
+const AppNavigator = ({user, setInitializing, theme, toggleMode}) => (
   <NavigationContainer>
-    <BottomTabNavigator theme={theme} toggleMode={toggleMode}/>
+    <BottomTabNavigator user={user} setInitializing={setInitializing} theme={theme} toggleMode={toggleMode}/>
   </NavigationContainer>
 );
 

@@ -3,11 +3,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
 import { useCustomTheme } from "./src/assets/theme/theme";
 import { useFonts } from "expo-font";
-import { ActivityIndicator, Image, StatusBar, View } from "react-native";
+import { StatusBar } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import { Asset } from "expo-asset";
+import LoadingScreen from "./src/components/loadingScreen";
+import auth from "@react-native-firebase/auth";
 
 const App = () => {
 
@@ -68,57 +69,35 @@ const App = () => {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme) {
         const theme = JSON.parse(savedTheme);
-        toggleMode(theme);
+        loadMode(theme);
       }
     } catch (error) {
       console.error('Error loading theme:', error);
     }
   };
 
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
   useEffect(() => {
     const initializeApp = async () => {
-
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
       await loadTheme();
       await loadImages();
-      setInitializing(false);
+      return subscriber;
     };
 
-    initializeApp().then();
+    initializeApp().then(() => setInitializing(false));
   }, []);
 
 
   return (
     <SafeAreaProvider>
       {initializing || !fontsLoaded ? (
-        <View style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: theme.colors.background
-        }}>
-          <View style={{
-            alignItems: "center",
-            marginBottom: 20
-          }}>
-            {theme.mode === 'dark' ? (
-              <Image
-                source={require('./src/assets/images/logo/logo-dark.png')}
-                style={{width: wp('70%')}}
-                resizeMode={"contain"}
-              />
-            ) : (
-              <Image
-                source={require('./src/assets/images/logo/logo-light.png')}
-                style={{width: wp('70%')}}
-                resizeMode={"contain"}
-              />
-            )}
-          </View>
-          <ActivityIndicator
-            size={75}
-            color={theme.colors.accent}
-          />
-        </View>
+        <LoadingScreen theme={theme}/>
       ) : (
         <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}/>
       )}
