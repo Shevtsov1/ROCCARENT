@@ -28,7 +28,7 @@ const App = () => {
   let [fontsLoaded] = useFonts({
     'Montserrat-Black': require('./src/assets/fonts/Montserrat-Black.ttf'),
     'Montserrat-Bold': require('./src/assets/fonts/Montserrat-Bold.ttf'),
-    'Montserrat-SemiBold': require('./src/assets/fonts/Montserrat-Bold.ttf'),
+    'Montserrat-SemiBold': require('./src/assets/fonts/Montserrat-SemiBold.ttf'),
     'Montserrat-Medium': require('./src/assets/fonts/Montserrat-Medium.ttf'),
     'Montserrat-Italic': require('./src/assets/fonts/Montserrat-Italic.ttf'),
     'Montserrat-Light': require('./src/assets/fonts/Montserrat-Light.ttf'),
@@ -38,8 +38,8 @@ const App = () => {
 
   async function loadImages() {
     const images = [
-      require('./src/assets/images/logo/logo-dark.png'),
-      require('./src/assets/images/logo/logo-light.png'),
+      require('./src/assets/images/logo/logo.png'),
+      require('./src/assets/images/logo/logo_text_caps.png'),
       require('./src/assets/images/bottomTab/add.png'),
       require('./src/assets/images/bottomTab/addFilled.png'),
       require('./src/assets/images/bottomTab/home.png'),
@@ -50,10 +50,6 @@ const App = () => {
       require('./src/assets/images/bottomTab/favoriteFilled.png'),
       require('./src/assets/images/bottomTab/profile.png'),
       require('./src/assets/images/bottomTab/profileFilled.png'),
-      require('./src/assets/images/screens/profile/incognito.png'),
-      require('./src/assets/images/screens/profile/right-arrow.png'),
-      require('./src/assets/images/screens/profile/logout-filled.png'),
-      require('./src/assets/images/screens/profile/settings.png'),
     ];
 
     const cacheImages = images.map(async (image) => {

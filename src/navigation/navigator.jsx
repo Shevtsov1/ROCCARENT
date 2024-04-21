@@ -8,7 +8,7 @@ import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
-import { LinearGradient } from "expo-linear-gradient";
+import { LinearGradient } from "react-native-linear-gradient";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
@@ -118,8 +118,8 @@ const TabButton = React.memo((props) => {
           <LinearGradient
             colors={['transparent', theme.colors.secondary]}
             locations={[0.43, 0]}
-            start={[0.5, 0]}
-            end={[0.5, 1]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
             style={{ flex: 1, width: '100%', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}
           >
             <View
