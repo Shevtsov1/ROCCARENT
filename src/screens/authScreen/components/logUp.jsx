@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -8,25 +8,29 @@ import {
   Animated,
   Easing,
   StyleSheet,
-  ActivityIndicator, ToastAndroid
-} from 'react-native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
-import {CheckBox, Divider, Icon, Input} from "@rneui/themed";
+  ActivityIndicator, ToastAndroid,
+} from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Icon, Input, Button } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
-const LogUp = ({theme, isDarkMode, setInitializing}) => {
+const AnimatedInput = Animated.createAnimatedComponent(Input);
+
+const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
   const [isAdviceShown, setIsAdviceShown] = useState(true);
-  const [accountType, setAccountType] = useState('personal');
+  const [accountType, setAccountType] = useState("personal");
   const [adviceHeight, setAdviceHeight] = useState(0);
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
   const [btnIsLoading, setBtnIsLoading] = useState(false);
+  const [confPassAnimation] = useState(new Animated.Value(0));
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const bgColor = theme.colors.background;
@@ -53,7 +57,7 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
     if (password && hasMinimumLength && hasDigit && hasUppercaseLetter && hasLowercaseLetter) {
       setHasAllRequirements(true);
     } else {
-      setHasAllRequirements(false)
+      setHasAllRequirements(false);
     }
 
     if (
@@ -72,6 +76,30 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
       setAuthBtnDisabled(true);
     }
   }, [email, password, passwordConfirmation, termsAccepted]);
+
+  useEffect(() => {
+    if (password) {
+      // При наличии значения в поле пароля, показываем второй инпут с анимацией
+      Animated.timing(confPassAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // Если поле пароля пустое, скрываем второй инпут
+      Animated.timing(confPassAnimation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [password]);
+
+  const secondInputOpacity = confPassAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
 
   const closeAdvice = () => {
     Animated.parallel([
@@ -92,25 +120,25 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
   });
 
   const handleAdviceLayout = (event) => {
-    const {height} = event.nativeEvent.layout;
+    const { height } = event.nativeEvent.layout;
     setAdviceHeight(height);
   };
 
   const handleEmailClear = () => {
-    setEmail('');
-  }
+    setEmail("");
+  };
 
   const handleEmailChange = (value) => {
-    setEmail(value)
-  }
+    setEmail(value);
+  };
 
   const handlePasswordChange = (value) => {
     setPassword(value);
-  }
+  };
 
   const handlePasswordConfirmationChange = (value) => {
     setPasswordConfirmation(value);
-  }
+  };
 
   const handleTermsToggle = (isChecked) => {
     setTermsAccepted(isChecked);
@@ -118,18 +146,18 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
 
   const handleLogUpBtn = async () => {
     setInitializing(true);
-    let toastText = '';
+    let toastText = "";
 
     try {
       const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
       await auth().currentUser.linkWithCredential(emailAuthCredential);
-      toastText = 'Регистрация завершена';
+      toastText = "Регистрация завершена";
     } catch (error) {
       console.log(error);
       console.log(error.code);
-      console.log(error.message)
-      if (error.message === '[auth/unknown] User has already been linked to the given provider.') {
-        toastText = 'Пользователь с таким Email уже зарегистрирован';
+      console.log(error.message);
+      if (error.message === "[auth/unknown] User has already been linked to the given provider.") {
+        toastText = "Пользователь с таким Email уже зарегистрирован";
       }
     }
 
@@ -139,30 +167,22 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
     }, 2000);
   };
 
-  const styles = StyleSheet.create({
-    passwordRequirementsText: {
-      fontFamily: 'Montserrat-Medium',
-      fontSize: 12,
-      color: textColor,
-    }
-  })
-
   return (
     <>
       {btnIsLoading ?
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: backColor}}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: backColor }}>
           <Image
-            source={require('../../../assets/images/logo/logo_text_caps.png')}
-            style={{width: 192, height: 192, marginBottom: hp(1)}} borderRadius={30}/>
-          <ActivityIndicator size={48} color={textColor}/>
+            source={require("../../../assets/images/logo/logo_text_caps.png")}
+            style={{ width: 192, height: 192, marginBottom: hp(1) }} borderRadius={30} />
+          <ActivityIndicator size={48} color={textColor} />
         </View> : <ScrollView style={{
-          flex: 1, backgroundColor: backColor
+          flex: 1, backgroundColor: backColor,
         }}>
-          <View style={{marginVertical: hp(2), marginBottom: 24, marginHorizontal: wp(4)}}>
+          <View style={{ marginVertical: hp(2), marginHorizontal: wp(4) }}>
             {isAdviceShown &&
               <Animated.View style={{
                 width: wp(92),
-                height: 'auto',
+                height: "auto",
                 paddingVertical: hp(1),
                 paddingHorizontal: wp(2),
                 borderRadius: 15,
@@ -173,130 +193,142 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
               }} onLayout={handleAdviceLayout}>
                 <Text
                   style={{
-                    fontFamily: 'Montserrat-Medium',
+                    fontFamily: "Montserrat-Medium",
                     fontSize: 14,
                     color: textColor,
                     marginBottom: 6,
                   }}>Зарегестрируйтесь,
                   чтобы:</Text>
-                <View style={{flexDirection: 'row', marginBottom: 3}}>
-                  <Image style={{width: 18, height: 18, resizeMode: 'contain', marginEnd: 6}}
-                         source={require('../../../assets/images/createAd-sticker.png')}
+                <View style={{ flexDirection: "row", marginBottom: 3 }}>
+                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
+                         source={require("../../../assets/images/createAd-sticker.png")}
                   />
-                  <View style={{flex: 1}}>
+                  <View style={{ flex: 1 }}>
                     <Text
-                      style={{fontFamily: 'Montserrat-Medium', fontSize: 14, color: textColor,}}>Подавать
+                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Подавать
                       объявления</Text>
                   </View>
                 </View>
-                <View style={{flexDirection: 'row', marginBottom: 3}}>
-                  <Image style={{width: 18, height: 18, resizeMode: 'contain', marginEnd: 6}}
-                         source={require('../../../assets/images/saved-sticker.png')}
+                <View style={{ flexDirection: "row", marginBottom: 3 }}>
+                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
+                         source={require("../../../assets/images/saved-sticker.png")}
                   />
-                  <View style={{flex: 1}}>
+                  <View style={{ flex: 1 }}>
                     <Text
-                      style={{fontFamily: 'Montserrat-Medium', fontSize: 14, color: textColor,}}>Сохранять
+                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Сохранять
                       товары и продавцов в Избранное</Text>
                   </View>
                 </View>
-                <View style={{flexDirection: 'row'}}>
-                  <Image style={{width: 18, height: 18, resizeMode: 'contain', marginEnd: 6}}
-                         source={require('../../../assets/images/chatting-sticker.png')}
+                <View style={{ flexDirection: "row" }}>
+                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
+                         source={require("../../../assets/images/chatting-sticker.png")}
                   />
-                  <View style={{flex: 1}}>
+                  <View style={{ flex: 1 }}>
                     <Text
-                      style={{fontFamily: 'Montserrat-Medium', fontSize: 14, color: textColor,}}>Отправлять
+                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Отправлять
                       и получать сообщения</Text>
                   </View>
                 </View>
                 <TouchableOpacity onPress={closeAdvice}
                                   style={{
-                                    position: 'absolute',
+                                    position: "absolute",
                                     top: hp(0.5),
                                     right: wp(0.5),
                                     height: 30,
                                     width: 30,
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                   }}>
-                  <Image source={require('../../../assets/images/SearchBar/cancel.png')}
-                         style={{width: 20, height: 20, tintColor: textColor}}
-                         resizeMode={'contain'}/>
+                  <Image source={require("../../../assets/images/SearchBar/cancel.png")}
+                         style={{ width: 20, height: 20, tintColor: textColor }}
+                         resizeMode={"contain"} />
                 </TouchableOpacity>
               </Animated.View>
             }
-            <Divider width={1} color={theme.colors.grey1}
-                     style={{marginBottom: hp(1)}}/>
             <View>
+              <View style={{ flexDirection: "row" }}>
+                <Image source={require("../../../assets/images/usingPhone/auth.png")}
+                       style={{ width: 144, height: 144, alignSelf: "center" }} />
+                <GoogleSigninButton style={{ alignSelf: "flex-end", marginBottom: "5%" }} onPress={onGoogleButtonPress}
+                                    size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} />
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <Input
+                  containerStyle={{ height: 60, paddingHorizontal: 0 }}
+                  inputContainerStyle={{
+                    paddingHorizontal: wp(3),
+                    borderColor: theme.colors.grey1,
+                  }}
+                  disabledInputStyle={{ background: "#ddd" }}
+                  inputMode={"email"}
+                  inputStyle={{ color: textColor }}
+                  errorMessage=""
+                  leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
+                  rightIcon={<View style={{ flexDirection: "row" }}>
+                    {email && (
+                      <TouchableOpacity style={{ justifyContent: "center", marginEnd: 12 }} onPress={handleEmailClear}>
+                        <Icon type={"ionicon"} name={"close"} color={textColor} />
+                      </TouchableOpacity>
+                    )}
+                  </View>}
+                  rightIconContainerStyle={{ marginEnd: 0 }}
+                  labelStyle={{ color: textColor }}
+                  placeholder="Email"
+                  value={email}
+                  onChangeText={handleEmailChange}
+                />
+              </View>
               <Input
-                containerStyle={{height: 60, paddingHorizontal: 0}}
+                containerStyle={{ height: 60, paddingHorizontal: 0 }}
                 inputContainerStyle={{
                   paddingHorizontal: wp(3),
-                  borderColor: theme.colors.grey1
+                  borderColor: theme.colors.grey1,
                 }}
-                disabledInputStyle={{background: "#ddd"}}
-                inputMode={'email'}
-                inputStyle={{color: textColor}}
-                errorMessage=""
-                leftIcon={<Icon type={'ionicon'} name='mail-outline' color={textColor}/>}
-                rightIcon={email &&
-                  <TouchableOpacity onPress={handleEmailClear}><Icon type={'ionicon'} name={'close'}
-                                                                     color={textColor}/></TouchableOpacity>}
-                labelStyle={{color: textColor}}
-                placeholder="Email"
-                value={email}
-                onChangeText={handleEmailChange}
-              />
-              <Input
-                containerStyle={{height: 60, paddingHorizontal: 0}}
-                inputContainerStyle={{
-                  paddingHorizontal: wp(3),
-                  borderColor: theme.colors.grey1
-                }}
-                disabledInputStyle={{background: "#ddd"}}
-                inputStyle={{color: textColor}}
-                errorStyle={{marginStart: wp(3)}}
-                errorMessage={password ? (hasAllRequirements ? '' : 'Пароль не соответствует требованиям') : ''}
-                leftIcon={<Icon type={'ionicon'} name='key-outline' color={textColor}/>}
+                disabledInputStyle={{ background: "#ddd" }}
+                inputStyle={{ color: textColor }}
+                errorStyle={{ marginStart: wp(3) }}
+                errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
+                leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
                 rightIcon={password &&
                   <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
                     <Icon color={textColor}
-                          type={'ionicon'}
-                          name={isPasswordSecure ? 'eye-outline' : 'eye-off-outline'}/>
+                          type={"ionicon"}
+                          name={isPasswordSecure ? "eye-outline" : "eye-off-outline"} />
                   </TouchableOpacity>}
-                labelStyle={{color: textColor}}
+                labelStyle={{ color: textColor }}
                 placeholder="Пароль"
                 secureTextEntry={isPasswordSecure}
                 value={password}
                 onChangeText={handlePasswordChange}
               />
-              <Input
+              {hasAllRequirements && <AnimatedInput
                 containerStyle={{
+                  opacity: secondInputOpacity,
                   height: 60, paddingHorizontal: 0,
                   marginBottom: (password === passwordConfirmation ? 0 : hp(1.5)),
                 }}
                 inputContainerStyle={{
                   paddingHorizontal: wp(3),
-                  borderColor: theme.colors.grey1
+                  borderColor: theme.colors.grey1,
                 }}
-                disabledInputStyle={{background: "#ddd"}}
-                inputStyle={{color: textColor}}
-                errorStyle={{marginStart: wp(3)}}
-                errorMessage={password === passwordConfirmation ? '' : 'Пароли не совпадают'}
-                leftIcon={<Icon type={'ionicon'} name='key-outline' color={textColor}/>}
+                disabledInputStyle={{ background: "#ddd" }}
+                inputStyle={{ color: textColor }}
+                errorStyle={{ marginStart: wp(3) }}
+                errorMessage={password === passwordConfirmation ? "" : "Пароли не совпадают"}
+                leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
                 rightIcon={passwordConfirmation &&
                   <TouchableOpacity
                     onPress={() => setIsConfirmPasswordSecure(!isConfirmPasswordSecure)}>
                     <Icon color={textColor}
-                          type={'ionicon'}
-                          name={isConfirmPasswordSecure ? 'eye-outline' : 'eye-off-outline'}/>
+                          type={"ionicon"}
+                          name={isConfirmPasswordSecure ? "eye-outline" : "eye-off-outline"} />
                   </TouchableOpacity>}
-                labelStyle={{color: textColor}}
-                placeholder='Подтвердите пароль'
+                labelStyle={{ color: textColor }}
+                placeholder="Подтвердите пароль"
                 secureTextEntry={isConfirmPasswordSecure}
                 value={passwordConfirmation}
                 onChangeText={handlePasswordConfirmationChange}
-              />
+              />}
             </View>
             <View>
               <TermsCheckbox
@@ -308,20 +340,20 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
             </View>
             <TouchableOpacity
               style={{
-                alignSelf: 'center',
+                alignSelf: "center",
                 height: 54,
-                width: wp(92),
+                width: "100%",
                 borderRadius: 15,
-                justifyContent: 'center',
-                alignItems: 'center',
+                justifyContent: "center",
+                alignItems: "center",
                 backgroundColor: authBtnDisabled ? theme.colors.disabled : accentColor,
-                overflow: 'hidden'
+                overflow: "hidden",
               }}
               disabled={authBtnDisabled || btnIsLoading}
               onPress={handleLogUpBtn}
             >
               <Text style={{
-                fontFamily: 'Montserrat-Bold',
+                fontFamily: "Montserrat-Bold",
                 fontSize: 18,
                 color: theme.colors.background,
               }}>Зарегистрироваться</Text>
