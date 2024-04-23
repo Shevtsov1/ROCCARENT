@@ -14,7 +14,7 @@ const Auth = ({ theme, user, navigation, setInitializing }) => {
         <ScreenHeader theme={theme} user={user} page={'auth'} navigation={navigation}/>
         <>
           <Tab containerStyle={{ backgroundColor: theme.colors.background }} titleStyle={{ fontFamily: 'Montserrat-Bold', color: theme.colors.text }}
-               indicatorStyle={{ backgroundColor: theme.colors.text }} value={index} onChange={setIndex} dense>
+               indicatorStyle={{ backgroundColor: theme.colors.text, width: '50%' }} value={index} onChange={setIndex} dense>
             <Tab.Item>Вход</Tab.Item>
             <Tab.Item>Регистрация</Tab.Item>
           </Tab>

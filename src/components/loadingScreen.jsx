@@ -1,8 +1,37 @@
 import React from "react";
-import { ActivityIndicator, Image, View } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { ActivityIndicator, Animated, Easing, Image, View } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Skeleton } from "@rneui/base";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 const LoadingScreen = ({ theme }) => {
+
+  const animation = new Animated.Value(0);
+
+  React.useEffect(() => {
+    const startAnimation = () => {
+      Animated.loop(
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: 2500,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    };
+
+    startAnimation();
+
+    return () => {
+      animation.stopAnimation();
+    };
+  }, []);
+
+  const opacity = animation.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1, 0.5, 1],
+  });
+
   return (
     <View style={{
       flex: 1,
@@ -12,18 +41,19 @@ const LoadingScreen = ({ theme }) => {
     }}>
       <View style={{
         alignItems: "center",
-        marginBottom: 20,
       }}>
-        <Image
-          source={require("../assets/images/logo/logo_text_caps.png")}
-          style={{ width: wp("70%") }}
-          resizeMode={"contain"}
-        />
+        <Animated.View
+          style={{
+            opacity,
+          }}
+        >
+          <Image
+            source={require('../assets/images/logo/logo.png')}
+            style={{ width: wp('100%') }}
+            resizeMode="contain"
+          />
+        </Animated.View>
       </View>
-      <ActivityIndicator
-        size={75}
-        color={theme.colors.accent}
-      />
     </View>
   );
 };

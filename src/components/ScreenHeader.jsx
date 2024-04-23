@@ -107,8 +107,7 @@ const ProfileScreenHeader = ({ user, theme, setInitializing, styles }) => {
 };
 
 const ScreenHeader = ({ user, theme, page, setInitializing, navigation }) => {
-    const textGradientStartColor = theme.colors.text;
-    const textGradientEndColor = theme.colors.text;
+
 
     const styles = StyleSheet.create({
       header: {

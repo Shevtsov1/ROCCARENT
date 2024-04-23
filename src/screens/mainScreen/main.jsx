@@ -1,8 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet } from "react-native";
+import { Button } from "@rneui/base";
+import { useNavigation } from "@react-navigation/native";
+import ScreenHeader from "../../components/ScreenHeader";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const Main = () => {
+const Main = ({theme, user}) => {
 
+  const navigation = useNavigation();
 
   const styles = StyleSheet.create({
 
@@ -18,11 +23,12 @@ const Main = () => {
   });
 
   return (
-    <View style={{flex: 1}}>
-      <View style={styles.body}>
-        <Text>M A I N</Text>
-      </View>
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView>
+        <ScreenHeader theme={theme} user={user} page={'main'} navigation={navigation}/>
+        <Button onPress={() => navigation.navigate('ProfileStack', {screen: 'Auth'})} title={'auth'}/>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

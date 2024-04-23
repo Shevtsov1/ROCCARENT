@@ -13,6 +13,7 @@ import {
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
 import {CheckBox, Divider, Icon, Input} from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
+import auth from "@react-native-firebase/auth";
 
 const LogUp = ({theme, isDarkMode, setInitializing}) => {
   const [isAdviceShown, setIsAdviceShown] = useState(true);
@@ -115,14 +116,28 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
     setTermsAccepted(isChecked);
   };
 
-  const handleLogUpBtn = () => {
+  const handleLogUpBtn = async () => {
     setInitializing(true);
     let toastText = '';
+
+    try {
+      const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
+      await auth().currentUser.linkWithCredential(emailAuthCredential);
+      toastText = 'Регистрация завершена';
+    } catch (error) {
+      console.log(error);
+      console.log(error.code);
+      console.log(error.message)
+      if (error.message === '[auth/unknown] User has already been linked to the given provider.') {
+        toastText = 'Пользователь с таким Email уже зарегистрирован';
+      }
+    }
+
     setTimeout(() => {
       setInitializing(false);
-      ToastAndroid.show(toastText, 10000);
+      ToastAndroid.show(toastText, ToastAndroid.LONG);
     }, 2000);
-  }
+  };
 
   const styles = StyleSheet.create({
     passwordRequirementsText: {
@@ -210,44 +225,6 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
                 </TouchableOpacity>
               </Animated.View>
             }
-            <View
-              style={{flexDirection: 'row', paddingVertical: hp(1)}}>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginEnd: wp(3)}}>
-                <CheckBox
-                  checkedColor={accentColor}
-                  containerStyle={{paddingHorizontal: 0, marginHorizontal: 0}}
-                  checked={accountType === 'personal'}
-                  onPress={() => setAccountType('personal')}
-                  disabled={accountType === 'personal'}
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"/>
-                <TouchableOpacity style={{height: 48, justifyContent: 'center'}} activeOpacity={1}
-                                  disabled={accountType === 'personal'}
-                                  onPress={() => setAccountType('personal')}>
-                  <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 15, color: textColor,}}>Частное
-                    лицо</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <CheckBox
-                  checkedColor={accentColor}
-                  containerStyle={{paddingHorizontal: 0, marginHorizontal: 0}}
-                  checked={accountType === 'company'}
-                  onPress={() => setAccountType('company')}
-                  disabled={accountType === 'company'}
-                  checkedIcon="dot-circle-o"
-                  uncheckedIcon="circle-o"/>
-                <TouchableOpacity style={{height: 48, justifyContent: 'center'}} activeOpacity={1}
-                                  disabled={accountType === 'company'}
-                                  onPress={() => setAccountType('company')}>
-                  <Text style={{
-                    fontFamily: 'Montserrat-SemiBold',
-                    fontSize: 15,
-                    color: textColor,
-                  }}>Компания/ИП</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
             <Divider width={1} color={theme.colors.grey1}
                      style={{marginBottom: hp(1)}}/>
             <View>
@@ -345,8 +322,8 @@ const LogUp = ({theme, isDarkMode, setInitializing}) => {
             >
               <Text style={{
                 fontFamily: 'Montserrat-Bold',
-                fontSize: 16,
-                color: theme.colors.text,
+                fontSize: 18,
+                color: theme.colors.background,
               }}>Зарегистрироваться</Text>
             </TouchableOpacity>
           </View>
