@@ -143,8 +143,8 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       borderBottomStartRadius: 15,
     },
     googleAuthBtnText: {
-      marginEnd: 8,
-      fontFamily: "Montserrat-Medium",
+      marginEnd: 18,
+      fontFamily: "Roboto-Medium",
       fontSize: 16,
       color: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
     },
@@ -157,7 +157,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       alignItems: "center",
     },
     buttonText: {
-      fontFamily: "Montserrat-Bold",
+      fontFamily: "Roboto-Bold",
       fontSize: 18,
       color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
     },
@@ -183,7 +183,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               </View>
             </View>
             <Input
-              containerStyle={styles.inputContainer}
+              containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
               inputContainerStyle={styles.input}
               inputMode={"email"}
               inputStyle={styles.emailInput}

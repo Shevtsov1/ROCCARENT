@@ -172,7 +172,7 @@ const TabButton = React.memo((props) => {
           </Animated.View>
           {focused && (
             <Animated.View style={{opacity: opacityValue}}>
-              <Text style={{fontFamily: 'Montserrat-Bold', fontSize: 12, color: accentColor}}>{label}</Text>
+              <Text style={{fontFamily: 'Roboto-Bold', fontSize: 12, color: accentColor}}>{label}</Text>
             </Animated.View>
           )}
         </View>

@@ -12,10 +12,10 @@ const AuthScreenHeader = ({ theme, styles, navigation }) => {
 
   return (
     <View style={styles.header}>
-      <Text style={{ fontFamily: "Montserrat-Black", fontSize: 26, color: theme.colors.accent }}>RoccaRent</Text>
+      <Text style={{ fontFamily: "Roboto-Black", fontSize: 26, color: theme.colors.accent }}>RoccaRent</Text>
       <TouchableOpacity onPress={handleCloseAuthBtn}>
         <Text style={{
-          fontFamily: "Montserrat-SemiBold",
+          fontFamily: "Roboto-Medium",
           fontSize: 16,
           color: theme.colors.text,
         }}>Назад</Text>

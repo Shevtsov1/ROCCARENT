@@ -65,13 +65,13 @@ const Auth = ({ theme, user, setInitializing }) => {
         shadowColor: theme.colors.grey1,
         elevation: 8,
       }, headerText: {
-        fontFamily: "Montserrat-Medium", fontSize: 14, color: theme.colors.text, marginBottom: 6,
+        fontFamily: "Roboto-Medium", fontSize: 14, color: theme.colors.text, marginBottom: 6,
       }, stickerContainer: {
         flexDirection: "row", marginBottom: 3,
       }, stickerImage: {
         width: 18, height: 18, resizeMode: "contain", marginEnd: 6,
       }, stickerText: {
-        flex: 1, fontFamily: "Montserrat-Medium", fontSize: 14, color: theme.colors.text,
+        flex: 1, fontFamily: "Roboto-Medium", fontSize: 14, color: theme.colors.text,
       }, closeButton: {
         position: "absolute",
         top: hp(0.5),
@@ -129,7 +129,7 @@ const Auth = ({ theme, user, setInitializing }) => {
       <ScreenHeader theme={theme} user={user} page={"auth"} navigation={navigation} />
       <>
         <Tab containerStyle={{ backgroundColor: theme.colors.background }}
-             titleStyle={{ fontFamily: "Montserrat-Bold", color: theme.colors.text }}
+             titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.text }}
              indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}>
           <Tab.Item>Вход</Tab.Item>
           <Tab.Item>Регистрация</Tab.Item>

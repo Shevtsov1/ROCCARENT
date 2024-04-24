@@ -123,7 +123,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       overflow: "hidden",
     },
     buttonText: {
-      fontFamily: "Montserrat-Bold",
+      fontFamily: "Roboto-Bold",
       fontSize: 18,
       color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
     },
@@ -184,8 +184,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       borderBottomStartRadius: 15,
     },
     googleAuthBtnText: {
-      marginEnd: 6,
-      fontFamily: "Montserrat-Medium",
+      marginEnd: 18,
+      fontFamily: "Roboto-Medium",
       fontSize: 16,
       color: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
     },
@@ -212,10 +212,10 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           </View>
           <View style={{ flexDirection: "row" }}>
             <Input
-              containerStyle={styles.inputContainer}
+              containerStyle={[styles.inputContainer, { marginBottom: email ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
               inputContainerStyle={styles.input}
               inputMode={"email"}
-              inputStyle={{ color: textColor }}
+              inputStyle={{ fontFamily: 'Roboto-Regular', color: textColor }}
               errorMessage={email ? (isValidEmail ? '' :  'Введит корректный Email') : '' }
               leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
               rightIcon={
@@ -236,9 +236,9 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
             />
           </View>
           <Input
-            containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1)) : 0 }]}
+            containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
             inputContainerStyle={styles.input}
-            inputStyle={{ color: textColor }}
+            inputStyle={{ fontFamily: 'Roboto-Regular', color: textColor }}
             errorStyle={styles.errorStyle}
             errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
             leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
@@ -262,10 +262,10 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           <Input
             containerStyle={[
               styles.inputContainer,
-              { marginBottom: password ? (hasAllRequirements ? 0 : hp(1)) : 0 },
+              { marginBottom: passwordConfirmation ? (hasAllRequirements ? 0 : hp(1.5)) : 0 },
             ]}
             inputContainerStyle={styles.input}
-            inputStyle={{ color: textColor }}
+            inputStyle={{ fontFamily: 'Roboto-Regular', color: textColor }}
             errorStyle={styles.errorStyle}
             errorMessage={passwordConfirmation ? (hasAllRequirements ? "" : "Пароли не совпадают") : ""}
             leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
