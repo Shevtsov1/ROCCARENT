@@ -58,8 +58,8 @@ const Auth = ({ theme, user, navigation, setInitializing }) => {
         borderRadius: 15,
         backgroundColor: theme.colors.background,
         opacity: adviceOpacity,
-        elevation: 1,
-        shadowColor: theme.colors.text,
+        shadowColor: theme.colors.grey1,
+        elevation: 8,
       }, headerText: {
         fontFamily: "Montserrat-Medium", fontSize: 14, color: theme.colors.text, marginBottom: 6,
       }, stickerContainer: {

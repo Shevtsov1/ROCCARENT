@@ -12,13 +12,11 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
-  const [btnIsLoading, setBtnIsLoading] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -185,6 +183,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       borderRadius: 15,
       justifyContent: 'space-between',
       alignItems: 'center',
+      shadowColor: theme.colors.grey1,
+      elevation: 8,
     },
     googleAuthBtnImageContainer: {
       height: 36,

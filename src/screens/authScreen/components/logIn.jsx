@@ -8,9 +8,8 @@ import {
   StyleSheet
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { Button, Icon, Input } from "@rneui/themed";
+import { Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
 const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -125,6 +124,8 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       borderRadius: 15,
       justifyContent: 'space-between',
       alignItems: 'center',
+      shadowColor: theme.colors.grey1,
+      elevation: 8,
     },
     googleAuthBtnImageContainer: {
       height: 36,

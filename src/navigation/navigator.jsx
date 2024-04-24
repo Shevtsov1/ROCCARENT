@@ -131,6 +131,8 @@ const TabButton = React.memo((props) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: accentColor,
+                  shadowColor: theme.colors.grey1,
+                  elevation: 8,
                 }
               }
             >
