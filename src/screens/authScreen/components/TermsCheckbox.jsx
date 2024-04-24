@@ -47,7 +47,7 @@ const TermsCheckbox = ({theme, isDarkMode, isActive, onCheckboxToggle}) => {
           </Text>
         </View>
       </TouchableOpacity>
-      <Terms theme={theme} isDarkMode={isDarkMode} isVisible={showTerms} handleConfirm={handleCheckboxPress}
+      <Terms theme={theme} isDarkMode={isDarkMode} isVisible={showTerms} isChecked={isChecked} handleConfirm={handleCheckboxPress}
              onClose={handleCloseTerms}/>
     </View>
   );

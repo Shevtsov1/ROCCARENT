@@ -8,11 +8,13 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Animated, Easing, Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const Auth = ({ theme, user, navigation, setInitializing }) => {
+const Auth = ({ theme, user, setInitializing }) => {
   const [index, setIndex] = React.useState(0);
   const [isAdviceShown, setIsAdviceShown] = useState(true);
   const adviceAnimation = useRef(new Animated.Value(1)).current;
+  const navigation = useNavigation()
 
   GoogleSignin.configure({
     webClientId: "771592361046-c50gd0p0heu9i02kp2j8j3s27m45h8cl.apps.googleusercontent.com",
@@ -24,16 +26,18 @@ const Auth = ({ theme, user, navigation, setInitializing }) => {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       // Get the users ID token
       const { idToken } = await GoogleSignin.signIn();
-
+      setInitializing(true);
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Sign-in the user with the credential
-      return auth().signInWithCredential(googleCredential);
+      return await auth().signInWithCredential(googleCredential).then(() => {
+        setInitializing(false);
+      });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const closeAdvice = () => {
     Animated.parallel([Animated.timing(adviceAnimation, {
@@ -82,69 +86,69 @@ const Auth = ({ theme, user, navigation, setInitializing }) => {
     });
 
     return (<Animated.View style={styles.container}>
-        <Text style={styles.headerText}>{authTypeWord}, чтобы:</Text>
-        <View style={styles.stickerContainer}>
-          <Image
-            style={styles.stickerImage}
-            source={require("../../assets/images/createAd-sticker.png")}
-          />
-          <View>
-            <Text style={styles.stickerText}>Подавать объявления</Text>
-          </View>
+      <Text style={styles.headerText}>{authTypeWord}, чтобы:</Text>
+      <View style={styles.stickerContainer}>
+        <Image
+          style={styles.stickerImage}
+          source={require("../../assets/images/createAd-sticker.png")}
+        />
+        <View>
+          <Text style={styles.stickerText}>Подавать объявления</Text>
         </View>
-        <View style={styles.stickerContainer}>
-          <Image
-            style={styles.stickerImage}
-            source={require("../../assets/images/saved-sticker.png")}
-          />
-          <View>
-            <Text style={styles.stickerText}>Сохранять товары и продавцов в Избранное</Text>
-          </View>
+      </View>
+      <View style={styles.stickerContainer}>
+        <Image
+          style={styles.stickerImage}
+          source={require("../../assets/images/saved-sticker.png")}
+        />
+        <View>
+          <Text style={styles.stickerText}>Сохранять товары и продавцов в Избранное</Text>
         </View>
-        <View style={styles.stickerContainer}>
-          <Image
-            style={styles.stickerImage}
-            source={require("../../assets/images/chatting-sticker.png")}
-          />
-          <View>
-            <Text style={styles.stickerText}>Отправлять и получать сообщения</Text>
-          </View>
+      </View>
+      <View style={styles.stickerContainer}>
+        <Image
+          style={styles.stickerImage}
+          source={require("../../assets/images/chatting-sticker.png")}
+        />
+        <View>
+          <Text style={styles.stickerText}>Отправлять и получать сообщения</Text>
         </View>
-        <TouchableOpacity onPress={closeAdvice} style={styles.closeButton}>
-          <Image
-            source={require("../../assets/images/SearchBar/cancel.png")}
-            style={styles.closeImage}
-            resizeMode={"contain"}
-          />
-        </TouchableOpacity>
-      </Animated.View>);
+      </View>
+      <TouchableOpacity onPress={closeAdvice} style={styles.closeButton}>
+        <Image
+          source={require("../../assets/images/SearchBar/cancel.png")}
+          style={styles.closeImage}
+          resizeMode={"contain"}
+        />
+      </TouchableOpacity>
+    </Animated.View>);
   };
 
   return (<SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScreenHeader theme={theme} user={user} page={"auth"} navigation={navigation} />
-        <>
-          <Tab containerStyle={{ backgroundColor: theme.colors.background }}
-               titleStyle={{ fontFamily: "Montserrat-Bold", color: theme.colors.text }}
-               indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}
-               denseswipeEnabled={false}>
-            <Tab.Item>Вход</Tab.Item>
-            <Tab.Item>Регистрация</Tab.Item>
-          </Tab>
-          <TabView containerStyle={{ backgroundColor: theme.colors.secondary }} value={index} onChange={setIndex}
-                   animationType="spring" disableSwipe>
-            <TabView.Item style={{ width: "100%" }}>
-              <LogIn user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
-                     isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
-            </TabView.Item>
-            <TabView.Item style={{ width: "100%" }}>
-              <LogUp user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
-                     isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
-            </TabView.Item>
-          </TabView>
-        </>
-      </SafeAreaView>
-    </SafeAreaProvider>);
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScreenHeader theme={theme} user={user} page={"auth"} navigation={navigation} />
+      <>
+        <Tab containerStyle={{ backgroundColor: theme.colors.background }}
+             titleStyle={{ fontFamily: "Montserrat-Bold", color: theme.colors.text }}
+             indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}
+             denseswipeEnabled={false}>
+          <Tab.Item>Вход</Tab.Item>
+          <Tab.Item>Регистрация</Tab.Item>
+        </Tab>
+        <TabView containerStyle={{ backgroundColor: theme.colors.secondary }} value={index} onChange={setIndex}
+                 animationType="spring" disableSwipe>
+          <TabView.Item style={{ width: "100%" }}>
+            <LogIn user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
+                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
+          </TabView.Item>
+          <TabView.Item style={{ width: "100%" }}>
+            <LogUp user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
+                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
+          </TabView.Item>
+        </TabView>
+      </>
+    </SafeAreaView>
+  </SafeAreaProvider>);
 };
 
 export default Auth;

@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  ToastAndroid,
   StyleSheet,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -28,20 +27,18 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const accentColor = theme.colors.accent;
 
   let hasMinimumLength;
-  let hasUppercaseLetter;
-  let hasLowercaseLetter;
-  let hasDigit;
+  let hasValidCharacters;
+  let isValidEmail;
   const [hasAllRequirements, setHasAllRequirements] = useState(false);
 
   useEffect(() => {
     const hasValidPassword =
       password && passwordConfirmation && password === passwordConfirmation;
-    hasMinimumLength = password.length >= 8;
-    hasUppercaseLetter = /[A-Z]/.test(password);
-    hasLowercaseLetter = /[a-z]/.test(password);
-    hasDigit = /\d/.test(password);
+    hasMinimumLength = password.length >= 6;
+    hasValidCharacters = /^[a-zA-Z0-9]+$/.test(password);
+    isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    if (password && hasMinimumLength && hasDigit && hasUppercaseLetter && hasLowercaseLetter) {
+    if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {
       setHasAllRequirements(true);
     } else {
       setHasAllRequirements(false);
@@ -54,9 +51,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       termsAccepted &&
       hasValidPassword &&
       hasMinimumLength &&
-      hasUppercaseLetter &&
-      hasLowercaseLetter &&
-      hasDigit
+      hasValidCharacters &&
+      isValidEmail
     ) {
       setAuthBtnDisabled(false);
     } else {
@@ -86,25 +82,17 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
 
   const handleLogUpBtn = async () => {
     setInitializing(true);
-    let toastText = "";
-
     try {
       const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
-      await auth().currentUser.linkWithCredential(emailAuthCredential);
-      toastText = "Регистрация завершена";
+      await auth().currentUser.linkWithCredential(emailAuthCredential).then(() => {
+        setInitializing(false);
+      });
+      console.log("Регистрация завершена");
     } catch (error) {
-      console.log(error);
-      console.log(error.code);
-      console.log(error.message);
       if (error.message === "[auth/unknown] User has already been linked to the given provider.") {
-        toastText = "Пользователь с таким Email уже зарегистрирован";
+        console.log("Пользователь с таким Email уже зарегистрирован");
       }
     }
-
-    setTimeout(() => {
-      setInitializing(false);
-      ToastAndroid.show(toastText, ToastAndroid.LONG);
-    }, 2000);
   };
 
   const styles = StyleSheet.create({
@@ -141,7 +129,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     },
     imageContainer: {
       flexDirection: "row",
-      justifyContent: 'space-between',
+      justifyContent: "space-between",
     },
     image: {
       width: 144,
@@ -172,34 +160,34 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     googleButtonContainer: {
       alignSelf: "flex-end",
       marginBottom: "5%",
-      flexDirection: 'column',
+      flexDirection: "column",
     },
     googleAuthBtn: {
       right: 0,
       height: 36,
       width: 200,
-      flexDirection: 'row',
+      flexDirection: "row",
       backgroundColor: theme.colors.googleBlue,
       borderRadius: 15,
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      justifyContent: "space-between",
+      alignItems: "center",
       shadowColor: theme.colors.grey1,
       elevation: 8,
     },
     googleAuthBtnImageContainer: {
       height: 36,
       width: 42,
-      backgroundColor: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
-      justifyContent: 'center',
-      alignItems: 'center',
+      backgroundColor: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
+      justifyContent: "center",
+      alignItems: "center",
       borderTopStartRadius: 15,
       borderBottomStartRadius: 15,
     },
     googleAuthBtnText: {
       marginEnd: 6,
-      fontFamily: 'Montserrat-Medium',
+      fontFamily: "Montserrat-Medium",
       fontSize: 16,
-      color: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
+      color: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
     },
   });
 
@@ -216,7 +204,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
             <View style={styles.googleButtonContainer}>
               <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
                 <View style={styles.googleAuthBtnImageContainer}>
-                  <Image source={require('../../../assets/images/google-icon.png')} style={{width: 24, height: 24}}/>
+                  <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 24, height: 24 }} />
                 </View>
                 <Text style={styles.googleAuthBtnText}>Войти с Google</Text>
               </TouchableOpacity>
@@ -228,7 +216,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
               inputContainerStyle={styles.input}
               inputMode={"email"}
               inputStyle={{ color: textColor }}
-              errorMessage=""
+              errorMessage={email ? (isValidEmail ? '' :  'Введит корректный Email') : '' }
               leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
               rightIcon={
                 <View style={{ flexDirection: "row" }}>
