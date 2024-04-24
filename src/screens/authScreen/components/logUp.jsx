@@ -1,44 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
   ScrollView,
-  Animated,
-  Easing,
-  StyleSheet,
   ActivityIndicator, ToastAndroid,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Icon, Input, Button } from "@rneui/themed";
+import { Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
-const AnimatedInput = Animated.createAnimatedComponent(Input);
-
-const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
-  const [isAdviceShown, setIsAdviceShown] = useState(true);
-  const [accountType, setAccountType] = useState("personal");
-  const [adviceHeight, setAdviceHeight] = useState(0);
+const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
   const [btnIsLoading, setBtnIsLoading] = useState(false);
-  const [confPassAnimation] = useState(new Animated.Value(0));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const bgColor = theme.colors.background;
   const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
   const accentColor = theme.colors.accent;
-
-  const adviceAnimation = useRef(new Animated.Value(1)).current;
 
   let hasMinimumLength;
   let hasUppercaseLetter;
@@ -76,53 +64,6 @@ const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
       setAuthBtnDisabled(true);
     }
   }, [email, password, passwordConfirmation, termsAccepted]);
-
-  useEffect(() => {
-    if (password) {
-      // При наличии значения в поле пароля, показываем второй инпут с анимацией
-      Animated.timing(confPassAnimation, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      // Если поле пароля пустое, скрываем второй инпут
-      Animated.timing(confPassAnimation, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [password]);
-
-  const secondInputOpacity = confPassAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-
-
-  const closeAdvice = () => {
-    Animated.parallel([
-      Animated.timing(adviceAnimation, {
-        toValue: 0,
-        duration: 300,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setIsAdviceShown(false);
-    });
-  };
-
-  const adviceOpacity = adviceAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-
-  const handleAdviceLayout = (event) => {
-    const { height } = event.nativeEvent.layout;
-    setAdviceHeight(height);
-  };
 
   const handleEmailClear = () => {
     setEmail("");
@@ -179,72 +120,7 @@ const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
           flex: 1, backgroundColor: backColor,
         }}>
           <View style={{ marginVertical: hp(2), marginHorizontal: wp(4) }}>
-            {isAdviceShown &&
-              <Animated.View style={{
-                width: wp(92),
-                height: "auto",
-                paddingVertical: hp(1),
-                paddingHorizontal: wp(2),
-                borderRadius: 15,
-                backgroundColor: bgColor,
-                opacity: adviceOpacity,
-                elevation: 1,
-                shadowColor: textColor,
-              }} onLayout={handleAdviceLayout}>
-                <Text
-                  style={{
-                    fontFamily: "Montserrat-Medium",
-                    fontSize: 14,
-                    color: textColor,
-                    marginBottom: 6,
-                  }}>Зарегестрируйтесь,
-                  чтобы:</Text>
-                <View style={{ flexDirection: "row", marginBottom: 3 }}>
-                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                         source={require("../../../assets/images/createAd-sticker.png")}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Подавать
-                      объявления</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row", marginBottom: 3 }}>
-                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                         source={require("../../../assets/images/saved-sticker.png")}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Сохранять
-                      товары и продавцов в Избранное</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: "row" }}>
-                  <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                         source={require("../../../assets/images/chatting-sticker.png")}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Отправлять
-                      и получать сообщения</Text>
-                  </View>
-                </View>
-                <TouchableOpacity onPress={closeAdvice}
-                                  style={{
-                                    position: "absolute",
-                                    top: hp(0.5),
-                                    right: wp(0.5),
-                                    height: 30,
-                                    width: 30,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}>
-                  <Image source={require("../../../assets/images/SearchBar/cancel.png")}
-                         style={{ width: 20, height: 20, tintColor: textColor }}
-                         resizeMode={"contain"} />
-                </TouchableOpacity>
-              </Animated.View>
-            }
+            {isAdviceShown && <Advice authTypeWord={'Зарегистрируйтесь'}/> }
             <View>
               <View style={{ flexDirection: "row" }}>
                 <Image source={require("../../../assets/images/usingPhone/auth.png")}
@@ -279,7 +155,7 @@ const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
                 />
               </View>
               <Input
-                containerStyle={{ height: 60, paddingHorizontal: 0 }}
+                containerStyle={{ height: 60, paddingHorizontal: 0, marginBottom: password ? (hasAllRequirements ? 0 : hp(1)) : 0}}
                 inputContainerStyle={{
                   paddingHorizontal: wp(3),
                   borderColor: theme.colors.grey1,
@@ -301,9 +177,8 @@ const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
                 value={password}
                 onChangeText={handlePasswordChange}
               />
-              {hasAllRequirements && <AnimatedInput
+              <Input
                 containerStyle={{
-                  opacity: secondInputOpacity,
                   height: 60, paddingHorizontal: 0,
                   marginBottom: (password === passwordConfirmation ? 0 : hp(1.5)),
                 }}
@@ -328,7 +203,7 @@ const LogUp = ({ theme, isDarkMode, setInitializing, onGoogleButtonPress }) => {
                 secureTextEntry={isConfirmPasswordSecure}
                 value={passwordConfirmation}
                 onChangeText={handlePasswordConfirmationChange}
-              />}
+              />
             </View>
             <View>
               <TermsCheckbox

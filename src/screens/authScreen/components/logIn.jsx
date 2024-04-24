@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  Animated,
-  Easing,
   ScrollView,
   Image,
   TouchableOpacity,
@@ -11,20 +9,17 @@ import {
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
-const LogIn = ({ theme, setInitializing }) => {
-  const [isAdviceShown, setIsAdviceShown] = useState(true);
+const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const bgColor = theme.colors.background;
   const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
-
-  const adviceAnimation = useRef(new Animated.Value(1)).current;
 
   let hasMinimumLength;
   let hasUppercaseLetter;
@@ -60,24 +55,6 @@ const LogIn = ({ theme, setInitializing }) => {
     }
   }, [email, password]);
 
-  const closeAdvice = () => {
-    Animated.parallel([
-      Animated.timing(adviceAnimation, {
-        toValue: 0,
-        duration: 300,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setIsAdviceShown(false);
-    });
-  };
-
-  const adviceOpacity = adviceAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-
   const handleEmailClear = () => {
     setEmail("");
   };
@@ -105,67 +82,12 @@ const LogIn = ({ theme, setInitializing }) => {
       flex: 1, backgroundColor: backColor,
     }}>
       <View style={{ marginVertical: hp(2), marginBottom: 24, marginHorizontal: wp(4) }}>
-        {isAdviceShown &&
-          <Animated.View style={{
-            width: wp(92),
-            height: "auto",
-            paddingVertical: hp(1),
-            paddingHorizontal: wp(2),
-            borderRadius: 15,
-            backgroundColor: bgColor,
-            opacity: adviceOpacity,
-            elevation: 1,
-            shadowColor: textColor,
-          }}>
-            <Text
-              style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor, marginBottom: 6 }}>Войдите,
-              чтобы:</Text>
-            <View style={{ flexDirection: "row", marginBottom: 3 }}>
-              <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                     source={require("../../../assets/images/createAd-sticker.png")}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Подавать
-                  объявления</Text>
-              </View>
-            </View>
-            <View style={{ flexDirection: "row", marginBottom: 3 }}>
-              <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                     source={require("../../../assets/images/saved-sticker.png")}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Сохранять
-                  товары и продавцов в Избранное</Text>
-              </View>
-            </View>
-            <View style={{ flexDirection: "row" }}>
-              <Image style={{ width: 18, height: 18, resizeMode: "contain", marginEnd: 6 }}
-                     source={require("../../../assets/images/chatting-sticker.png")}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: "Montserrat-Medium", fontSize: 14, color: textColor }}>Отправлять
-                  и получать сообщения</Text>
-              </View>
-            </View>
-            <TouchableOpacity onPress={closeAdvice}
-                              style={{
-                                position: "absolute",
-                                top: hp(0.5),
-                                right: wp(0.5),
-                                height: 30,
-                                width: 30,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}>
-              <Image source={require("../../../assets/images/SearchBar/cancel.png")}
-                     style={{ width: 20, height: 20, tintColor: textColor }}
-                     resizeMode={"contain"} />
-            </TouchableOpacity>
-          </Animated.View>
-        }
-        <View style={{ marginStart: wp(20) }}>
-          <Image source={require("../../../assets/images/usingPhone/type-email.png")}
-                 style={{ width: 168, height: 168 }} />
+        {isAdviceShown && <Advice authTypeWord={'Войдите'}/>  }
+        <View style={{ flexDirection: "row" }}>
+          <Image source={require("../../../assets/images/usingPhone/auth.png")}
+                 style={{ width: 144, height: 144, alignSelf: "center" }} />
+          <GoogleSigninButton style={{ alignSelf: "flex-end", marginBottom: "5%" }} onPress={onGoogleButtonPress}
+                              size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} />
         </View>
         <Input
           containerStyle={{ height: 60, paddingHorizontal: 0 }}
@@ -187,7 +109,7 @@ const LogIn = ({ theme, setInitializing }) => {
           onChangeText={handleEmailChange}
         />
         <Input
-          containerStyle={{ height: 60, paddingHorizontal: 0 }}
+          containerStyle={{ height: 60, paddingHorizontal: 0, marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }}
           inputContainerStyle={{
             paddingHorizontal: wp(3),
             borderColor: theme.colors.primary,
