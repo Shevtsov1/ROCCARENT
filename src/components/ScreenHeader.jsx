@@ -35,12 +35,25 @@ const MainScreenHeader = ({ theme, styles }) => {
         justifyContent: "center",
         alignItems: "center",
       }}>
-        <Image source={require("../assets/images/Chat/chat.png")} style={{
+        <Image
+          source={require("../assets/images/Chat/chat.png")}
+          style={{
+            tintColor: theme.colors.accent, width: 24,
+            height: 24,
+            resizeMode: 'contain',
+          }}
+        />
+      </TouchableOpacity>
+        <Image source={require("../assets/images/logo/logo.png")} style={{
+          width: 60,
+          height: 60,
+          resizeMode: 'contain',
+        }} />
+          <Image source={require("../assets/images/logo/logo.png")} style={{
           width: 24,
           height: 24,
-          tintColor: theme.colors.accent,
+          resizeMode: 'contain',
         }} />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -112,9 +125,9 @@ const ScreenHeader = ({ user, theme, page, setInitializing, navigation }) => {
     const styles = StyleSheet.create({
       header: {
         alignItems: "center",
-        justifyContent: "space-between",
         flexDirection: "row",
-        paddingHorizontal: wp("5%"),
+        justifyContent: 'space-between',
+        paddingHorizontal: wp(5),
         minHeight: hp("6%"),
         height: hp("8%"),
         maxHeight: hp("8%"),
