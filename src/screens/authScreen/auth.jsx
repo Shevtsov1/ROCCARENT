@@ -130,13 +130,12 @@ const Auth = ({ theme, user, setInitializing }) => {
       <>
         <Tab containerStyle={{ backgroundColor: theme.colors.background }}
              titleStyle={{ fontFamily: "Montserrat-Bold", color: theme.colors.text }}
-             indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}
-             denseswipeEnabled={false}>
+             indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}>
           <Tab.Item>Вход</Tab.Item>
           <Tab.Item>Регистрация</Tab.Item>
         </Tab>
         <TabView containerStyle={{ backgroundColor: theme.colors.secondary }} value={index} onChange={setIndex}
-                 animationType="spring" disableSwipe>
+                 animationType="spring">
           <TabView.Item style={{ width: "100%" }}>
             <LogIn user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
                    isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
