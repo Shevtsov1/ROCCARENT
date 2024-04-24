@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { Icon, Input } from "@rneui/themed";
+import { Button, Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 
@@ -86,8 +86,11 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
         <View style={{ flexDirection: "row" }}>
           <Image source={require("../../../assets/images/usingPhone/auth.png")}
                  style={{ width: 144, height: 144, alignSelf: "center" }} />
-          <GoogleSigninButton style={{ alignSelf: "flex-end", marginBottom: "5%" }} onPress={onGoogleButtonPress}
-                              size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} />
+          <View style={{ alignSelf: "flex-end", marginBottom: "5%", flexDirection: 'column' }}>
+            <Button  title={'text'}/>
+            <GoogleSigninButton onPress={onGoogleButtonPress}
+                                size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} />
+          </View>
         </View>
         <Input
           containerStyle={{ height: 60, paddingHorizontal: 0 }}

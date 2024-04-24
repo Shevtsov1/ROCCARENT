@@ -49,7 +49,7 @@ const LoadingScreen = ({ theme }) => {
         >
           <Image
             source={require('../assets/images/logo/logo.png')}
-            style={{ width: wp('100%') }}
+            style={{ width: wp('60%') }}
             resizeMode="contain"
           />
         </Animated.View>

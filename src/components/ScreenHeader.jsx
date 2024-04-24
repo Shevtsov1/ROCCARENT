@@ -7,7 +7,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 const AuthScreenHeader = ({ theme, styles, navigation }) => {
 
   const handleCloseAuthBtn = () => {
-    navigation.goBack();
+    navigation.navigate('Profile');
   };
 
   return (
