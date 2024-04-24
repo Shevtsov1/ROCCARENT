@@ -5,6 +5,7 @@ export const appColors = {
     secondary: '#ECF1F6',
     background: '#FFFFFF',
     text: '#293441',
+    accentText: '#FDFDFD',
     grey0: '#43484D',
     grey1: '#5E6977',
     grey2: '#86939E',
@@ -17,6 +18,7 @@ export const appColors = {
     error: '#FF190C',
     warning: '#FAAD14',
     disabled: 'rgba(0, 0, 0, 0.3)',
+    googleBlue: '#4285F4',
   },
   dark: {
     primary: '#34536A',
@@ -24,6 +26,7 @@ export const appColors = {
     secondary: '#434E58',
     background: '#1F2C37',
     text: '#FDFDFD',
+    accentText: '#293441',
     grey0: '#5E6977',
     grey1: '#86939E',
     grey2: '#BDC6CF',
@@ -36,5 +39,6 @@ export const appColors = {
     error: '#FF190C',
     warning: '#FAAD14',
     disabled: 'rgba(255, 255, 255, 0.3)',
+    googleBlue: '#4285F4',
   },
 };

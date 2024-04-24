@@ -139,10 +139,11 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     buttonText: {
       fontFamily: "Montserrat-Bold",
       fontSize: 18,
-      color: theme.colors.background,
+      color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
     },
     imageContainer: {
       flexDirection: "row",
+      justifyContent: 'space-between',
     },
     image: {
       width: 144,
@@ -161,9 +162,6 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       paddingHorizontal: wp(3),
       borderColor: theme.colors.grey1,
     },
-    disabledInput: {
-      background: "#ddd",
-    },
     inputIcon: {
       marginEnd: 12,
     },
@@ -172,6 +170,36 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     },
     errorStyle: {
       marginStart: wp(3),
+    },
+    googleButtonContainer: {
+      alignSelf: "flex-end",
+      marginBottom: "5%",
+      flexDirection: 'column',
+    },
+    googleAuthBtn: {
+      right: 0,
+      height: 36,
+      width: 200,
+      flexDirection: 'row',
+      backgroundColor: theme.colors.googleBlue,
+      borderRadius: 15,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    googleAuthBtnImageContainer: {
+      height: 36,
+      width: 42,
+      backgroundColor: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderTopStartRadius: 15,
+      borderBottomStartRadius: 15,
+    },
+    googleAuthBtnText: {
+      marginEnd: 6,
+      fontFamily: 'Montserrat-Medium',
+      fontSize: 16,
+      color: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
     },
   });
 
@@ -185,18 +213,19 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
               source={require("../../../assets/images/usingPhone/auth.png")}
               style={styles.image}
             />
-            <GoogleSigninButton
-              style={styles.googleButton}
-              onPress={onGoogleButtonPress}
-              size={GoogleSigninButton.Size.Standard}
-              color={GoogleSigninButton.Color.Dark}
-            />
+            <View style={styles.googleButtonContainer}>
+              <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
+                <View style={styles.googleAuthBtnImageContainer}>
+                  <Image source={require('../../../assets/images/google-icon.png')} style={{width: 24, height: 24}}/>
+                </View>
+                <Text style={styles.googleAuthBtnText}>Войти с Google</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={{ flexDirection: "row" }}>
             <Input
               containerStyle={styles.inputContainer}
               inputContainerStyle={styles.input}
-              disabledInputStyle={styles.disabledInput}
               inputMode={"email"}
               inputStyle={{ color: textColor }}
               errorMessage=""
@@ -221,7 +250,6 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           <Input
             containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1)) : 0 }]}
             inputContainerStyle={styles.input}
-            disabledInputStyle={styles.disabledInput}
             inputStyle={{ color: textColor }}
             errorStyle={styles.errorStyle}
             errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
@@ -249,7 +277,6 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
               { marginBottom: password ? (hasAllRequirements ? 0 : hp(1)) : 0 },
             ]}
             inputContainerStyle={styles.input}
-            disabledInputStyle={styles.disabledInput}
             inputStyle={{ color: textColor }}
             errorStyle={styles.errorStyle}
             errorMessage={passwordConfirmation ? (hasAllRequirements ? "" : "Пароли не совпадают") : ""}

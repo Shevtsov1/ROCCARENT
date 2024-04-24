@@ -1,8 +1,6 @@
 import React from "react";
-import { ActivityIndicator, Animated, Easing, Image, View } from "react-native";
+import { Animated, Easing, Image, View } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Skeleton } from "@rneui/base";
-import MaskedView from "@react-native-masked-view/masked-view";
 
 const LoadingScreen = ({ theme }) => {
 
@@ -28,8 +26,8 @@ const LoadingScreen = ({ theme }) => {
   }, []);
 
   const opacity = animation.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [1, 0.5, 1],
+    inputRange: [0, 0.6, 1],
+    outputRange: [1, 0.6, 1],
   });
 
   return (

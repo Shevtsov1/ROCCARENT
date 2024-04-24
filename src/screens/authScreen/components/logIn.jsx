@@ -71,7 +71,7 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const handleLogInBtn = () => {
     setInitializing(true);
     auth().signInWithEmailAndPassword(email, password).then(() => {
-      console.log("good");
+      console.log("User signed in!");
     }).catch((error) => {
       console.log(error);
     });
@@ -90,6 +90,7 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     },
     imageContainer: {
       flexDirection: "row",
+      justifyContent: 'space-between',
     },
     image: {
       width: 144,
@@ -107,16 +108,38 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     },
     input: {
       paddingHorizontal: wp(3),
-      borderColor: theme.colors.primary,
-    },
-    disabledInput: {
-      background: "#ddd",
+      borderColor: theme.colors.grey1,
     },
     emailInput: {
       color: textColor,
     },
     errorStyle: {
       marginStart: wp(3),
+    },
+    googleAuthBtn: {
+      right: 0,
+      height: 36,
+      width: 200,
+      flexDirection: 'row',
+      backgroundColor: theme.colors.googleBlue,
+      borderRadius: 15,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    googleAuthBtnImageContainer: {
+      height: 36,
+      width: 42,
+      backgroundColor: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderTopStartRadius: 15,
+      borderBottomStartRadius: 15,
+    },
+    googleAuthBtnText: {
+      marginEnd: 8,
+      fontFamily: 'Montserrat-Medium',
+      fontSize: 16,
+      color: theme.mode === 'dark' ? theme.colors.text : theme.colors.accentText,
     },
     buttonSubmit: {
       alignSelf: "center",
@@ -129,7 +152,7 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     buttonText: {
       fontFamily: "Montserrat-Bold",
       fontSize: 18,
-      color: theme.colors.background,
+      color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
     },
   });
 
@@ -143,13 +166,17 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
             style={styles.image}
           />
           <View style={styles.buttonContainer}>
-            <GoogleSigninButton onPress={onGoogleButtonPress} size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark}/>
+            <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
+              <View style={styles.googleAuthBtnImageContainer}>
+                <Image source={require('../../../assets/images/google-icon.png')} style={{width: 24, height: 24}}/>
+              </View>
+              <Text style={styles.googleAuthBtnText}>Войти с Google</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <Input
           containerStyle={styles.inputContainer}
           inputContainerStyle={styles.input}
-          disabledInputStyle={styles.disabledInput}
           inputMode={"email"}
           inputStyle={styles.emailInput}
           errorMessage=""
@@ -169,7 +196,6 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
         <Input
           containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }]}
           inputContainerStyle={styles.input}
-          disabledInputStyle={styles.disabledInput}
           inputStyle={styles.emailInput}
           errorStyle={styles.errorStyle}
           errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
