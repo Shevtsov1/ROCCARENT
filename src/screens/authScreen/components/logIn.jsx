@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  StyleSheet
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Button, Icon, Input } from "@rneui/themed";
@@ -77,57 +78,113 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     setInitializing(false);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: backColor,
+    },
+    contentContainer: {
+      marginVertical: hp(2),
+      marginBottom: 24,
+      marginHorizontal: wp(4),
+    },
+    imageContainer: {
+      flexDirection: "row",
+    },
+    image: {
+      width: 144,
+      height: 144,
+      alignSelf: "center",
+    },
+    buttonContainer: {
+      alignSelf: "flex-end",
+      marginBottom: "5%",
+      flexDirection: 'column',
+    },
+    inputContainer: {
+      height: 60,
+      paddingHorizontal: 0,
+    },
+    input: {
+      paddingHorizontal: wp(3),
+      borderColor: theme.colors.primary,
+    },
+    disabledInput: {
+      background: "#ddd",
+    },
+    emailInput: {
+      color: textColor,
+    },
+    errorStyle: {
+      marginStart: wp(3),
+    },
+    buttonSubmit: {
+      alignSelf: "center",
+      height: 54,
+      width: wp(92),
+      borderRadius: 15,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    buttonText: {
+      fontFamily: "Montserrat-Bold",
+      fontSize: 18,
+      color: theme.colors.background,
+    },
+  });
+
   return (
-    <ScrollView style={{
-      flex: 1, backgroundColor: backColor,
-    }}>
-      <View style={{ marginVertical: hp(2), marginBottom: 24, marginHorizontal: wp(4) }}>
-        {isAdviceShown && <Advice authTypeWord={'Войдите'}/>  }
-        <View style={{ flexDirection: "row" }}>
-          <Image source={require("../../../assets/images/usingPhone/auth.png")}
-                 style={{ width: 144, height: 144, alignSelf: "center" }} />
-          <View style={{ alignSelf: "flex-end", marginBottom: "5%", flexDirection: 'column' }}>
-            <Button  title={'text'}/>
-            <GoogleSigninButton onPress={onGoogleButtonPress}
-                                size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} />
+    <ScrollView style={styles.container}>
+      <View style={styles.contentContainer}>
+        {isAdviceShown && <Advice authTypeWord={'Войдите'} />}
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../../../assets/images/usingPhone/auth.png")}
+            style={styles.image}
+          />
+          <View style={styles.buttonContainer}>
+            <GoogleSigninButton onPress={onGoogleButtonPress} size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark}/>
           </View>
         </View>
         <Input
-          containerStyle={{ height: 60, paddingHorizontal: 0 }}
-          inputContainerStyle={{
-            paddingHorizontal: wp(3),
-            borderColor: theme.colors.primary,
-          }}
-          disabledInputStyle={{ background: "#ddd" }}
+          containerStyle={styles.inputContainer}
+          inputContainerStyle={styles.input}
+          disabledInputStyle={styles.disabledInput}
           inputMode={"email"}
-          inputStyle={{ color: textColor }}
+          inputStyle={styles.emailInput}
           errorMessage=""
           leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
-          rightIcon={email &&
-            <TouchableOpacity onPress={handleEmailClear}><Icon type={"ionicon"} name={"close"}
-                                                               color={textColor} /></TouchableOpacity>}
+          rightIcon={
+            email && (
+              <TouchableOpacity onPress={handleEmailClear}>
+                <Icon type={"ionicon"} name={"close"} color={textColor}/>
+              </TouchableOpacity>
+            )
+          }
           labelStyle={{ color: textColor }}
           placeholder="Email"
           value={email}
           onChangeText={handleEmailChange}
         />
         <Input
-          containerStyle={{ height: 60, paddingHorizontal: 0, marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }}
-          inputContainerStyle={{
-            paddingHorizontal: wp(3),
-            borderColor: theme.colors.primary,
-          }}
-          disabledInputStyle={{ background: "#ddd" }}
-          inputStyle={{ color: textColor }}
-          errorStyle={{ marginStart: wp(3) }}
+          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }]}
+          inputContainerStyle={styles.input}
+          disabledInputStyle={styles.disabledInput}
+          inputStyle={styles.emailInput}
+          errorStyle={styles.errorStyle}
           errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
           leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
-          rightIcon={password &&
-            <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
-              <Icon color={textColor}
-                    type={"ionicon"}
-                    name={isPasswordSecure ? "eye-outline" : "eye-off-outline"} />
-            </TouchableOpacity>}
+          rightIcon={
+            password && (
+              <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
+                <Icon
+                  color={textColor}
+                  type={"ionicon"}
+                  name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
+                />
+              </TouchableOpacity>
+            )
+          }
           labelStyle={{ color: textColor }}
           placeholder="Пароль"
           secureTextEntry={isPasswordSecure}
@@ -135,22 +192,16 @@ const LogIn = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           onChangeText={handlePasswordChange}
         />
         <TouchableOpacity
-          style={{
-            alignSelf: "center",
-            height: 54,
-            width: wp(92),
-            borderRadius: 15,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: authBtnDisabled ? theme.colors.disabled : theme.colors.accent,
-          }}
+          style={[
+            styles.buttonSubmit,
+            {
+              backgroundColor: authBtnDisabled ? theme.colors.disabled : theme.colors.accent,
+            },
+          ]}
           disabled={authBtnDisabled}
-          onPress={handleLogInBtn}>
-          <Text style={{
-            fontFamily: "Montserrat-Bold",
-            fontSize: 18,
-            color: theme.colors.background,
-          }}>Войти</Text>
+          onPress={handleLogInBtn}
+        >
+          <Text style={styles.buttonText}>Войти</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
