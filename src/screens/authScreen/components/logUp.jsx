@@ -11,6 +11,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
+import { Overlay } from "@rneui/base";
 
 const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -21,6 +22,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [overlayVisible, setOverlayVisible] = useState(false);
 
   const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
@@ -36,7 +38,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       password && passwordConfirmation && password === passwordConfirmation;
     hasMinimumLength = password.length >= 6;
     hasValidCharacters = /^[a-zA-Z0-9]+$/.test(password);
-    isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    isValidEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
     if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {
       setHasAllRequirements(true);
@@ -80,19 +82,45 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     setTermsAccepted(isChecked);
   };
 
+  const toggleOverlay = () => {
+    setOverlayVisible(!overlayVisible);
+  };
+
   const handleLogUpBtn = async () => {
     setInitializing(true);
     try {
       const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
-      await auth().currentUser.linkWithCredential(emailAuthCredential).then(() => {
-        setInitializing(false);
-      });
+      await auth().currentUser.linkWithCredential(emailAuthCredential);
+      // Регистрация завершена, отправляем письмо с подтверждением
+      await auth().currentUser.sendEmailVerification();
+
+      console.log("Письмо с подтверждением отправлено");
       console.log("Регистрация завершена");
+
+      // Ожидание подтверждения почты
+      await waitForEmailVerification();
+
+      console.log("Почта подтверждена");
     } catch (error) {
-      if (error.message === "[auth/unknown] User has already been linked to the given provider.") {
+      if (error.code === "auth/unknown") {
         console.log("Пользователь с таким Email уже зарегистрирован");
       }
+      // Обработка других ошибок при регистрации
     }
+    setInitializing(false);
+  };
+
+  const waitForEmailVerification = async () => {
+    return new Promise((resolve) => {
+      const intervalId = setInterval(async () => {
+        const user = auth().currentUser;
+        await user.reload();
+        if (user.emailVerified) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, 1000); // Проверяем каждую секунду
+    });
   };
 
   const styles = StyleSheet.create({
@@ -296,6 +324,12 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           <TouchableOpacity disabled={authBtnDisabled} style={styles.buttonContainer} onPress={handleLogUpBtn}>
             <Text style={styles.buttonText}>Зарегистрироваться</Text>
           </TouchableOpacity>
+          <Overlay isVisible={overlayVisible} onBackdropPress={toggleOverlay}>
+            <Text>Hello!</Text>
+            <Text>
+              Welcome to React Native Elements
+            </Text>
+          </Overlay>
         </View>
       </View>
     </ScrollView>
