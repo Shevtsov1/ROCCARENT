@@ -14,6 +14,7 @@ const App = () => {
 
   const [user, setUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
+  const [loadingScreenText, setLoadingScreenText] = useState(null);
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor(theme.colors.background);
@@ -59,9 +60,9 @@ const App = () => {
   return (
     <SafeAreaProvider>
       {initializing ? (
-        <LoadingScreen theme={theme}/>
+        <LoadingScreen theme={theme} text={loadingScreenText}/>
       ) : (
-        <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}/>
+        <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
       )}
     </SafeAreaProvider>
   );

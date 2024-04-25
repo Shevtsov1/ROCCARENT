@@ -182,7 +182,7 @@ const TabButton = React.memo((props) => {
 });
 
 // Компонент нижней навигации по вкладкам
-const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializing}) => {
+const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializing, setLoadingScreenText}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <Tab.Navigator
@@ -207,7 +207,7 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
                           ),
                         }}
             >
-              {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}/>}
+              {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>}
             </Tab.Screen>
           )
         })}
@@ -217,9 +217,9 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
 }
 
 // Компонент навигации приложения
-const AppNavigator = ({user, setInitializing, theme, toggleMode}) => (
+const AppNavigator = ({user, setInitializing, theme, toggleMode, setLoadingScreenText}) => (
   <NavigationContainer>
-    <BottomTabNavigator user={user} setInitializing={setInitializing} theme={theme} toggleMode={toggleMode}/>
+    <BottomTabNavigator user={user} setInitializing={setInitializing} theme={theme} toggleMode={toggleMode} setLoadingScreenText={setLoadingScreenText}/>
   </NavigationContainer>
 );
 

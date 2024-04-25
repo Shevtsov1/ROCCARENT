@@ -10,7 +10,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-nat
 import { Animated, Easing, Image, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-const Auth = ({ theme, user, setInitializing }) => {
+const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
   const [index, setIndex] = React.useState(0);
   const [isAdviceShown, setIsAdviceShown] = useState(true);
   const adviceAnimation = useRef(new Animated.Value(1)).current;
@@ -142,7 +142,7 @@ const Auth = ({ theme, user, setInitializing }) => {
           </TabView.Item>
           <TabView.Item style={{ width: "100%" }}>
             <LogUp user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
-                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} />
+                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} setLoadingScreenText={setLoadingScreenText} />
           </TabView.Item>
         </TabView>
       </>

@@ -1,8 +1,8 @@
 import React from "react";
-import { Animated, Easing, Image, View } from "react-native";
+import { Animated, Easing, Image, Text, View } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
-const LoadingScreen = ({ theme }) => {
+const LoadingScreen = ({ theme, text }) => {
 
   const animation = new Animated.Value(0);
 
@@ -51,6 +51,7 @@ const LoadingScreen = ({ theme }) => {
             resizeMode="contain"
           />
         </Animated.View>
+        <Text style={{fontFamily: 'Roboto-Medium'}}>{text}</Text>
       </View>
     </View>
   );
