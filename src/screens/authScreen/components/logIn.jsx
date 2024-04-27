@@ -15,6 +15,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
   const translateY = useRef(new Animated.Value(0)).current;
+  const passwordRef = useRef(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -200,6 +201,10 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               placeholder="Email"
               value={email}
               onChangeText={handleEmailChange}
+              onSubmitEditing={() => {
+                // Переход к следующему инпуту (в данном случае, к инпуту password)
+                passwordRef.current.focus();
+              }}
             />
             <Input
               containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }]}
@@ -224,6 +229,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               secureTextEntry={isPasswordSecure}
               value={password}
               onChangeText={handlePasswordChange}
+              ref={passwordRef}
             />
             <TouchableOpacity
               style={[

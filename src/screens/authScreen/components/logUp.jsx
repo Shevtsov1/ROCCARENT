@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View, Text, TouchableOpacity, Image, ScrollView, StyleSheet,
 } from "react-native";
@@ -18,6 +18,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const passwordRef = useRef(null);
+  const passwordConfirmationRef = useRef(null);
 
   const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
@@ -31,8 +33,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   useEffect(() => {
     const hasValidPassword = password && passwordConfirmation && password === passwordConfirmation;
     hasMinimumLength = password.length >= 6;
-    hasValidCharacters = /^[a-zA-Z0-9]+$/.test(password);
-    isValidEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+    hasValidCharacters = /^[a-zA-Z\d]+$/.test(password);
+    isValidEmail = /^[a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
 
     if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {
       setHasAllRequirements(true);
@@ -214,6 +216,10 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
             placeholder="Email"
             value={email}
             onChangeText={handleEmailChange}
+            onSubmitEditing={() => {
+              // Переход к следующему инпуту (в данном случае, к инпуту password)
+              passwordRef.current.focus();
+            }}
           />
         </View>
         <Input
@@ -235,6 +241,11 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           secureTextEntry={isPasswordSecure}
           value={password}
           onChangeText={handlePasswordChange}
+          ref={passwordRef}
+          onSubmitEditing={() => {
+            // Переход к следующему инпуту (в данном случае, к инпуту passwordConfirmation)
+            passwordConfirmationRef.current.focus();
+          }}
         />
         <Input
           containerStyle={[styles.inputContainer, { marginBottom: passwordConfirmation ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
@@ -256,6 +267,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           secureTextEntry={isConfirmPasswordSecure}
           value={passwordConfirmation}
           onChangeText={handlePasswordConfirmationChange}
+          ref={passwordConfirmationRef}
         />
         <View>
           <TermsCheckbox
