@@ -144,7 +144,7 @@ const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
       <>
           <Tab containerStyle={{ backgroundColor: theme.colors.background }}
                titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.text }}
-               indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%"}} value={index} onChange={setIndex}>
+               indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%", height: 2}} value={index} onChange={setIndex}>
             <Tab.Item>Вход</Tab.Item>
             <Tab.Item>Регистрация</Tab.Item>
           </Tab>
