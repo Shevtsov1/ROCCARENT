@@ -9,19 +9,23 @@ import auth from "@react-native-firebase/auth";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Animated, Easing, Image, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { shadowStyle } from "react-native-fast-shadow";
+import { ShadowedView } from "react-native-fast-shadow";
 
 const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
   const [index, setIndex] = React.useState(0);
   const [isAdviceShown, setIsAdviceShown] = useState(true);
   const adviceAnimation = useRef(new Animated.Value(1)).current;
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
   GoogleSignin.configure({
     webClientId: "771592361046-c50gd0p0heu9i02kp2j8j3s27m45h8cl.apps.googleusercontent.com",
   });
 
   useEffect(() => {
-    onGoogleButtonPress().then();
+    if(auth().currentUser.isAnonymous) {
+      onGoogleButtonPress().then();
+    }
   }, []);
 
 
@@ -67,8 +71,6 @@ const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
         borderRadius: 15,
         backgroundColor: theme.colors.background,
         opacity: adviceOpacity,
-        shadowColor: theme.colors.grey1,
-        elevation: 8,
       }, headerText: {
         fontFamily: "Roboto-Medium", fontSize: 14, color: theme.colors.text, marginBottom: 6,
       }, stickerContainer: {
@@ -90,55 +92,62 @@ const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
       },
     });
 
-    return (<Animated.View style={styles.container}>
-      <Text style={styles.headerText}>{authTypeWord}, чтобы:</Text>
-      <View style={styles.stickerContainer}>
-        <Image
-          style={styles.stickerImage}
-          source={require("../../assets/images/createAd-sticker.png")}
-        />
-        <View>
-          <Text style={styles.stickerText}>Подавать объявления</Text>
+    return (
+      <ShadowedView style={[shadowStyle({
+        color: theme.colors.text,
+        opacity: 0.8,
+        radius: 4,
+        offset: [0, 0],
+      }), { borderRadius: 15 }]}><Animated.View style={styles.container}>
+        <Text style={styles.headerText}>{authTypeWord}, чтобы:</Text>
+        <View style={styles.stickerContainer}>
+          <Image
+            style={styles.stickerImage}
+            source={require("../../assets/images/createAd-sticker.png")}
+          />
+          <View>
+            <Text style={styles.stickerText}>Подавать объявления</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.stickerContainer}>
-        <Image
-          style={styles.stickerImage}
-          source={require("../../assets/images/saved-sticker.png")}
-        />
-        <View>
-          <Text style={styles.stickerText}>Сохранять товары и продавцов в Избранное</Text>
+        <View style={styles.stickerContainer}>
+          <Image
+            style={styles.stickerImage}
+            source={require("../../assets/images/saved-sticker.png")}
+          />
+          <View>
+            <Text style={styles.stickerText}>Сохранять товары и продавцов в Избранное</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.stickerContainer}>
-        <Image
-          style={styles.stickerImage}
-          source={require("../../assets/images/chatting-sticker.png")}
-        />
-        <View>
-          <Text style={styles.stickerText}>Отправлять и получать сообщения</Text>
+        <View style={styles.stickerContainer}>
+          <Image
+            style={styles.stickerImage}
+            source={require("../../assets/images/chatting-sticker.png")}
+          />
+          <View>
+            <Text style={styles.stickerText}>Отправлять и получать сообщения</Text>
+          </View>
         </View>
-      </View>
-      <TouchableOpacity onPress={closeAdvice} style={styles.closeButton}>
-        <Image
-          source={require("../../assets/images/SearchBar/cancel.png")}
-          style={styles.closeImage}
-          resizeMode={"contain"}
-        />
-      </TouchableOpacity>
-    </Animated.View>);
+        <TouchableOpacity onPress={closeAdvice} style={styles.closeButton}>
+          <Image
+            source={require("../../assets/images/SearchBar/cancel.png")}
+            style={styles.closeImage}
+            resizeMode={"contain"}
+          />
+        </TouchableOpacity>
+      </Animated.View>
+      </ShadowedView>);
   };
 
   return (<SafeAreaProvider>
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenHeader theme={theme} user={user} page={"auth"} navigation={navigation} />
       <>
-        <Tab containerStyle={{ backgroundColor: theme.colors.background }}
-             titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.text }}
-             indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%" }} value={index} onChange={setIndex}>
-          <Tab.Item>Вход</Tab.Item>
-          <Tab.Item>Регистрация</Tab.Item>
-        </Tab>
+          <Tab containerStyle={{ backgroundColor: theme.colors.background }}
+               titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.text }}
+               indicatorStyle={{ backgroundColor: theme.colors.text, width: "50%"}} value={index} onChange={setIndex}>
+            <Tab.Item>Вход</Tab.Item>
+            <Tab.Item>Регистрация</Tab.Item>
+          </Tab>
         <TabView containerStyle={{ backgroundColor: theme.colors.secondary }} value={index} onChange={setIndex}
                  animationType="spring">
           <TabView.Item style={{ width: "100%" }}>
@@ -147,7 +156,8 @@ const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
           </TabView.Item>
           <TabView.Item style={{ width: "100%" }}>
             <LogUp user={user} theme={theme} setInitializing={setInitializing} Advice={Advice}
-                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress} setLoadingScreenText={setLoadingScreenText} />
+                   isAdviceShown={isAdviceShown} onGoogleButtonPress={onGoogleButtonPress}
+                   setLoadingScreenText={setLoadingScreenText} />
           </TabView.Item>
         </TabView>
       </>

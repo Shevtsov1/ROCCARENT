@@ -11,6 +11,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-nat
 import { Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
+import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 
 const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceShown }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -21,7 +22,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const backColor = theme.colors.secondary;
+  const backColor = theme.colors.background;
   const textColor = theme.colors.text;
 
   const [hasValidPassword, setHasValidPassword] = useState(false);
@@ -124,7 +125,6 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       borderRadius: 15,
       justifyContent: "center",
       alignItems: "center",
-      marginEnd: wp(2),
     },
     buttonText: {
       fontFamily: "Roboto-Bold",
@@ -132,7 +132,6 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
     }, googleAuthBtnContainer: {
       borderRadius: 15,
-      elevation: 3,
     }, googleAuthBtn: {
       height: 54,
       width: 54,
@@ -214,19 +213,35 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
         />
         <View>
           <View style={styles.loginBtnContainer}>
-            <TouchableOpacity
-              style={[styles.buttonSubmit, {
-                backgroundColor: authBtnDisabled ? theme.colors.disabled :
-                  theme.colors.accent,
-              }]}
-              disabled={authBtnDisabled}
-              onPress={handleLogInBtn}
-            >
-              <Text style={styles.buttonText}>Войти</Text>
-            </TouchableOpacity>
-            <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn} onPress={onGoogleButtonPress}
-                    title={<Image source={require("../../../assets/images/google-icon.png")}
-                                  style={{ width: 30, height: 30 }} />} />
+            <View style={{marginEnd: wp(2)}}>
+              <ShadowedView style={[ !authBtnDisabled && shadowStyle({
+                color: theme.colors.text,
+                opacity: 0.8,
+                radius: 4,
+                offset: [0,0],
+              }), {borderRadius: 15}]}>
+                <TouchableOpacity
+                  style={[styles.buttonSubmit, {
+                    backgroundColor: authBtnDisabled ? theme.colors.disabled :
+                      theme.colors.accent,
+                  }]}
+                  disabled={authBtnDisabled}
+                  onPress={handleLogInBtn}
+                >
+                  <Text style={styles.buttonText}>Войти</Text>
+                </TouchableOpacity>
+              </ShadowedView>
+            </View>
+            <ShadowedView style={[shadowStyle({
+                color: theme.colors.text,
+                opacity: 0.8,
+                radius: 4,
+                offset: [0,0],
+              }), {borderRadius:15}]}>
+              <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn} onPress={onGoogleButtonPress}
+                      title={<Image source={require("../../../assets/images/google-icon.png")}
+                                    style={{ width: 30, height: 30 }} />} />
+            </ShadowedView>
           </View>
         </View>
       </View>

@@ -111,8 +111,8 @@ const TabButton = React.memo((props) => {
     // Отдельные стили для кнопки "CreateAd"
     return (
       <ShadowedView style={shadowStyle({
-        opacity: 0.3,
-        radius: 5,
+        opacity: 0.4,
+        radius: 8,
         offset: [10,0],
       })}>
       <TouchableOpacity
@@ -157,8 +157,8 @@ const TabButton = React.memo((props) => {
     // Стили для остальных кнопок
     return (
       <ShadowedView style={shadowStyle({
-        opacity: 0.3,
-        radius: 5,
+        opacity: 0.4,
+        radius: 8,
         offset: [10,0],
       })}>
         <TouchableOpacity onPress={handlePress} activeOpacity={1}

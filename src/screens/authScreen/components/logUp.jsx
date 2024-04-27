@@ -7,6 +7,7 @@ import { Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
 import { Overlay } from "@rneui/base";
+import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 
 const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown, setLoadingScreenText }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -21,7 +22,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const passwordRef = useRef(null);
   const passwordConfirmationRef = useRef(null);
 
-  const backColor = theme.colors.secondary;
+  const backColor = theme.colors.background;
   const textColor = theme.colors.text;
   const accentColor = theme.colors.accent;
 
@@ -135,7 +136,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     }, imageContainer: {
       justifyContent: "center",
     }, image: {
-      width: 144, height: 144, alignSelf: "center", resizeMode: 'contain'
+      width: 144, height: 144, alignSelf: "center", resizeMode: "contain",
     }, googleButton: {
       alignSelf: "flex-end", marginBottom: "5%",
     }, inputContainer: {
@@ -158,12 +159,10 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       borderRadius: 15,
       justifyContent: "center",
       alignItems: "center",
-      shadowColor: theme.colors.primary,
-      elevation: 8,
     }, googleAuthBtnImageContainer: {
       height: 54,
       width: 54,
-      backgroundColor:theme.colors.background,
+      backgroundColor: theme.colors.background,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 15,
@@ -261,14 +260,28 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           />
         </View>
         <View style={styles.logupBtnContainer}>
+          <ShadowedView style={[!authBtnDisabled && shadowStyle({
+            color: theme.colors.text,
+            opacity: 0.8,
+            radius: 4,
+            offset: [0, 0],
+          }), { borderRadius: 15 }]}>
           <TouchableOpacity disabled={authBtnDisabled} style={styles.buttonContainer} onPress={handleLogUpBtn}>
             <Text style={styles.buttonText}>Зарегистрироваться</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
-            <View style={styles.googleAuthBtnImageContainer}>
-              <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 30, height: 30 }} />
-            </View>
-          </TouchableOpacity>
+          </ShadowedView>
+          <ShadowedView style={[shadowStyle({
+            color: theme.colors.text,
+            opacity: 0.8,
+            radius: 4,
+            offset: [0, 0],
+          }), { borderRadius: 15 }]}>
+            <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
+              <View style={styles.googleAuthBtnImageContainer}>
+                <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 30, height: 30 }} />
+              </View>
+            </TouchableOpacity>
+          </ShadowedView>
         </View>
         <Overlay isVisible={overlayVisible} onBackdropPress={toggleOverlay}>
           <Text>Hello!</Text>
@@ -278,7 +291,8 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
         </Overlay>
       </View>
     </View>
-  </ScrollView>);
+  </ScrollView>
+);
 };
 
 export default LogUp;
