@@ -157,8 +157,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   return (
     <ScrollView style={styles.container}>
       <View style={styles.contentContainer}>
-        <Advice authTypeWord={"Войдите"} />
-        <Animated.View style={{ transform: [{ translateY }] }}>
+        {isAdviceShown && <Advice authTypeWord={"Войдите"}/>}
           <View style={styles.imageContainer}>
             <Image
               source={require("../../../assets/images/usingPhone/auth.png")}
@@ -230,7 +229,6 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
                                     style={{ width: 30, height: 30 }} />} />
             </View>
           </View>
-        </Animated.View>
       </View>
     </ScrollView>
   );
