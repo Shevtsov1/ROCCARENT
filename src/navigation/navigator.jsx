@@ -123,9 +123,9 @@ const TabButton = React.memo((props) => {
       >
         <View style={{ justifyContent: 'center', alignItems: 'center', bottom: 26, width: '100%', height: 64 }}>
           <ShadowedView style={shadowStyle({
-            opacity: 0.4,
-            radius: 12,
-            offset: [0,6],
+            opacity: 0.3,
+            radius: 8,
+            offset: [0,4],
           })}>
             <View
               style={
