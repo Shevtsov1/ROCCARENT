@@ -163,7 +163,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     }, googleAuthBtnImageContainer: {
       height: 54,
       width: 54,
-      backgroundColor: theme.mode === "dark" ? theme.colors.accentText : theme.colors.accentText,
+      backgroundColor:theme.colors.background,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 15,

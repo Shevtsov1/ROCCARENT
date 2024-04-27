@@ -136,7 +136,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
     }, googleAuthBtn: {
       height: 54,
       width: 54,
-      backgroundColor: theme.colors.accentText,
+      backgroundColor: theme.colors.background,
       flexDirection: "row",
       borderRadius: 15,
       justifyContent: "center",
