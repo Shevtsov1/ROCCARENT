@@ -57,10 +57,10 @@ const App = () => {
         await waitForEmailVerification()
           .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
       }
-      setInitializing(false);
     };
 
     init().then();
+    setInitializing(false);
   }, []);
 
   const waitForEmailVerification = async () => {
