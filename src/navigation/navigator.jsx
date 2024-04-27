@@ -8,7 +8,6 @@ import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
-import { LinearGradient } from "react-native-linear-gradient";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 
