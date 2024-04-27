@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Tab, Text, TabView } from "@rneui/themed";
 import LogIn from "./components/logIn";
 import LogUp from "./components/logUp";
@@ -19,6 +19,11 @@ const Auth = ({ theme, user, setInitializing, setLoadingScreenText }) => {
   GoogleSignin.configure({
     webClientId: "771592361046-c50gd0p0heu9i02kp2j8j3s27m45h8cl.apps.googleusercontent.com",
   });
+
+  useEffect(() => {
+    onGoogleButtonPress().then();
+  }, []);
+
 
   const onGoogleButtonPress = async () => {
     try {
