@@ -26,7 +26,7 @@ export const appColors = {
     secondary: '#434E58',
     background: '#1F2C37',
     text: '#FDFDFD',
-    accentText: '#293441',
+    accentText: '#FDFDFD',
     grey0: '#5E6977',
     grey1: '#86939E',
     grey2: '#BDC6CF',

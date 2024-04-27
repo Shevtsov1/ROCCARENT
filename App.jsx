@@ -48,21 +48,29 @@ const App = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+      const subscriber = await auth().onAuthStateChanged(onAuthStateChanged);
       await loadTheme();
       return subscriber;
     };
 
-    initializeApp().then(() => setInitializing(false));
-  }, []);
+    const init = () => {
+      initializeApp().then();
+      setInitializing(false);
+    };
 
+    init();
+  }, []);
 
   return (
     <SafeAreaProvider>
-      {initializing ? (
-        <LoadingScreen theme={theme} text={loadingScreenText}/>
+      {auth().currentUser && !auth().currentUser.isAnonymous && !auth().currentUser.emailVerified ? (
+        <LoadingScreen theme={theme} text={'Письмо с подтверждением отправлено на Email\nОжидание подтверждения'} resendEmailVerify/>
       ) : (
-        <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
+        initializing ? (
+          <LoadingScreen theme={theme} text={loadingScreenText}/>
+        ) : (
+          <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
+        )
       )}
     </SafeAreaProvider>
   );
