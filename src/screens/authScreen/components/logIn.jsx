@@ -21,7 +21,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const backColor = theme.colors.background;
+  const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
 
   const [hasValidPassword, setHasValidPassword] = useState(false);
@@ -158,77 +158,77 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
     <ScrollView style={styles.container}>
       <View style={styles.contentContainer}>
         {isAdviceShown && <Advice authTypeWord={"Войдите"}/>}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("../../../assets/images/usingPhone/auth.png")}
-              style={styles.image}
-            />
-          </View>
-          <Input
-            containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
-            inputContainerStyle={styles.input}
-            inputMode={"email"}
-            inputStyle={styles.emailInput}
-            errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
-            leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
-            rightIcon={
-              email && (
-                <TouchableOpacity onPress={handleEmailClear}>
-                  <Icon type={"ionicon"} name={"close"} color={textColor} />
-                </TouchableOpacity>
-              )
-            }
-            labelStyle={{ color: textColor }}
-            placeholder="Email"
-            value={email}
-            onChangeText={handleEmailChange}
-            onSubmitEditing={() => {
-              // Переход к следующему инпуту (в данном случае, к инпуту password)
-              passwordRef.current.focus();
-            }}
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../../../assets/images/usingPhone/auth.png")}
+            style={styles.image}
           />
-          <Input
-            containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(2)) : 0 }]}
-            inputContainerStyle={styles.input}
-            inputStyle={styles.emailInput}
-            errorStyle={styles.errorStyle}
-            errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
-            leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
-            rightIcon={
-              password && (
-                <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
-                  <Icon
-                    color={textColor}
-                    type={"ionicon"}
-                    name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
-                  />
-                </TouchableOpacity>
-              )
-            }
-            labelStyle={{ color: textColor }}
-            placeholder="Пароль"
-            secureTextEntry={isPasswordSecure}
-            value={password}
-            onChangeText={handlePasswordChange}
-            ref={passwordRef}
-          />
-          <View>
-            <View style={styles.loginBtnContainer}>
-              <TouchableOpacity
-                style={[styles.buttonSubmit, {
-                  backgroundColor: authBtnDisabled ? theme.colors.disabled :
-                    theme.colors.accent,
-                }]}
-                disabled={authBtnDisabled}
-                onPress={handleLogInBtn}
-              >
-                <Text style={styles.buttonText}>Войти</Text>
+        </View>
+        <Input
+          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
+          inputContainerStyle={styles.input}
+          inputMode={"email"}
+          inputStyle={styles.emailInput}
+          errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
+          leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
+          rightIcon={
+            email && (
+              <TouchableOpacity onPress={handleEmailClear}>
+                <Icon type={"ionicon"} name={"close"} color={textColor} />
               </TouchableOpacity>
-              <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn} onPress={onGoogleButtonPress}
-                      title={<Image source={require("../../../assets/images/google-icon.png")}
-                                    style={{ width: 30, height: 30 }} />} />
-            </View>
+            )
+          }
+          labelStyle={{ color: textColor }}
+          placeholder="Email"
+          value={email}
+          onChangeText={handleEmailChange}
+          onSubmitEditing={() => {
+            // Переход к следующему инпуту (в данном случае, к инпуту password)
+            passwordRef.current.focus();
+          }}
+        />
+        <Input
+          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(2)) : 0 }]}
+          inputContainerStyle={styles.input}
+          inputStyle={styles.emailInput}
+          errorStyle={styles.errorStyle}
+          errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
+          leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
+          rightIcon={
+            password && (
+              <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
+                <Icon
+                  color={textColor}
+                  type={"ionicon"}
+                  name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
+                />
+              </TouchableOpacity>
+            )
+          }
+          labelStyle={{ color: textColor }}
+          placeholder="Пароль"
+          secureTextEntry={isPasswordSecure}
+          value={password}
+          onChangeText={handlePasswordChange}
+          ref={passwordRef}
+        />
+        <View>
+          <View style={styles.loginBtnContainer}>
+            <TouchableOpacity
+              style={[styles.buttonSubmit, {
+                backgroundColor: authBtnDisabled ? theme.colors.disabled :
+                  theme.colors.accent,
+              }]}
+              disabled={authBtnDisabled}
+              onPress={handleLogInBtn}
+            >
+              <Text style={styles.buttonText}>Войти</Text>
+            </TouchableOpacity>
+            <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn} onPress={onGoogleButtonPress}
+                    title={<Image source={require("../../../assets/images/google-icon.png")}
+                                  style={{ width: 30, height: 30 }} />} />
           </View>
+        </View>
       </View>
     </ScrollView>
   );

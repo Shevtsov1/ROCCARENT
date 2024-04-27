@@ -8,7 +8,7 @@ import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
-import { Shadow } from "react-native-shadow-2";
+import { LinearGradient } from "react-native-linear-gradient";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
@@ -112,9 +112,16 @@ const TabButton = React.memo((props) => {
       <TouchableOpacity
         onPress={handlePress}
         activeOpacity={1}
-        style={[styles.container, { flex: 1, alignItems: 'center', backgroundColor: bgColor }]}
+        style={[styles.container, { flex: 0.8, alignItems: 'center', backgroundColor: bgColor }]}
       >
         <View style={{ justifyContent: 'center', alignItems: 'center', bottom: 26, width: '100%', height: 64 }}>
+          <LinearGradient
+            colors={['transparent', theme.colors.secondary]}
+            locations={[0.43, 0]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={{ flex: 1, width: '100%', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}
+          >
             <View
               style={
                 {
@@ -138,6 +145,7 @@ const TabButton = React.memo((props) => {
                 />
               </Animated.View>
             </View>
+          </LinearGradient>
         </View>
       </TouchableOpacity>
     );
@@ -149,6 +157,8 @@ const TabButton = React.memo((props) => {
                           top: 0,
                           alignItems: "center",
                           backgroundColor: bgColor,
+                          borderTopEndRadius: item.route === "Catalog" ? 10 : 0,
+                          borderTopStartRadius: item.route === "Favorites" ? 10 : 0,
                         }]}>
 
         <View style={styles.iconContainer}>
@@ -175,12 +185,13 @@ const TabButton = React.memo((props) => {
 const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializing, setLoadingScreenText}) => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Shadow>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
             borderTopWidth: 0,
+            elevation: 5,
+            shadowColor: theme.colors.secondary,
             height: 60,
             backgroundColor: theme.colors.secondary,
           },
@@ -192,7 +203,7 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
                         options={{
                           tabBarShowLabel: false,
                           tabBarButton: (props) => (
-                              <TabButton {...props} item={item} theme={theme} isDarkMode={isDarkMode}/>
+                            <TabButton {...props} item={item} theme={theme} isDarkMode={isDarkMode}/>
                           ),
                         }}
             >
@@ -201,7 +212,6 @@ const BottomTabNavigator = ({user, theme, toggleMode, isDarkMode, setInitializin
           )
         })}
       </Tab.Navigator>
-    </Shadow>
     </SafeAreaView>
   )
 }
