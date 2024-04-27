@@ -25,24 +25,20 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
   const textColor = theme.colors.text;
   const accentColor = theme.colors.accent;
 
-  let hasMinimumLength;
-  let hasValidCharacters;
-  let isValidEmail;
-  const [hasAllRequirements, setHasAllRequirements] = useState(false);
+  const [hasValidPassword, setHasValidPassword] = useState(false);
+  const [hasValidEmail, setHasValidEmail] = useState(false);
+  const [passwordsMatch, setPaswordsMatch] = useState(false);
 
   useEffect(() => {
-    const hasValidPassword = password && passwordConfirmation && password === passwordConfirmation;
-    hasMinimumLength = password.length >= 6;
-    hasValidCharacters = /^[a-zA-Z\d]+$/.test(password);
-    isValidEmail = /^[a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
+    const minimumLength = password.length >= 6;
+    const validCharacters = /^(?=.*\d?)\w+$/.test(password);
+    const validEmail = /^[a-zA-Z][a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
+    setPaswordsMatch(password === passwordConfirmation);
 
-    if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {
-      setHasAllRequirements(true);
-    } else {
-      setHasAllRequirements(false);
-    }
+    setHasValidPassword(minimumLength && validCharacters);
+    setHasValidEmail(validEmail);
 
-    if (email && password && passwordConfirmation && termsAccepted && hasValidPassword && hasMinimumLength && hasValidCharacters && isValidEmail) {
+    if (email && password && passwordConfirmation && termsAccepted && minimumLength && validCharacters && validEmail && passwordsMatch) {
       setAuthBtnDisabled(false);
     } else {
       setAuthBtnDisabled(true);
@@ -199,11 +195,11 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
         </View>
         <View style={{ flexDirection: "row" }}>
           <Input
-            containerStyle={[styles.inputContainer, { marginBottom: email ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
+            containerStyle={[styles.inputContainer, { marginBottom: email ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
             inputContainerStyle={styles.input}
             inputMode={"email"}
             inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
-            errorMessage={email ? (isValidEmail ? "" : "Введит корректный Email") : ""}
+            errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
             leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
             rightIcon={<View style={{ flexDirection: "row" }}>
               {email && (<TouchableOpacity style={{ justifyContent: "center", marginEnd: 12 }}
@@ -223,11 +219,11 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           />
         </View>
         <Input
-          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
+          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(1.5)) : 0 }]}
           inputContainerStyle={styles.input}
           inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
           errorStyle={styles.errorStyle}
-          errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
+          errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
           leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
           rightIcon={password && (<TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
             <Icon
@@ -248,11 +244,11 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
           }}
         />
         <Input
-          containerStyle={[styles.inputContainer, { marginBottom: passwordConfirmation ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
+          containerStyle={[styles.inputContainer, { marginBottom: passwordConfirmation ? (passwordsMatch ? 0 : hp(1.5)) : 0 }]}
           inputContainerStyle={styles.input}
           inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
           errorStyle={styles.errorStyle}
-          errorMessage={passwordConfirmation ? (hasAllRequirements ? "" : "Пароли не совпадают") : ""}
+          errorMessage={passwordConfirmation ? (passwordsMatch ? "" : "Пароли не совпадают") : ""}
           leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
           rightIcon={passwordConfirmation && (
             <TouchableOpacity onPress={() => setIsConfirmPasswordSecure(!isConfirmPasswordSecure)}>

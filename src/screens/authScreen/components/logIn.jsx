@@ -23,29 +23,18 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
 
-  let hasMinimumLength;
-  let hasValidCharacters;
-  let isValidEmail;
-  const [hasAllRequirements, setHasAllRequirements] = useState(false);
+  const [hasValidPassword, setHasValidPassword] = useState(false);
+  const [hasValidEmail, setHasValidEmail] = useState(false);
 
   useEffect(() => {
-    hasMinimumLength = password.length >= 6;
-    hasValidCharacters = /^[a-zA-Z\d]+$/.test(password);
-    isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const minimumLength = password.length >= 6;
+    const validCharacters = /^(?=.*\d?)\w+$/.test(password);
+    const validEmail = /^[a-zA-Z][a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
 
-    if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {
-      setHasAllRequirements(true);
-    } else {
-      setHasAllRequirements(false);
-    }
+    setHasValidPassword(minimumLength && validCharacters);
+    setHasValidEmail(validEmail);
 
-    if (
-      email &&
-      password &&
-      hasMinimumLength &&
-      hasValidCharacters &&
-      isValidEmail
-    ) {
+    if (email && password && minimumLength && validCharacters && validEmail) {
       setAuthBtnDisabled(false);
     } else {
       setAuthBtnDisabled(true);
@@ -184,11 +173,11 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               </View>
             </View>
             <Input
-              containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(1.5)) : 0 }]}
+              containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
               inputContainerStyle={styles.input}
               inputMode={"email"}
               inputStyle={styles.emailInput}
-              errorMessage={email ? (isValidEmail ? '' :  'Введит корректный Email') : '' }
+              errorMessage={email ? (hasValidEmail ? '' :  'Введит корректный Email') : '' }
               leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
               rightIcon={
                 email && (
@@ -207,11 +196,11 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               }}
             />
             <Input
-              containerStyle={[styles.inputContainer, { marginBottom: password ? (hasAllRequirements ? 0 : hp(2)) : 0 }]}
+              containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(2)) : 0 }]}
               inputContainerStyle={styles.input}
               inputStyle={styles.emailInput}
               errorStyle={styles.errorStyle}
-              errorMessage={password ? (hasAllRequirements ? "" : "Пароль не соответствует требованиям") : ""}
+              errorMessage={password ? (hasValidPassword ? "" : "\"Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
               leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
               rightIcon={
                 password && (
