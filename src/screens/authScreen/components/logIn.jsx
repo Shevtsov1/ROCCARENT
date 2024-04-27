@@ -21,7 +21,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const backColor = theme.colors.secondary;
+  const backColor = theme.colors.background;
   const textColor = theme.colors.text;
 
   const [hasValidPassword, setHasValidPassword] = useState(false);
