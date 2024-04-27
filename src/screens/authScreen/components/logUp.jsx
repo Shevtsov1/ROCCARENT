@@ -112,6 +112,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     });
   };
 
+
   const styles = StyleSheet.create({
     container: {
       flex: 1, backgroundColor: backColor,
@@ -122,16 +123,17 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     }, buttonContainer: {
       alignSelf: "center",
       height: 54,
-      width: "100%",
+      width: (wp(90) - 54),
       borderRadius: 15,
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: authBtnDisabled ? theme.colors.disabled : accentColor,
       overflow: "hidden",
+      marginEnd: wp(2),
     }, buttonText: {
       fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
     }, imageContainer: {
-      flexDirection: "row", justifyContent: "space-between",
+      flexDirection: "row", justifyContent: "center",
     }, image: {
       width: 144, height: 144, alignSelf: "center",
     }, googleButton: {
@@ -149,29 +151,25 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     }, googleButtonContainer: {
       alignSelf: "flex-end", marginBottom: "5%", flexDirection: "column",
     }, googleAuthBtn: {
-      right: 0,
-      height: 36,
-      width: 200,
+      height: 54,
+      width: 54,
       flexDirection: "row",
       backgroundColor: theme.colors.googleBlue,
       borderRadius: 15,
-      justifyContent: "space-between",
-      alignItems: "center",
-      shadowColor: theme.colors.grey1,
-      elevation: 8,
-    }, googleAuthBtnImageContainer: {
-      height: 36,
-      width: 42,
-      backgroundColor: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
       justifyContent: "center",
       alignItems: "center",
-      borderTopStartRadius: 15,
-      borderBottomStartRadius: 15,
-    }, googleAuthBtnText: {
-      marginEnd: 18,
-      fontFamily: "Roboto-Medium",
-      fontSize: 16,
-      color: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
+      shadowColor: theme.colors.primary,
+      elevation: 8,
+    }, googleAuthBtnImageContainer: {
+      height: 54,
+      width: 54,
+      backgroundColor: theme.mode === "dark" ? theme.colors.accentText : theme.colors.accentText,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 15,
+    }, logupBtnContainer: {
+      maxWidth: "100%",
+      flexDirection: "row",
     },
   });
 
@@ -179,45 +177,29 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     <View style={{ marginVertical: hp(2), marginHorizontal: wp(4) }}>
       {isAdviceShown && <Advice authTypeWord={"Зарегистрируйтесь"} />}
       <View>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../../../assets/images/usingPhone/auth.png")}
-            style={styles.image}
-          />
-          <View style={styles.googleButtonContainer}>
-            <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
-              <View style={styles.googleAuthBtnImageContainer}>
-                <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 24, height: 24 }} />
-              </View>
-              <Text style={styles.googleAuthBtnText}>Войти с Google</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <Input
-            containerStyle={[styles.inputContainer, { marginBottom: email ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
-            inputContainerStyle={styles.input}
-            inputMode={"email"}
-            inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
-            errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
-            leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
-            rightIcon={<View style={{ flexDirection: "row" }}>
-              {email && (<TouchableOpacity style={{ justifyContent: "center", marginEnd: 12 }}
-                                           onPress={handleEmailClear}>
-                <Icon type={"ionicon"} name={"close"} color={textColor} />
-              </TouchableOpacity>)}
-            </View>}
-            rightIconContainerStyle={styles.inputRightIconContainer}
-            labelStyle={{ color: textColor }}
-            placeholder="Email"
-            value={email}
-            onChangeText={handleEmailChange}
-            onSubmitEditing={() => {
-              // Переход к следующему инпуту (в данном случае, к инпуту password)
-              passwordRef.current.focus();
-            }}
-          />
-        </View>
+        <Input
+          containerStyle={[styles.inputContainer, { marginBottom: email ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
+          inputContainerStyle={styles.input}
+          inputMode={"email"}
+          inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
+          errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
+          leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
+          rightIcon={<View style={{ flexDirection: "row" }}>
+            {email && (<TouchableOpacity style={{ justifyContent: "center", marginEnd: 12 }}
+                                         onPress={handleEmailClear}>
+              <Icon type={"ionicon"} name={"close"} color={textColor} />
+            </TouchableOpacity>)}
+          </View>}
+          rightIconContainerStyle={styles.inputRightIconContainer}
+          labelStyle={{ color: textColor }}
+          placeholder="Email"
+          value={email}
+          onChangeText={handleEmailChange}
+          onSubmitEditing={() => {
+            // Переход к следующему инпуту (в данном случае, к инпуту password)
+            passwordRef.current.focus();
+          }}
+        />
         <Input
           containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(1.5)) : 0 }]}
           inputContainerStyle={styles.input}
@@ -272,9 +254,16 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
             onCheckboxToggle={handleTermsToggle}
           />
         </View>
-        <TouchableOpacity disabled={authBtnDisabled} style={styles.buttonContainer} onPress={handleLogUpBtn}>
-          <Text style={styles.buttonText}>Зарегистрироваться</Text>
-        </TouchableOpacity>
+        <View style={styles.logupBtnContainer}>
+          <TouchableOpacity disabled={authBtnDisabled} style={styles.buttonContainer} onPress={handleLogUpBtn}>
+            <Text style={styles.buttonText}>Зарегистрироваться</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
+            <View style={styles.googleAuthBtnImageContainer}>
+              <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 30, height: 30 }} />
+            </View>
+          </TouchableOpacity>
+        </View>
         <Overlay isVisible={overlayVisible} onBackdropPress={toggleOverlay}>
           <Text>Hello!</Text>
           <Text>
