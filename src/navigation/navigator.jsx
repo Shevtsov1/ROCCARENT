@@ -9,6 +9,8 @@ import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
 import { LinearGradient } from "react-native-linear-gradient";
+import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
+import { widthPercentageToDP } from "react-native-responsive-screen";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
@@ -109,19 +111,22 @@ const TabButton = React.memo((props) => {
   if (item.route === 'CreateAd') {
     // Отдельные стили для кнопки "CreateAd"
     return (
+      <ShadowedView style={shadowStyle({
+        opacity: 0.3,
+        radius: 5,
+        offset: [10,0],
+      })}>
       <TouchableOpacity
         onPress={handlePress}
         activeOpacity={1}
-        style={[styles.container, { flex: 0.8, alignItems: 'center', backgroundColor: bgColor }]}
+        style={[styles.container, { flex: 1, alignItems: 'center', backgroundColor: bgColor }]}
       >
         <View style={{ justifyContent: 'center', alignItems: 'center', bottom: 26, width: '100%', height: 64 }}>
-          <LinearGradient
-            colors={['transparent', theme.colors.secondary]}
-            locations={[0.43, 0]}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={{ flex: 1, width: '100%', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}
-          >
+          <ShadowedView style={shadowStyle({
+            opacity: 0.4,
+            radius: 12,
+            offset: [0,6],
+          })}>
             <View
               style={
                 {
@@ -132,7 +137,6 @@ const TabButton = React.memo((props) => {
                   justifyContent: 'center',
                   backgroundColor: accentColor,
                   shadowColor: theme.colors.grey1,
-                  elevation: 8,
                 }
               }
             >
@@ -145,38 +149,43 @@ const TabButton = React.memo((props) => {
                 />
               </Animated.View>
             </View>
-          </LinearGradient>
+          </ShadowedView>
         </View>
       </TouchableOpacity>
+      </ShadowedView>
     );
   } else {
     // Стили для остальных кнопок
     return (
-      <TouchableOpacity onPress={handlePress} activeOpacity={1}
-                        style={[styles.container, {
-                          top: 0,
-                          alignItems: "center",
-                          backgroundColor: bgColor,
-                          borderTopEndRadius: item.route === "Catalog" ? 10 : 0,
-                          borderTopStartRadius: item.route === "Favorites" ? 10 : 0,
-                        }]}>
+      <ShadowedView style={shadowStyle({
+        opacity: 0.3,
+        radius: 5,
+        offset: [10,0],
+      })}>
+        <TouchableOpacity onPress={handlePress} activeOpacity={1}
+                          style={[styles.container, {
+                            top: 0,
+                            alignItems: "center",
+                            backgroundColor: bgColor,
+                          }]}>
 
-        <View style={styles.iconContainer}>
-          <Animated.View
-            style={{transform: [{scale: scaleValue}, {translateY: translateYValue}]}}>
-            <Icon
-              type={item.type}
-              name={focused ? item.activeIcon : item.inActiveIcon}
-              color={focused ? activeTabBarIconColor : inActiveTabBarIconColor}
-            />
-          </Animated.View>
-          {focused && (
-            <Animated.View style={{opacity: opacityValue}}>
-              <Text style={{fontFamily: 'Roboto-Black', fontSize: 12, color: accentColor}}>{label}</Text>
+          <View style={styles.iconContainer}>
+            <Animated.View
+              style={{transform: [{scale: scaleValue}, {translateY: translateYValue}]}}>
+              <Icon
+                type={item.type}
+                name={focused ? item.activeIcon : item.inActiveIcon}
+                color={focused ? activeTabBarIconColor : inActiveTabBarIconColor}
+              />
             </Animated.View>
-          )}
-        </View>
-      </TouchableOpacity>
+            {focused && (
+              <Animated.View style={{opacity: opacityValue}}>
+                <Text style={{fontFamily: 'Roboto-Black', fontSize: 12, color: accentColor}}>{label}</Text>
+              </Animated.View>
+            )}
+          </View>
+        </TouchableOpacity>
+      </ShadowedView>
     );
   }
 });
@@ -232,6 +241,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     maxHeight: 60,
     height: 60,
+    width: widthPercentageToDP(20)
   },
   iconContainer: {
     alignItems: 'center',
