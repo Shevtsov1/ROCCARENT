@@ -51,13 +51,30 @@ const App = () => {
       return auth().onAuthStateChanged(onAuthStateChanged);
     };
 
-    const init = () => {
+    const init = async () => {
       initializeApp().then();
+      if (!auth().currentUser.emailVerified) {
+        await waitForEmailVerification()
+          .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
+      }
       setInitializing(false);
     };
 
-    init();
+    init().then();
   }, []);
+
+  const waitForEmailVerification = async () => {
+    return new Promise((resolve) => {
+      const intervalId = setInterval(async () => {
+        const user = auth().currentUser;
+        await user.reload();
+        if (user.emailVerified) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, 1000); // Проверяем каждую секунду
+    });
+  };
 
   return (
     <SafeAreaProvider>

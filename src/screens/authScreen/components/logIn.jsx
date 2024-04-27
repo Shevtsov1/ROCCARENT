@@ -30,7 +30,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
 
   useEffect(() => {
     hasMinimumLength = password.length >= 6;
-    hasValidCharacters = /^[a-zA-Z0-9]+$/.test(password);
+    hasValidCharacters = /^[a-zA-Z\d]+$/.test(password);
     isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     if (password && hasMinimumLength && hasValidCharacters && isValidEmail) {

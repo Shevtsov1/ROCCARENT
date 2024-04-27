@@ -7,7 +7,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 const AuthScreenHeader = ({ theme, styles, navigation }) => {
 
   const handleCloseAuthBtn = () => {
-    navigation.navigate('Profile');
+    navigation.navigate("Profile");
   };
 
   return (
@@ -40,20 +40,20 @@ const MainScreenHeader = ({ theme, styles }) => {
           style={{
             tintColor: theme.colors.accent, width: 24,
             height: 24,
-            resizeMode: 'contain',
+            resizeMode: "contain",
           }}
         />
       </TouchableOpacity>
-        <Image source={require("../assets/images/logo/logo.png")} style={{
-          width: 60,
-          height: 60,
-          resizeMode: 'contain',
-        }} />
-          <Image source={require("../assets/images/logo/logo.png")} style={{
-          width: 24,
-          height: 24,
-          resizeMode: 'contain',
-        }} />
+      <Image source={require("../assets/images/logo/logo.png")} style={{
+        width: 60,
+        height: 60,
+        resizeMode: "contain",
+      }} />
+      <Image source={require("../assets/images/logo/logo.png")} style={{
+        width: 24,
+        height: 24,
+        resizeMode: "contain",
+      }} />
     </View>
   );
 };
@@ -79,9 +79,23 @@ const FavoritesScreenHeader = ({ theme, styles }) => {
 const ProfileScreenHeader = ({ user, theme, setInitializing, styles }) => {
   const handleSignOutBtn = () => {
     setInitializing(true);
-    auth()
-      .signOut()
-      .then(() => GoogleSignin.signOut().then(() => console.log("User signed out!")));
+
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+      const providerId = currentUser.providerData[0].providerId;
+
+      if (providerId === "google.com") {
+        GoogleSignin.signOut()
+          .then(() => console.log("User signed out from Google!"))
+          .catch((error) => console.log("Google sign out error:", error));
+      }
+
+      auth()
+        .signOut()
+        .then(() => console.log("User signed out!"))
+        .catch((error) => console.log("Sign out error:", error));
+    }
+
     setInitializing(false);
   };
   return (
@@ -126,7 +140,7 @@ const ScreenHeader = ({ user, theme, page, setInitializing, navigation }) => {
       header: {
         alignItems: "center",
         flexDirection: "row",
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
         paddingHorizontal: wp(5),
         minHeight: hp("6%"),
         height: hp("8%"),
