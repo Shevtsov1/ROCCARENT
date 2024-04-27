@@ -3,8 +3,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
 import { useCustomTheme } from "./src/assets/theme/theme";
 import { StatusBar } from "react-native";
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import changeNavigationBarColor from "react-native-navigation-bar-color";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "./src/components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 
@@ -39,7 +39,6 @@ const App = () => {
     if (user) {
       // Пользователь вошел в аккаунт
       setUser(user);
-      if (initializing) setInitializing(false);
     } else {
       // Пользователь не вошел в аккаунт, предлагаем выбрать аккаунт Google
       await auth().signInAnonymously();
@@ -48,9 +47,8 @@ const App = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      const subscriber = await auth().onAuthStateChanged(onAuthStateChanged);
       await loadTheme();
-      return subscriber;
+      return auth().onAuthStateChanged(onAuthStateChanged);
     };
 
     const init = () => {

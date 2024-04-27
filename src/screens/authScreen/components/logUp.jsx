@@ -82,7 +82,6 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
         .catch((error) => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
 
       console.log("Письмо с подтверждением отправлено");
-      console.log("Регистрация завершена");
 
       // Ожидание подтверждения почты
       await waitForEmailVerification()
@@ -132,7 +131,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
       backgroundColor: authBtnDisabled ? theme.colors.disabled : accentColor,
       overflow: "hidden",
     }, buttonText: {
-      fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
+      fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
     }, imageContainer: {
       flexDirection: "row", justifyContent: "space-between",
     }, image: {

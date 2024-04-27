@@ -159,7 +159,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
     buttonText: {
       fontFamily: "Roboto-Bold",
       fontSize: 18,
-      color: authBtnDisabled ? theme.colors.accentText : theme.colors.text,
+      color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
     },
   });
 

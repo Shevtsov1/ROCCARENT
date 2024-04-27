@@ -61,9 +61,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
       .catch((error) => text = "Ошибка при подтверждении почты");
 
     setResendBtnLoading(false);
-    setTimeout(() => {
-      text = "Почта подтверждена";
-    }, 3000);
+    text='';
   };
 
   return (
@@ -87,7 +85,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
             resizeMode="contain"
           />
         </Animated.View>
-        <Text style={{ fontFamily: "Roboto-Medium" }}>{text}</Text>
+        <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>{text}</Text>
         {resendEmailVerify && <Button onPress={handleResendVerification}
                                       buttonStyle={{ borderRadius: 15, backgroundColor: theme.colors.accent }}
                                       title={"Отправить повторно"}
