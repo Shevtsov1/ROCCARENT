@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 import ScreenHeader from "../../components/ScreenHeader";
@@ -11,9 +11,11 @@ const Main = ({theme, user}) => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{flex:1}}>
         <ScreenHeader theme={theme} user={user} page={'main'} navigation={navigation}/>
-        <Button onPress={() => navigation.navigate('ProfileStack', {screen: 'Auth'})} title={'auth'}/>
+        <View style={{flex:1, backgroundColor: theme.colors.background}}>
+          <Button onPress={() => navigation.navigate('ProfileStack', {screen: 'Auth'})} title={'auth'}/>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
