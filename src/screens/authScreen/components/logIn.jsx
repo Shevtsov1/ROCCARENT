@@ -200,7 +200,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
               inputContainerStyle={styles.input}
               inputStyle={styles.emailInput}
               errorStyle={styles.errorStyle}
-              errorMessage={password ? (hasValidPassword ? "" : "\"Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
+              errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
               leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
               rightIcon={
                 password && (
