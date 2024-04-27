@@ -133,9 +133,9 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     }, buttonText: {
       fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
     }, imageContainer: {
-      flexDirection: "row", justifyContent: "center",
+      justifyContent: "center",
     }, image: {
-      width: 144, height: 144, alignSelf: "center",
+      width: 144, height: 144, alignSelf: "center", resizeMode: 'contain'
     }, googleButton: {
       alignSelf: "flex-end", marginBottom: "5%",
     }, inputContainer: {
@@ -177,6 +177,12 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceSh
     <View style={{ marginVertical: hp(2), marginHorizontal: wp(4) }}>
       {isAdviceShown && <Advice authTypeWord={"Зарегистрируйтесь"} />}
       <View>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("../../../assets/images/usingPhone/auth.png")}
+            style={styles.image}
+          />
+        </View>
         <Input
           containerStyle={[styles.inputContainer, { marginBottom: email ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
           inputContainerStyle={styles.input}
