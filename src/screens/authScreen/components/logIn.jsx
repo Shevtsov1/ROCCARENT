@@ -24,11 +24,11 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
   const [hasValidPassword, setHasValidPassword] = useState(false);
   const [hasValidEmail, setHasValidEmail] = useState(false);
 
-  // useEffect(() => {
-  //   if(auth().currentUser.isAnonymous) {
-  //     onGoogleButtonPress().then();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if(auth().currentUser.isAnonymous) {
+      onGoogleButtonPress().then();
+    }
+  }, []);
 
 
   useEffect(() => {
