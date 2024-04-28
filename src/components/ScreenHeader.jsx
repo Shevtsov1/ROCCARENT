@@ -76,77 +76,6 @@ const FavoritesScreenHeader = ({ theme, styles }) => {
   );
 };
 
-const ProfileScreenHeader = ({ user, theme, setInitializing, styles }) => {
-  const handleSignOutBtn = () => {
-    setInitializing(true);
-
-    const currentUser = auth().currentUser;
-    if (currentUser) {
-      const providerId = currentUser.providerData[0].providerId;
-
-      if (providerId === "google.com") {
-        GoogleSignin.signOut()
-          .then(() => console.log("User signed out from Google!"))
-          .catch((error) => console.log("Google sign out error:", error));
-      }
-
-      auth()
-        .signOut()
-        .then(() => console.log("User signed out!"))
-        .catch((error) => console.log("Sign out error:", error));
-    }
-
-    setInitializing(false);
-  };
-
-  return (
-    <View></View>
-    // <View style={{height: 144, width: wp(100), backgroundColor: theme.colors.background}}>
-    //   <ShadowedView style={shadowStyle({
-    //     color: theme.colors.text,
-    //     opacity: 0.4,
-    //     radius: 8,
-    //     offset: [0,0]
-    //   })}>
-    //     <View style={{height: 138, width: wp(100), borderBottomStartRadius: 200, borderBottomEndRadius: 200, backgroundColor: theme.colors.background}}>
-    //
-    //     </View>
-    //   </ShadowedView>
-    // </View>
-    // <View style={styles.header}>
-    //   <Text style={{
-    //     fontFamily: "Montserrat-Black",
-    //     fontSize: 24,
-    //     color: theme.colors.accent,
-    //   }}>Профиль</Text>
-    //   {!user.isAnonymous && (
-    //     <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-    //       <TouchableOpacity
-    //         style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center", marginEnd: 12 }}>
-    //         <Image
-    //           source={require("../assets/images/screens/profile/settings.png")}
-    //           style={{
-    //             width: 24,
-    //             height: 24,
-    //             tintColor: theme.colors.accent,
-    //           }} resizeMode={"contain"} />
-    //       </TouchableOpacity>
-    //       <TouchableOpacity style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
-    //                         onPress={handleSignOutBtn}>
-    //         <Image
-    //           source={require("../assets/images/screens/profile/logout-filled.png")}
-    //           style={{
-    //             width: 24,
-    //             height: 24,
-    //             tintColor: theme.colors.accent,
-    //           }} resizeMode={"contain"} />
-    //       </TouchableOpacity>
-    //     </View>
-    //   )}
-    // </View>
-  );
-};
-
 const ScreenHeader = ({ user, theme, page, setInitializing, navigation }) => {
 
 
@@ -179,10 +108,7 @@ const ScreenHeader = ({ user, theme, page, setInitializing, navigation }) => {
     } else if (page === "favorites") {
       return <FavoritesScreenHeader theme={theme} styles={styles}
       />;
-    } else if (page === "profile") {
-      return <ProfileScreenHeader theme={theme} styles={styles}
-                                  user={user} setInitializing={setInitializing} />;
-    } else if (page === "auth") {
+    }  else if (page === "auth") {
       return <AuthScreenHeader theme={theme} styles={styles}
                                user={user} navigation={navigation} />;
     } else {
