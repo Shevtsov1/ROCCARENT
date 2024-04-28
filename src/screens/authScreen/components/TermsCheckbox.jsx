@@ -27,7 +27,7 @@ const TermsCheckbox = ({theme, isDarkMode, isActive, onCheckboxToggle}) => {
   };
 
   return (
-    <View style={{marginStart: widthPercentageToDP(3)}}>
+    <View>
       <TouchableOpacity onPress={handleCheckboxPress} style={styles.container}>
         <Image style={{
           height: 24,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginVertical: 6,
   },
   checkbox: {
     width: 20,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   label: {
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: 'Roboto-Medium',
     fontSize: 14,
   },
 });

@@ -120,7 +120,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
       alignItems: "center",
     },
     buttonText: {
-      fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.accentText,
+      fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.greyOutline : theme.colors.accentText,
     },
     googleAuthBtnContainer: {
       borderRadius: 15,
@@ -153,7 +153,9 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
       flexDirection: "row",
       justifyContent: "space-between",
       marginTop: 12,
-    }, underButton: {}, underButtonText: {
+    }, underButton: {
+      height: 48,
+    }, underButtonText: {
       fontFamily: "Roboto-Medium",
       color: theme.colors.grey1,
     },
@@ -235,12 +237,12 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
         </View>
         <View style={styles.loginBtnContainer}>
           <View style={{ marginEnd: wp(2) }}>
-            <ShadowedView style={[shadowStyle({
+            <ShadowedView style={[!authBtnDisabled && shadowStyle({
               color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
             }), { borderRadius: 15 }]}>
               <TouchableOpacity
                 style={[styles.buttonSubmit, {
-                  backgroundColor: theme.colors.accent,
+                  backgroundColor: authBtnDisabled ? theme.colors.disabled : theme.colors.accent,
                 }]}
                 disabled={authBtnDisabled}
                 onPress={handleLogInBtn}
@@ -259,10 +261,10 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
           </ShadowedView>
         </View>
         <View style={styles.underButtonsContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('LogUp')}>
+          <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate('LogUp')}>
             <Text style={styles.underButtonText}>Регистрация</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity style={styles.underButton} >
             <Text style={styles.underButtonText}>Забыли пароль?</Text>
           </TouchableOpacity>
         </View>

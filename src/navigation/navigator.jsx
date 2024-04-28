@@ -191,7 +191,7 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
                         options={({route}) => ({
                           tabBarStyle: ((route) => {
                             const routeName = getFocusedRouteNameFromRoute(route) ?? ""
-                            if (routeName === 'LogIn') {
+                            if (routeName === 'LogIn' || routeName === 'LogUp') {
                               return { display: "none" }
                             }
                           })(route),

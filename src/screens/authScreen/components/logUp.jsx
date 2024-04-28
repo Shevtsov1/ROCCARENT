@@ -1,298 +1,367 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, TouchableOpacity, Image, ScrollView, StyleSheet,
+  View, Text, TouchableOpacity, Image, StyleSheet,
 } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
-import { Overlay } from "@rneui/base";
+import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const LogUp = ({ theme, setInitializing, onGoogleButtonPress, Advice, isAdviceShown, setLoadingScreenText }) => {
-  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
-  const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
-  const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
+const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoadingScreenText }) => {
+    const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+    const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
+    const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [overlayVisible, setOverlayVisible] = useState(false);
-  const passwordRef = useRef(null);
-  const passwordConfirmationRef = useRef(null);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
+    const [termsAccepted, setTermsAccepted] = useState(false);
+    const passwordRef = useRef(null);
+    const passwordConfirmationRef = useRef(null);
 
-  const backColor = theme.colors.background;
-  const textColor = theme.colors.text;
-  const accentColor = theme.colors.accent;
+    const backColor = theme.colors.secondary;
+    const textColor = theme.colors.text;
+    const accentColor = theme.colors.accent;
 
-  const [hasValidPassword, setHasValidPassword] = useState(false);
-  const [hasValidEmail, setHasValidEmail] = useState(false);
-  const [passwordsMatch, setPaswordsMatch] = useState(false);
+    const [hasValidPasswordLength, setHasValidPasswordLength] = useState(false);
+    const [hasValidPassword, setHasValidPassword] = useState(false);
+    const [hasValidEmail, setHasValidEmail] = useState(false);
+    const [passwordsMatch, setPaswordsMatch] = useState(false);
 
-  useEffect(() => {
-    const minimumLength = password.length >= 6;
-    const validCharacters = /^(?=.*\d?)\w+$/.test(password);
-    const validEmail = /^[a-zA-Z][a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
-    setPaswordsMatch(password === passwordConfirmation);
+    useEffect(() => {
+      const minimumLength = password.length >= 6;
+      const validCharacters = /^(?=.*\d?)\w+$/.test(password);
+      const validEmail = /^[a-zA-Z][a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
+      setPaswordsMatch(password === passwordConfirmation);
 
-    setHasValidPassword(minimumLength && validCharacters);
-    setHasValidEmail(validEmail);
+      setHasValidPasswordLength(minimumLength);
+      setHasValidPassword(validCharacters);
+      setHasValidEmail(validEmail);
 
-    if (email && password && passwordConfirmation && termsAccepted && minimumLength && validCharacters && validEmail && passwordsMatch) {
-      setAuthBtnDisabled(false);
-    } else {
-      setAuthBtnDisabled(true);
-    }
-  }, [email, password, passwordConfirmation, termsAccepted]);
-
-  const handleEmailClear = () => {
-    setEmail("");
-  };
-
-  const handleEmailChange = (value) => {
-    setEmail(value);
-  };
-
-  const handlePasswordChange = (value) => {
-    setPassword(value);
-  };
-
-  const handlePasswordConfirmationChange = (value) => {
-    setPasswordConfirmation(value);
-  };
-
-  const handleTermsToggle = (isChecked) => {
-    setTermsAccepted(isChecked);
-  };
-
-  const toggleOverlay = () => {
-    setOverlayVisible(!overlayVisible);
-  };
-
-  const handleLogUpBtn = async () => {
-    setInitializing(true);
-    try {
-      const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
-      await auth().currentUser.linkWithCredential(emailAuthCredential);
-      // Регистрация завершена, отправляем письмо с подтверждением
-      await auth().currentUser.sendEmailVerification()
-        .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
-        .catch((error) => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
-
-      console.log("Письмо с подтверждением отправлено");
-
-      // Ожидание подтверждения почты
-      await waitForEmailVerification()
-        .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
-
-      setTimeout(() => {
-        setLoadingScreenText("Почта подтверждена");
-      }, 3000);
-      console.log("Почта подтверждена");
-      setLoadingScreenText(null);
-    } catch (error) {
-      if (error.code === "auth/unknown") {
-        console.log("Пользователь с таким Email уже зарегистрирован");
+      if (email && password && passwordConfirmation && termsAccepted && minimumLength && validCharacters && validEmail && passwordsMatch) {
+        setAuthBtnDisabled(false);
+      } else {
+        setAuthBtnDisabled(true);
       }
-      // Обработка других ошибок при регистрации
-    }
-    setInitializing(false);
-  };
+    }, [email, password, passwordConfirmation, termsAccepted]);
 
-  const waitForEmailVerification = async () => {
-    return new Promise((resolve) => {
-      const intervalId = setInterval(async () => {
-        const user = auth().currentUser;
-        await user.reload();
-        if (user.emailVerified) {
-          clearInterval(intervalId);
-          resolve();
+    const handleEmailClear = () => {
+      setEmail("");
+    };
+
+    const handleEmailChange = (value) => {
+      setEmail(value);
+    };
+
+    const handlePasswordChange = (value) => {
+      setPassword(value);
+    };
+
+    const handlePasswordConfirmationChange = (value) => {
+      setPasswordConfirmation(value);
+    };
+
+    const handleTermsToggle = (isChecked) => {
+      setTermsAccepted(isChecked);
+    };
+
+    const handleLogUpBtn = async () => {
+      setInitializing(true);
+      try {
+        const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
+        await auth().currentUser.linkWithCredential(emailAuthCredential);
+        // Регистрация завершена, отправляем письмо с подтверждением
+        await auth().currentUser.sendEmailVerification()
+          .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
+          .catch((error) => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
+
+        console.log("Письмо с подтверждением отправлено");
+
+        // Ожидание подтверждения почты
+        await waitForEmailVerification()
+          .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
+
+        setTimeout(() => {
+          setLoadingScreenText("Почта подтверждена");
+        }, 3000);
+        console.log("Почта подтверждена");
+        setLoadingScreenText(null);
+      } catch (error) {
+        if (error.code === "auth/unknown") {
+          console.log("Пользователь с таким Email уже зарегистрирован");
         }
-      }, 1000); // Проверяем каждую секунду
+        // Обработка других ошибок при регистрации
+      }
+      setInitializing(false);
+    };
+
+    const waitForEmailVerification = async () => {
+      return new Promise((resolve) => {
+        const intervalId = setInterval(async () => {
+          const user = auth().currentUser;
+          await user.reload();
+          if (user.emailVerified) {
+            clearInterval(intervalId);
+            resolve();
+          }
+        }, 1000); // Проверяем каждую секунду
+      });
+    };
+
+
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1, backgroundColor: backColor, justifyContent: "center",
+      }, contentContainer: {
+        marginTop: hp(30), marginHorizontal: wp(4),
+      }, imageContainer: {
+        position: "absolute", alignSelf: "center", top: hp(10),
+      }, image: {
+        width: 144, height: 144, alignSelf: "center",
+      }, inputViewContainer: {
+        height: 84,
+        borderRadius: 15,
+        backgroundColor: theme.colors.background,
+        justifyContent: "center",
+        paddingHorizontal: 12,
+      },
+      inputContainer: {
+        height: 72, paddingHorizontal: 0,
+      },
+      inputLabelStyle: { fontFamily: "Roboto-Medium", fontWeight: "light", color: theme.colors.grey1, marginBottom: 10 },
+      input: {
+        height: 24, borderBottomWidth: 0,
+      },
+      emailInput: {
+        paddingVertical: 0, fontFamily: "Roboto-Medium", color: textColor,
+      },
+      errorStyle: {
+        marginTop: 0, fontFamily: "Roboto-Regular", marginHorizontal: 0, paddingHorizontal: 0,
+      }, buttonContainer: {
+        alignSelf: "center",
+        height: 54,
+        width: (wp(90) - 54),
+        borderRadius: 15,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: authBtnDisabled ? theme.colors.disabled : accentColor,
+        overflow: "hidden",
+        marginEnd: wp(2),
+      }, googleButton: {
+        alignSelf: "flex-end", marginBottom: "5%",
+      }, googleButtonContainer: {
+        alignSelf: "flex-end", marginBottom: "5%", flexDirection: "column",
+      }, logupBtnContainer: {
+        maxWidth: "100%",
+        flexDirection: "row",
+      },
+      backButton: {
+        position: "absolute",
+        top: hp(2),
+        left: wp(2),
+      }, underButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 12,
+      }, underButton: {
+        height: 48,
+      }, underButtonText: {
+        fontFamily: "Roboto-Medium",
+        color: theme.colors.grey1,
+      },
+      googleAuthBtnText: {
+        marginEnd: 18,
+        fontFamily: "Roboto-Medium",
+        fontSize: 16,
+        color: theme.mode === "dark" ? theme.colors.text : theme.colors.accentText,
+      },
+      buttonSubmit: {
+        alignSelf: "center",
+        height: 54,
+        width: wp(90) - 54,
+        borderRadius: 15,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      buttonText: {
+        fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.accentText,
+      },
+      googleAuthBtnContainer: {
+        borderRadius: 15,
+      },
+      googleAuthBtn: {
+        height: 54,
+        width: 54,
+        backgroundColor: theme.colors.background,
+        flexDirection: "row",
+        borderRadius: 15,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      googleAuthBtnImageContainer: {
+        height: 54,
+        width: 54,
+        backgroundColor: theme.mode === "dark" ? theme.colors.accentText : theme.colors.accentText,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 15,
+      },
+      loginBtnContainer: {
+        maxWidth: "100%", flexDirection: "row",
+      },
     });
-  };
 
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1, backgroundColor: backColor,
-    }, loadingContainer: {
-      flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: backColor,
-    }, logoImage: {
-      width: 192, height: 192, marginBottom: hp(1), borderRadius: 30,
-    }, buttonContainer: {
-      alignSelf: "center",
-      height: 54,
-      width: (wp(90) - 54),
-      borderRadius: 15,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: authBtnDisabled ? theme.colors.disabled : accentColor,
-      overflow: "hidden",
-      marginEnd: wp(2),
-    }, buttonText: {
-      fontFamily: "Roboto-Bold", fontSize: 18, color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
-    }, imageContainer: {
-      justifyContent: "center",
-    }, image: {
-      width: 144, height: 144, alignSelf: "center", resizeMode: "contain",
-    }, googleButton: {
-      alignSelf: "flex-end", marginBottom: "5%",
-    }, inputContainer: {
-      height: 60, paddingHorizontal: 0,
-    }, input: {
-      paddingHorizontal: wp(3), borderColor: theme.colors.grey1,
-    }, inputIcon: {
-      marginEnd: 12,
-    }, inputRightIconContainer: {
-      marginEnd: 0,
-    }, errorStyle: {
-      marginStart: wp(3),
-    }, googleButtonContainer: {
-      alignSelf: "flex-end", marginBottom: "5%", flexDirection: "column",
-    }, googleAuthBtn: {
-      height: 54,
-      width: 54,
-      flexDirection: "row",
-      backgroundColor: theme.colors.googleBlue,
-      borderRadius: 15,
-      justifyContent: "center",
-      alignItems: "center",
-    }, googleAuthBtnImageContainer: {
-      height: 54,
-      width: 54,
-      backgroundColor: theme.colors.background,
-      justifyContent: "center",
-      alignItems: "center",
-      borderRadius: 15,
-    }, logupBtnContainer: {
-      maxWidth: "100%",
-      flexDirection: "row",
-    },
-  });
-
-  return (<ScrollView style={styles.container}>
-    <View style={{ marginVertical: hp(2), marginHorizontal: wp(4) }}>
-      {isAdviceShown && <Advice authTypeWord={"Зарегистрируйтесь"} />}
-      <View>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../../../assets/images/usingPhone/auth.png")}
-            style={styles.image}
-          />
-        </View>
-        <Input
-          containerStyle={[styles.inputContainer, { marginBottom: email ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
-          inputContainerStyle={styles.input}
-          inputMode={"email"}
-          inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
-          errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
-          leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
-          rightIcon={<View style={{ flexDirection: "row" }}>
-            {email && (<TouchableOpacity style={{ justifyContent: "center", marginEnd: 12 }}
-                                         onPress={handleEmailClear}>
-              <Icon type={"ionicon"} name={"close"} color={textColor} />
-            </TouchableOpacity>)}
-          </View>}
-          rightIconContainerStyle={styles.inputRightIconContainer}
-          labelStyle={{ color: textColor }}
-          placeholder="Email"
-          value={email}
-          onChangeText={handleEmailChange}
-          onSubmitEditing={() => {
-            // Переход к следующему инпуту (в данном случае, к инпуту password)
-            passwordRef.current.focus();
-          }}
-        />
-        <Input
-          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(1.5)) : 0 }]}
-          inputContainerStyle={styles.input}
-          inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
-          errorStyle={styles.errorStyle}
-          errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
-          leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
-          rightIcon={password && (<TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
-            <Icon
-              color={textColor}
-              type={"ionicon"}
-              name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
-            />
-          </TouchableOpacity>)}
-          labelStyle={{ color: textColor }}
-          placeholder="Пароль"
-          secureTextEntry={isPasswordSecure}
-          value={password}
-          onChangeText={handlePasswordChange}
-          ref={passwordRef}
-          onSubmitEditing={() => {
-            // Переход к следующему инпуту (в данном случае, к инпуту passwordConfirmation)
-            passwordConfirmationRef.current.focus();
-          }}
-        />
-        <Input
-          containerStyle={[styles.inputContainer, { marginBottom: passwordConfirmation ? (passwordsMatch ? 0 : hp(1.5)) : 0 }]}
-          inputContainerStyle={styles.input}
-          inputStyle={{ fontFamily: "Roboto-Regular", color: textColor }}
-          errorStyle={styles.errorStyle}
-          errorMessage={passwordConfirmation ? (passwordsMatch ? "" : "Пароли не совпадают") : ""}
-          leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
-          rightIcon={passwordConfirmation && (
-            <TouchableOpacity onPress={() => setIsConfirmPasswordSecure(!isConfirmPasswordSecure)}>
-              <Icon
-                color={textColor}
-                type={"ionicon"}
-                name={isConfirmPasswordSecure ? "eye-outline" : "eye-off-outline"}
-              />
-            </TouchableOpacity>)}
-          labelStyle={{ color: textColor }}
-          placeholder="Подтвердите пароль"
-          secureTextEntry={isConfirmPasswordSecure}
-          value={passwordConfirmation}
-          onChangeText={handlePasswordConfirmationChange}
-          ref={passwordConfirmationRef}
-        />
-        <View>
-          <TermsCheckbox
-            theme={theme}
-            isActive={termsAccepted}
-            onCheckboxToggle={handleTermsToggle}
-          />
-        </View>
-        <View style={styles.logupBtnContainer}>
-          <ShadowedView style={[!authBtnDisabled && shadowStyle({
-            color: theme.colors.text,
-            opacity: 0.8,
-            radius: 4,
-            offset: [0, 0],
-          }), { borderRadius: 15 }]}>
-          <TouchableOpacity disabled={authBtnDisabled} style={styles.buttonContainer} onPress={handleLogUpBtn}>
-            <Text style={styles.buttonText}>Зарегистрироваться</Text>
-          </TouchableOpacity>
-          </ShadowedView>
-          <ShadowedView style={[shadowStyle({
-            color: theme.colors.text,
-            opacity: 0.8,
-            radius: 4,
-            offset: [0, 0],
-          }), { borderRadius: 15 }]}>
-            <TouchableOpacity style={styles.googleAuthBtn} onPress={onGoogleButtonPress}>
-              <View style={styles.googleAuthBtnImageContainer}>
-                <Image source={require("../../../assets/images/google-icon.png")} style={{ width: 30, height: 30 }} />
-              </View>
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.backButton}>
+            <TouchableOpacity style={{ width: 36, height: 36 }} onPress={() => navigation.navigate("Profile")}>
+              <Icon type={"ionicon"} name="chevron-back-outline" color={theme.colors.text} size={24} />
             </TouchableOpacity>
-          </ShadowedView>
+          </View>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require("../../../assets/images/logo/logo.png")}
+              style={styles.image}
+              resizeMode={"contain"}
+            />
+          </View>
+          <View style={styles.contentContainer}>
+            <View style={{ marginBottom: 12 }}>
+              <ShadowedView style={[shadowStyle({
+                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+              }), { borderRadius: 15 }]}>
+                <View style={styles.inputViewContainer}>
+                  <Input
+                    label={"Email"}
+                    containerStyle={[styles.inputContainer]}
+                    inputContainerStyle={styles.input}
+                    inputMode={"email"}
+                    inputStyle={styles.emailInput}
+                    errorStyle={styles.errorStyle}
+                    errorMessage={email ? (hasValidEmail ? "" : "Введите корректный Email") : ""}
+                    leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
+                    rightIcon={email && (<TouchableOpacity onPress={handleEmailClear}>
+                      <Icon type={"ionicon"} name={"close"} color={textColor} />
+                    </TouchableOpacity>)}
+                    labelStyle={styles.inputLabelStyle}
+                    placeholder="example@gmail.com"
+                    value={email}
+                    onChangeText={handleEmailChange}
+                    onSubmitEditing={() => {
+                      // Переход к следующему инпуту (в данном случае, к инпуту password)
+                      passwordRef.current.focus();
+                    }}
+                  />
+                </View>
+              </ShadowedView>
+            </View>
+            <View style={{ marginBottom: 12 }}>
+              <ShadowedView style={[shadowStyle({
+                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+              }), { borderRadius: 15 }]}>
+                <View style={styles.inputViewContainer}>
+                  <Input
+                    label={"Пароль"}
+                    containerStyle={[styles.inputContainer]}
+                    inputContainerStyle={styles.input}
+                    inputStyle={styles.emailInput}
+                    errorStyle={styles.errorStyle}
+                    errorMessage={password ? (hasValidPasswordLength ? (hasValidPassword ? "" : "Латинские буквы, цифры и \"_\"") : "Минимум 6 символов") : ""}
+                    leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
+                    rightIcon={password && (<TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
+                      <Icon
+                        color={textColor}
+                        type={"ionicon"}
+                        name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
+                      />
+                    </TouchableOpacity>)}
+                    labelStyle={styles.inputLabelStyle}
+                    placeholder="Придумайте пароль"
+                    secureTextEntry={isPasswordSecure}
+                    value={password}
+                    onChangeText={handlePasswordChange}
+                    ref={passwordRef}
+                  />
+                </View>
+              </ShadowedView>
+            </View>
+            <ShadowedView style={[shadowStyle({
+              color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+            }), { borderRadius: 15 }]}>
+              <View style={styles.inputViewContainer}>
+                <Input
+                  label={"Подтвердите пароль"}
+                  containerStyle={[styles.inputContainer]}
+                  inputContainerStyle={styles.input}
+                  inputStyle={styles.emailInput}
+                  errorStyle={styles.errorStyle}
+                  errorMessage={passwordConfirmation ? (passwordsMatch ? "" : "Пароли не совпадают") : ""}
+                  leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
+                  rightIcon={passwordConfirmation && (<TouchableOpacity onPress={() => setIsConfirmPasswordSecure(!isConfirmPasswordSecure)}>
+                    <Icon
+                      color={textColor}
+                      type={"ionicon"}
+                      name={isConfirmPasswordSecure ? "eye-outline" : "eye-off-outline"}
+                    />
+                  </TouchableOpacity>)}
+                  labelStyle={styles.inputLabelStyle}
+                  placeholder="Придумайте пароль"
+                  secureTextEntry={isConfirmPasswordSecure}
+                  value={passwordConfirmation}
+                  onChangeText={handlePasswordConfirmationChange}
+                  ref={passwordConfirmationRef}
+                />
+              </View>
+            </ShadowedView>
+            <View>
+              <TermsCheckbox
+                theme={theme}
+                isActive={termsAccepted}
+                onCheckboxToggle={handleTermsToggle}
+              />
+            </View>
+            <View style={styles.logupBtnContainer}>
+              <View style={{ marginEnd: wp(2) }}>
+                <ShadowedView style={[!authBtnDisabled && shadowStyle({
+                  color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+                }), { borderRadius: 15 }]}>
+                  <TouchableOpacity
+                    style={[styles.buttonSubmit, {
+                      backgroundColor: authBtnDisabled ? theme.colors.disabled : theme.colors.accent,
+                    }]}
+                    disabled={authBtnDisabled}
+                    onPress={handleLogUpBtn}
+                  >
+                    <Text style={styles.buttonText}>Войти</Text>
+                  </TouchableOpacity>
+                </ShadowedView>
+              </View>
+              <ShadowedView style={[shadowStyle({
+                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+              }), { borderRadius: 15 }]}>
+                <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
+                        onPress={onGoogleButtonPress}
+                        title={<Image source={require("../../../assets/images/google-icon.png")}
+                                      style={{ width: 30, height: 30 }} />} />
+              </ShadowedView>
+            </View>
+            <View style={styles.underButtonsContainer}>
+              <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate("LogIn")}>
+                <Text style={styles.underButtonText}>Вход</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.underButton}>
+                <Text style={styles.underButtonText}>Нужна помощь?</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <Overlay isVisible={overlayVisible} onBackdropPress={toggleOverlay}>
-          <Text>Hello!</Text>
-          <Text>
-            Welcome to React Native Elements
-          </Text>
-        </Overlay>
-      </View>
-    </View>
-  </ScrollView>
-);
-};
+      </SafeAreaView>
+    );
+  }
+;
 
 export default LogUp;
