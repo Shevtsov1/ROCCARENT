@@ -61,7 +61,7 @@ const Terms = ({ theme, isVisible, onClose, handleConfirm, isChecked }) => {
           <Text style={styles.title}>Пользовательское соглашение RoccaRent</Text>
           <TouchableOpacity onPress={() => onClose()} style={styles.closeButton}>
             <Image
-              source={require("../../../assets/images/SearchBar/cancel.png")}
+              source={require("../../assets/images/SearchBar/cancel.png")}
               style={styles.closeImage}
               resizeMode={"contain"}
             />

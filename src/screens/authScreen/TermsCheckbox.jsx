@@ -34,7 +34,7 @@ const TermsCheckbox = ({theme, isDarkMode, isActive, onCheckboxToggle}) => {
           width: 24,
           tintColor: isChecked ? (theme.colors.accent) : (theme.colors.text)
         }} resizeMethod={"resize"}
-               source={isChecked ? require('../../../assets/images/checkbox.png') : require('../../../assets/images/checkbox-unchecked.png')}/>
+               source={isChecked ? require('../../assets/images/checkbox.png') : require('../../assets/images/checkbox-unchecked.png')}/>
         <View style={{flex: 1, marginHorizontal: widthPercentageToDP(4)}}>
           <Text
             style={[styles.label, {color: theme.colors.text}]}>

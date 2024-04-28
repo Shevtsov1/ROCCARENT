@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/profileScreen/profile";
-import LogIn from "../screens/authScreen/components/logIn";
-import LogUp from "../screens/authScreen/components/logUp";
+import LogIn from "../screens/authScreen/logIn";
+import LogUp from "../screens/authScreen/logUp";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 

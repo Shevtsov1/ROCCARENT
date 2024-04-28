@@ -224,7 +224,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
           </View>
           <View style={styles.imageContainer}>
             <Image
-              source={require("../../../assets/images/logo/logo.png")}
+              source={require("../../assets/images/logo/logo.png")}
               style={styles.image}
               resizeMode={"contain"}
             />
@@ -345,7 +345,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
               }), { borderRadius: 15 }]}>
                 <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
                         onPress={onGoogleButtonPress}
-                        title={<Image source={require("../../../assets/images/google-icon.png")}
+                        title={<Image source={require("../../assets/images/google-icon.png")}
                                       style={{ width: 30, height: 30 }} />} />
               </ShadowedView>
             </View>
