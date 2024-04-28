@@ -17,10 +17,10 @@ const App = () => {
   const [loadingScreenText, setLoadingScreenText] = useState(null);
 
   StatusBar.setTranslucent(true);
-  StatusBar.setBackgroundColor(theme.colors.background);
+  StatusBar.setBackgroundColor(theme.colors.secondary);
   StatusBar.setBarStyle(theme.mode === 'dark' ? 'light-content' : 'dark-content', true);
 
-  changeNavigationBarColor(theme.colors.background, theme.mode !== 'dark', false);
+  changeNavigationBarColor(theme.colors.secondary, theme.mode !== 'dark', false);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {

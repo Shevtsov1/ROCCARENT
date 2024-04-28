@@ -98,38 +98,52 @@ const ProfileScreenHeader = ({ user, theme, setInitializing, styles }) => {
 
     setInitializing(false);
   };
+
   return (
-    <View style={styles.header}>
-      <Text style={{
-        fontFamily: "Montserrat-Black",
-        fontSize: 24,
-        color: theme.colors.accent,
-      }}>Профиль</Text>
-      {!user.isAnonymous && (
-        <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-          <TouchableOpacity
-            style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center", marginEnd: 12 }}>
-            <Image
-              source={require("../assets/images/screens/profile/settings.png")}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: theme.colors.accent,
-              }} resizeMode={"contain"} />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
-                            onPress={handleSignOutBtn}>
-            <Image
-              source={require("../assets/images/screens/profile/logout-filled.png")}
-              style={{
-                width: 24,
-                height: 24,
-                tintColor: theme.colors.accent,
-              }} resizeMode={"contain"} />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+    <View></View>
+    // <View style={{height: 144, width: wp(100), backgroundColor: theme.colors.background}}>
+    //   <ShadowedView style={shadowStyle({
+    //     color: theme.colors.text,
+    //     opacity: 0.4,
+    //     radius: 8,
+    //     offset: [0,0]
+    //   })}>
+    //     <View style={{height: 138, width: wp(100), borderBottomStartRadius: 200, borderBottomEndRadius: 200, backgroundColor: theme.colors.background}}>
+    //
+    //     </View>
+    //   </ShadowedView>
+    // </View>
+    // <View style={styles.header}>
+    //   <Text style={{
+    //     fontFamily: "Montserrat-Black",
+    //     fontSize: 24,
+    //     color: theme.colors.accent,
+    //   }}>Профиль</Text>
+    //   {!user.isAnonymous && (
+    //     <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
+    //       <TouchableOpacity
+    //         style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center", marginEnd: 12 }}>
+    //         <Image
+    //           source={require("../assets/images/screens/profile/settings.png")}
+    //           style={{
+    //             width: 24,
+    //             height: 24,
+    //             tintColor: theme.colors.accent,
+    //           }} resizeMode={"contain"} />
+    //       </TouchableOpacity>
+    //       <TouchableOpacity style={{ width: 36, height: 36, alignItems: "center", justifyContent: "center" }}
+    //                         onPress={handleSignOutBtn}>
+    //         <Image
+    //           source={require("../assets/images/screens/profile/logout-filled.png")}
+    //           style={{
+    //             width: 24,
+    //             height: 24,
+    //             tintColor: theme.colors.accent,
+    //           }} resizeMode={"contain"} />
+    //       </TouchableOpacity>
+    //     </View>
+    //   )}
+    // </View>
   );
 };
 

@@ -8,7 +8,6 @@ import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
 import { ProfileStackNavigator } from "./profileStackNavigator";
-import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 
 // Массив с конфигурациями вкладок
@@ -66,10 +65,10 @@ const TabButton = React.memo((props) => {
   const translateYValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const activeTabBarIconColor = theme.colors.accent;
-  const inActiveTabBarIconColor = theme.colors.grey2;
+  const inActiveTabBarIconColor = theme.colors.grey1;
   const label = focused ? item.label : "";
   const accentColor = theme.colors.accent;
-  const bgColor = theme.colors.background;
+  const bgColor = theme.colors.secondary;
 
   const rotateInterpolation = rotation.interpolate({
     inputRange: [0, 1],
@@ -110,12 +109,6 @@ const TabButton = React.memo((props) => {
   if (item.route === "CreateAd") {
     // Отдельные стили для кнопки "CreateAd"
     return (
-      <ShadowedView style={shadowStyle({
-        color: theme.colors.text,
-        opacity: 0.1,
-        radius: 2,
-        offset: [2, -2],
-      })}>
         <TouchableOpacity
           onPress={handlePress}
           activeOpacity={1}
@@ -123,17 +116,16 @@ const TabButton = React.memo((props) => {
             flex: 1, alignItems: "center", backgroundColor: bgColor,
           }]}
         >
-          <View style={{ justifyContent: "center", alignItems: "center", bottom: 26, width: "100%", height: 64 }}>
+          <View style={{ justifyContent: "center", alignItems: "center", bottom: 2, width: "100%", height: 64 }}>
               <View
                 style={
                   {
-                    width: 54,
-                    height: 54,
+                    width: 42,
+                    height: 42,
                     borderRadius: 100,
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: accentColor,
-                    shadowColor: theme.colors.grey1,
                   }
                 }
               >
@@ -142,23 +134,16 @@ const TabButton = React.memo((props) => {
                     type={item.type}
                     name={focused ? item.activeIcon : item.inActiveIcon}
                     color={bgColor}
-                    size={30}
+                    size={22}
                   />
                 </Animated.View>
               </View>
           </View>
         </TouchableOpacity>
-      </ShadowedView>
     );
   } else {
     // Стили для остальных кнопок
     return (
-      <ShadowedView style={shadowStyle({
-        color: theme.colors.text,
-        opacity: 0.1,
-        radius: 2,
-        offset: [2, -2],
-      })}>
         <TouchableOpacity onPress={handlePress} activeOpacity={1}
                           style={[styles.container, {
                             top: 0,
@@ -182,7 +167,6 @@ const TabButton = React.memo((props) => {
             )}
           </View>
         </TouchableOpacity>
-      </ShadowedView>
     );
   }
 });
@@ -196,9 +180,8 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
           headerShown: false,
           tabBarStyle: {
             borderTopWidth: 0,
-            shadowColor: theme.colors.text,
             height: 60,
-            backgroundColor: theme.colors.secondary,
+            elevation: 0,
           },
         }}
       >
