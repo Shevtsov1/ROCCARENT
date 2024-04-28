@@ -178,11 +178,6 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
       <Tab.Navigator
         screenOptions={({route}) => ({
           headerShown: false,
-          tabBarStyle: {
-            borderTopWidth: 0,
-            height: 60,
-          elevation: 0,
-        },
         })}
       >
         {TabArr.map((item, index) => {
@@ -193,6 +188,12 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
                             const routeName = getFocusedRouteNameFromRoute(route) ?? ""
                             if (routeName === 'LogIn' || routeName === 'LogUp') {
                               return { display: "none" }
+                            } else  {
+                              return {
+                                borderTopWidth: 0,
+                                height: 60,
+                                elevation: 0,
+                              }
                             }
                           })(route),
                           tabBarShowLabel: false,
