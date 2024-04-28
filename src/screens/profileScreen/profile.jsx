@@ -10,7 +10,7 @@ import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 const Profile = ({ user, theme, toggleMode, navigation }) => {
 
   const handleAuthBtnPress = () => {
-    navigation.navigate("Auth");
+    navigation.navigate("LogIn");
   };
 
   const styles = StyleSheet.create({

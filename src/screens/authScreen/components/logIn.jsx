@@ -1,39 +1,43 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  StyleSheet, Animated,
+  View, Text, Image, TouchableOpacity, StyleSheet,
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceShown }) => {
+const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
   const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
-  const translateY = useRef(new Animated.Value(0)).current;
   const passwordRef = useRef(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const backColor = theme.colors.background;
+  const backColor = theme.colors.secondary;
   const textColor = theme.colors.text;
 
+  const [hasValidPasswordLength, setHasValidPasswordLength] = useState(false);
   const [hasValidPassword, setHasValidPassword] = useState(false);
   const [hasValidEmail, setHasValidEmail] = useState(false);
+
+  // useEffect(() => {
+  //   if(auth().currentUser.isAnonymous) {
+  //     onGoogleButtonPress().then();
+  //   }
+  // }, []);
+
 
   useEffect(() => {
     const minimumLength = password.length >= 6;
     const validCharacters = /^(?=.*\d?)\w+$/.test(password);
     const validEmail = /^[a-zA-Z][a-zA-Z\d._%+-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email);
 
-    setHasValidPassword(minimumLength && validCharacters);
+    setHasValidPasswordLength(minimumLength);
+    setHasValidPassword(validCharacters);
     setHasValidEmail(validEmail);
 
     if (email && password && minimumLength && validCharacters && validEmail) {
@@ -42,16 +46,6 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       setAuthBtnDisabled(true);
     }
   }, [email, password]);
-
-  useEffect(() => {
-    if (!isAdviceShown) {
-      Animated.timing(translateY, {
-        toValue: -100, // Величина смещения вверх, которую вы можете настроить
-        duration: 300, // Длительность анимации (в миллисекундах)
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isAdviceShown]);
 
   const handleEmailClear = () => {
     setEmail("");
@@ -77,40 +71,39 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: backColor,
+      flex: 1, backgroundColor: backColor, justifyContent: "center",
     },
     contentContainer: {
-      marginVertical: hp(2),
-      marginBottom: 24,
-      marginHorizontal: wp(4),
+      marginTop: hp(30), marginHorizontal: wp(4),
     },
     imageContainer: {
-      justifyContent: "center",
+      position: "absolute", alignSelf: "center", top: hp(20),
     },
     image: {
-      width: 144,
-      height: 144,
-      alignSelf: "center",
+      width: 144, height: 144, alignSelf: "center",
     },
     buttonContainer: {
-      alignSelf: "flex-end",
-      marginBottom: "5%",
-      flexDirection: "column",
+      alignSelf: "flex-end", marginBottom: "5%", flexDirection: "column",
+    },
+    inputViewContainer: {
+      height: 84,
+      borderRadius: 15,
+      backgroundColor: theme.colors.background,
+      justifyContent: "center",
+      paddingHorizontal: 12,
     },
     inputContainer: {
-      height: 60,
-      paddingHorizontal: 0,
+      height: 72, paddingHorizontal: 0,
     },
+    inputLabelStyle: { fontFamily: "Roboto-Medium", fontWeight: "light", color: theme.colors.grey1, marginBottom: 10 },
     input: {
-      paddingHorizontal: wp(3),
-      borderColor: theme.colors.grey1,
+      height: 24, borderBottomWidth: 0,
     },
     emailInput: {
-      color: textColor,
+      paddingVertical: 0, fontFamily: "Roboto-Medium", color: textColor,
     },
     errorStyle: {
-      marginStart: wp(3),
+      marginTop: 0, fontFamily: "Roboto-Regular", marginHorizontal: 0, paddingHorizontal: 0,
     },
     googleAuthBtnText: {
       marginEnd: 18,
@@ -127,12 +120,12 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       alignItems: "center",
     },
     buttonText: {
-      fontFamily: "Roboto-Bold",
-      fontSize: 18,
-      color: authBtnDisabled ? theme.colors.text : theme.colors.accentText,
-    }, googleAuthBtnContainer: {
+      fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.accentText,
+    },
+    googleAuthBtnContainer: {
       borderRadius: 15,
-    }, googleAuthBtn: {
+    },
+    googleAuthBtn: {
       height: 54,
       width: 54,
       backgroundColor: theme.colors.background,
@@ -140,113 +133,142 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, Advice, isAdviceSh
       borderRadius: 15,
       justifyContent: "center",
       alignItems: "center",
-    }, googleAuthBtnImageContainer: {
+    },
+    googleAuthBtnImageContainer: {
       height: 54,
       width: 54,
       backgroundColor: theme.mode === "dark" ? theme.colors.accentText : theme.colors.accentText,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: 15,
-    }, loginBtnContainer: {
-      maxWidth: "100%",
+    },
+    loginBtnContainer: {
+      maxWidth: "100%", flexDirection: "row",
+    },
+    backButton: {
+      position: "absolute",
+      top: hp(2),
+      left: wp(2),
+    }, underButtonsContainer: {
       flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: 12,
+    }, underButton: {}, underButtonText: {
+      fontFamily: "Roboto-Medium",
+      color: theme.colors.grey1,
     },
   });
 
-  return (
-    <ScrollView style={styles.container}>
+  return (<SafeAreaView style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <View style={styles.backButton}>
+        <TouchableOpacity style={{ width: 36, height: 36 }} onPress={() => navigation.navigate('Profile')}>
+          <Icon type={"ionicon"} name="chevron-back-outline" color={theme.colors.text} size={24} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("../../../assets/images/logo/logo.png")}
+          style={styles.image}
+          resizeMode={"contain"}
+        />
+      </View>
       <View style={styles.contentContainer}>
-        {isAdviceShown && <Advice authTypeWord={"Войдите"}/>}
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("../../../assets/images/usingPhone/auth.png")}
-            style={styles.image}
-          />
-        </View>
-        <Input
-          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidEmail ? 0 : hp(1.5)) : 0 }]}
-          inputContainerStyle={styles.input}
-          inputMode={"email"}
-          inputStyle={styles.emailInput}
-          errorMessage={email ? (hasValidEmail ? "" : "Введит корректный Email") : ""}
-          leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
-          rightIcon={
-            email && (
-              <TouchableOpacity onPress={handleEmailClear}>
-                <Icon type={"ionicon"} name={"close"} color={textColor} />
-              </TouchableOpacity>
-            )
-          }
-          labelStyle={{ color: textColor }}
-          placeholder="Email"
-          value={email}
-          onChangeText={handleEmailChange}
-          onSubmitEditing={() => {
-            // Переход к следующему инпуту (в данном случае, к инпуту password)
-            passwordRef.current.focus();
-          }}
-        />
-        <Input
-          containerStyle={[styles.inputContainer, { marginBottom: password ? (hasValidPassword ? 0 : hp(2)) : 0 }]}
-          inputContainerStyle={styles.input}
-          inputStyle={styles.emailInput}
-          errorStyle={styles.errorStyle}
-          errorMessage={password ? (hasValidPassword ? "" : "Пароль может содержать латинские буквы, цифры и \"_\"") : ""}
-          leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
-          rightIcon={
-            password && (
-              <TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
-                <Icon
-                  color={textColor}
-                  type={"ionicon"}
-                  name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
-                />
-              </TouchableOpacity>
-            )
-          }
-          labelStyle={{ color: textColor }}
-          placeholder="Пароль"
-          secureTextEntry={isPasswordSecure}
-          value={password}
-          onChangeText={handlePasswordChange}
-          ref={passwordRef}
-        />
-        <View>
-          <View style={styles.loginBtnContainer}>
-            <View style={{marginEnd: wp(2)}}>
-              <ShadowedView style={[ !authBtnDisabled && shadowStyle({
-                color: theme.colors.text,
-                opacity: 0.8,
-                radius: 4,
-                offset: [0,0],
-              }), {borderRadius: 15}]}>
-                <TouchableOpacity
-                  style={[styles.buttonSubmit, {
-                    backgroundColor: authBtnDisabled ? theme.colors.disabled :
-                      theme.colors.accent,
-                  }]}
-                  disabled={authBtnDisabled}
-                  onPress={handleLogInBtn}
-                >
-                  <Text style={styles.buttonText}>Войти</Text>
-                </TouchableOpacity>
-              </ShadowedView>
+        <View style={{ marginBottom: 12 }}>
+          <ShadowedView style={[shadowStyle({
+            color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+          }), { borderRadius: 15 }]}>
+            <View style={styles.inputViewContainer}>
+              <Input
+                label={"Email"}
+                containerStyle={[styles.inputContainer]}
+                inputContainerStyle={styles.input}
+                inputMode={"email"}
+                inputStyle={styles.emailInput}
+                errorStyle={styles.errorStyle}
+                errorMessage={email ? (hasValidEmail ? "" : "Введите корректный Email") : ""}
+                leftIcon={<Icon type={"ionicon"} name="mail-outline" color={textColor} />}
+                rightIcon={email && (<TouchableOpacity onPress={handleEmailClear}>
+                  <Icon type={"ionicon"} name={"close"} color={textColor} />
+                </TouchableOpacity>)}
+                labelStyle={styles.inputLabelStyle}
+                placeholder="example@gmail.com"
+                value={email}
+                onChangeText={handleEmailChange}
+                onSubmitEditing={() => {
+                  // Переход к следующему инпуту (в данном случае, к инпуту password)
+                  passwordRef.current.focus();
+                }}
+              />
             </View>
+          </ShadowedView>
+        </View>
+        <View style={{ marginBottom: 12 }}>
+          <ShadowedView style={[shadowStyle({
+            color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+          }), { borderRadius: 15 }]}>
+            <View style={styles.inputViewContainer}>
+              <Input
+                label={"Пароль"}
+                containerStyle={[styles.inputContainer]}
+                inputContainerStyle={styles.input}
+                inputStyle={styles.emailInput}
+                errorStyle={styles.errorStyle}
+                errorMessage={password ? (hasValidPasswordLength ? (hasValidPassword ? "" : "Латинские буквы, цифры и \"_\"") : "Минимум 6 символов") : ""}
+                leftIcon={<Icon type={"ionicon"} name="key-outline" color={textColor} />}
+                rightIcon={password && (<TouchableOpacity onPress={() => setIsPasswordSecure(!isPasswordSecure)}>
+                  <Icon
+                    color={textColor}
+                    type={"ionicon"}
+                    name={isPasswordSecure ? "eye-outline" : "eye-off-outline"}
+                  />
+                </TouchableOpacity>)}
+                labelStyle={styles.inputLabelStyle}
+                placeholder="Введите пароль"
+                secureTextEntry={isPasswordSecure}
+                value={password}
+                onChangeText={handlePasswordChange}
+                ref={passwordRef}
+              />
+            </View>
+          </ShadowedView>
+        </View>
+        <View style={styles.loginBtnContainer}>
+          <View style={{ marginEnd: wp(2) }}>
             <ShadowedView style={[shadowStyle({
-                color: theme.colors.text,
-                opacity: 0.8,
-                radius: 4,
-                offset: [0,0],
-              }), {borderRadius:15}]}>
-              <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn} onPress={onGoogleButtonPress}
-                      title={<Image source={require("../../../assets/images/google-icon.png")}
-                                    style={{ width: 30, height: 30 }} />} />
+              color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+            }), { borderRadius: 15 }]}>
+              <TouchableOpacity
+                style={[styles.buttonSubmit, {
+                  backgroundColor: theme.colors.accent,
+                }]}
+                disabled={authBtnDisabled}
+                onPress={handleLogInBtn}
+              >
+                <Text style={styles.buttonText}>Войти</Text>
+              </TouchableOpacity>
             </ShadowedView>
           </View>
+          <ShadowedView style={[shadowStyle({
+            color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+          }), { borderRadius: 15 }]}>
+            <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
+                    onPress={onGoogleButtonPress}
+                    title={<Image source={require("../../../assets/images/google-icon.png")}
+                                  style={{ width: 30, height: 30 }} />} />
+          </ShadowedView>
+        </View>
+        <View style={styles.underButtonsContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate('LogUp')}>
+            <Text style={styles.underButtonText}>Регистрация</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.underButtonText}>Забыли пароль?</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
-  );
+    </View>
+  </SafeAreaView>);
 };
 
 export default LogIn;

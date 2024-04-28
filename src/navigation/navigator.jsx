@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, Animated, View, Text } from "react-native";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
@@ -7,7 +7,7 @@ import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
-import { ProfileStackNavigator } from "./profileStackNavigator";
+import { ProfileStackNavigator } from "./stackNavigator";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 
 // Массив с конфигурациями вкладок
@@ -176,24 +176,30 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
-        screenOptions={{
+        screenOptions={({route}) => ({
           headerShown: false,
           tabBarStyle: {
             borderTopWidth: 0,
             height: 60,
-            elevation: 0,
-          },
-        }}
+          elevation: 0,
+        },
+        })}
       >
         {TabArr.map((item, index) => {
           return (
             <Tab.Screen key={index} name={item.route}
-                        options={{
+                        options={({route}) => ({
+                          tabBarStyle: ((route) => {
+                            const routeName = getFocusedRouteNameFromRoute(route) ?? ""
+                            if (routeName === 'LogIn') {
+                              return { display: "none" }
+                            }
+                          })(route),
                           tabBarShowLabel: false,
                           tabBarButton: (props) => (
                             <TabButton {...props} item={item} theme={theme} isDarkMode={isDarkMode} />
                           ),
-                        }}
+                        })}
             >
               {(props) => <item.component {...props} user={user} theme={theme} toggleMode={toggleMode}
                                           setInitializing={setInitializing}
