@@ -120,9 +120,9 @@ const TabButton = React.memo((props) => {
               <View
                 style={
                   {
-                    width: 42,
-                    height: 42,
-                    borderRadius: 100,
+                    width: 48,
+                    height: 36,
+                    borderRadius: 15,
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: accentColor,

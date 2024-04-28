@@ -86,8 +86,8 @@ const Profile = ({ user, theme, toggleMode, navigation }) => {
                 <Overlay overlayStyle={styles.logoutOverlay} isVisible={visible} onBackdropPress={toggleOverlay}>
                   <ShadowedView style={[{alignSelf: 'center', borderRadius: 15,}, shadowStyle({
                     color: theme.colors.error,
-                    opacity: 0.3,
-                    radius: 4,
+                    opacity: 0.4,
+                    radius: 12,
                     offset: [0,0]
                   })]}>
                     <Icon type={"ionicon"} name={'information-circle-outline'} color={theme.colors.error}/>
