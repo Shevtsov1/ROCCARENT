@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Icon } from "@rneui/base";
-import { Overlay, Avatar, Button } from "@rneui/themed";
+import { Overlay, Avatar, Button, Skeleton } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import switchTheme from "react-native-theme-switch-animation";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-const Profile = ({ theme, toggleMode, navigation }) => {
+const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
 
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
@@ -23,7 +24,7 @@ const Profile = ({ theme, toggleMode, navigation }) => {
         type: "circular",
         duration: 900,
         startingPoint: {
-          cxRatio: 0,
+          cxRatio: 1,
           cyRatio: -1,
         },
       },
@@ -42,6 +43,15 @@ const Profile = ({ theme, toggleMode, navigation }) => {
     navigation.navigate("LogUp");
   };
 
+  const handleSignOutBtnPress = async () => {
+    setInitializing(true);
+    const currentUser = auth().currentUser;
+    if (currentUser) {
+        await auth().signOut().then(GoogleSignin.signOut());
+    }
+    setInitializing(false);
+  };
+
   const styles = StyleSheet.create({
 
     /* BODY BEGIN */
@@ -57,12 +67,12 @@ const Profile = ({ theme, toggleMode, navigation }) => {
       alignSelf: "center",
     }, profileMainCard: {
       width: wp(90),
-      height: auth().currentUser.isAnonymous ? 360 : 360,
+      height: auth().currentUser.isAnonymous ? 360 : 240,
       padding: 12,
       backgroundColor: theme.colors.background,
       borderRadius: 15,
     }, profileMainCardHeader: {
-      flex: auth().currentUser.isAnonymous ? 1 : 1,
+      flex: auth().currentUser.isAnonymous ? 1 : 2,
       flexDirection: "row",
       justifyContent: auth().currentUser.isAnonymous ? "center" : "space-between",
     }, profileMainCardAuthBtnContainer: {
@@ -82,8 +92,9 @@ const Profile = ({ theme, toggleMode, navigation }) => {
       width: wp(80),
       maxWidth: wp(92),
     }, profileMainCardBody: {
-      flex: 7,
+      flex: auth().currentUser.isAnonymous ? 7 : 6,
       justifyContent: "space-between",
+      paddingVertical: !auth().currentUser.isAnonymous && 30,
       alignItems: "center",
     }, profileMainCardUnder: {
       flex: auth().currentUser.isAnonymous ? 2 : 3,
@@ -218,8 +229,18 @@ const Profile = ({ theme, toggleMode, navigation }) => {
                     <TouchableOpacity>
                       <Icon type={"ionicon"} name={"settings-outline"} size={24} color={theme.colors.text} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={toggleOverlay}>
-                      <Icon type={"ionicon"} name={"log-out-outline"} size={28} color={theme.colors.text} />
+                    <TouchableOpacity
+                      style={{ position: "absolute", top: 0, right: 0 }}
+                      onPress={handleToggleModePress}
+                    >
+                      <Image
+                        source={isSun ? require("../../assets/images/sun.png") : require("../../assets/images/moon.png")}
+                        style={{
+                          width: 32,
+                          height: 32,
+                        }}
+                        resizeMode="contain"
+                      />
                     </TouchableOpacity>
                     <Overlay overlayStyle={styles.logoutOverlay} isVisible={visible} onBackdropPress={toggleOverlay}>
                       <ShadowedView style={[{ alignSelf: "center", borderRadius: 15 }, shadowStyle({
@@ -278,7 +299,7 @@ const Profile = ({ theme, toggleMode, navigation }) => {
                           backgroundColor: theme.colors.error,
                           alignItems: "center",
                           justifyContent: "center",
-                        }} onPress={toggleOverlay}>
+                        }} onPress={handleSignOutBtnPress}>
                           <Text
                             style={{
                               fontFamily: "Roboto-Bold",
@@ -291,19 +312,18 @@ const Profile = ({ theme, toggleMode, navigation }) => {
                   </View>
                   <View style={styles.profileMainCardBody}>
                     <Avatar
-                      size={72}
+                      size={'large'}
                       rounded
-                      title={"VS"}
-                      titleStyle={{ fontFamily: "Roboto-Medium" }}
-                      containerStyle={{ backgroundColor: "blue", top: "10%" }} />
+                      title={auth().currentUser.email.substring(0, 2).toUpperCase()}
+                      containerStyle={{ backgroundColor: 'blue'}}
+                    />
                     <Text style={{
                       fontFamily: "Roboto-Medium",
                       fontSize: 18,
                       color: theme.colors.text,
-                      bottom: "10%",
                     }}>{auth().currentUser.email}</Text>
                   </View>
-                  <View style={styles.profileMainCardUnder}></View></>}
+                  </>}
               </View>
             </ShadowedView>
           </View>
@@ -357,6 +377,49 @@ const Profile = ({ theme, toggleMode, navigation }) => {
                   </Button>
                 </ShadowedView>
               </View>
+              {!auth().currentUser.isAnonymous && <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <ShadowedView style={[shadowStyle({
+                  color: theme.colors.grey3,
+                  opacity: 1,
+                  radius: 4,
+                  offset: [0, 0],
+                }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
+                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                          icon={
+                            <ShadowedView style={[shadowStyle({
+                              color: theme.colors.grey2, opacity: 0.8,
+                              radius: 4, offset: [0, 0],
+                            }), styles.profileAppDataBtnIconContainer]}>
+                              <Icon type={"ionicon"} name={"information-circle"} color={theme.colors.accent} size={34}/>
+                            </ShadowedView>
+                          } iconPosition={"left"}>
+                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Поддержка</Text>
+                  </Button>
+                </ShadowedView>
+                <ShadowedView style={[shadowStyle({
+                  color: theme.colors.grey3,
+                  opacity: 1,
+                  radius: 4,
+                  offset: [0, 0],
+                }),styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
+                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                          onPress={toggleOverlay}
+                          icon={
+                            <ShadowedView style={[shadowStyle({
+                              color: theme.colors.grey2, opacity: 0.8,
+                              radius: 4, offset: [0, 0],
+                            }), styles.profileAppDataBtnIconContainer]}>
+                              <View>
+                                <Icon type={"ionicon"} name={"log-out"} color={theme.colors.accent} size={34}/>
+                              </View>
+                            </ShadowedView>
+                          } iconPosition={"left"}>
+                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Выход</Text>
+                  </Button>
+                </ShadowedView>
+              </View>}
             </View>
           </View>
           {/*{user && <Text>{user.uid}</Text>}*/}
