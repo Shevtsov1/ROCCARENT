@@ -3,6 +3,7 @@ import { Animated, Easing, Image, Text, View } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
 
@@ -65,6 +66,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
   };
 
   return (
+  <SafeAreaView style={{flex: 1}}>
     <View style={{
       flex: 1,
       justifyContent: "center",
@@ -93,6 +95,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
                                       loading={resendBtnLoading} />}
       </View>
     </View>
+  </SafeAreaView>
   );
 };
 

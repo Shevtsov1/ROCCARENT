@@ -66,6 +66,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
       console.log("User signed in!");
     }).catch((error) => {
       console.log(error);
+      setInitializing(false);
     });
   };
 

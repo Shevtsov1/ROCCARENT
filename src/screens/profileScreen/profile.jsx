@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Icon } from "@rneui/base";
 import { Overlay, Avatar, Button } from "@rneui/themed";
@@ -8,7 +8,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import switchTheme from "react-native-theme-switch-animation";
 
-const Profile = ({ user, theme, toggleMode, navigation }) => {
+const Profile = ({ theme, toggleMode, navigation }) => {
 
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
@@ -110,6 +110,8 @@ const Profile = ({ user, theme, toggleMode, navigation }) => {
       height: 48,
       borderRadius: 15,
       backgroundColor: theme.colors.secondary,
+      justifyContent: 'center',
+      alignItems: 'center',
       marginEnd: 6,
     },
     /* BODY END */
@@ -327,9 +329,7 @@ const Profile = ({ user, theme, toggleMode, navigation }) => {
                               color: theme.colors.grey2, opacity: 0.8,
                               radius: 4, offset: [0, 0],
                             }), styles.profileAppDataBtnIconContainer]}>
-                              <View>
-                                {/*<Icon type={"ionicon"} name={"log-in-outline"} color={theme.colors.text} size={30} />*/}
-                              </View>
+                                <Icon type={"ionicon"} name={"heart"} color={theme.colors.accent} size={34}/>
                             </ShadowedView>
                           } iconPosition={"left"}>
                     <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Избранное</Text>
@@ -349,55 +349,11 @@ const Profile = ({ user, theme, toggleMode, navigation }) => {
                               radius: 4, offset: [0, 0],
                             }), styles.profileAppDataBtnIconContainer]}>
                               <View>
-                                {/*<Icon type={"ionicon"} name={"log-in-outline"} color={theme.colors.text} size={30} />*/}
+                                <Icon type={"ionicon"} name={"settings"} color={theme.colors.accent} size={34}/>
                               </View>
                             </ShadowedView>
                           } iconPosition={"left"}>
                     <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Настройки</Text>
-                  </Button>
-                </ShadowedView>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3,
-                  opacity: 1,
-                  radius: 4,
-                  offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
-                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                          icon={
-                            <ShadowedView style={[shadowStyle({
-                              color: theme.colors.grey2, opacity: 0.8,
-                              radius: 4, offset: [0, 0],
-                            }), styles.profileAppDataBtnIconContainer]}>
-                              <View>
-                                {/*<Icon type={"ionicon"} name={"log-in-outline"} color={theme.colors.text} size={30} />*/}
-                              </View>
-                            </ShadowedView>
-                          } iconPosition={"left"}>
-                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Помощь</Text>
-                  </Button>
-                </ShadowedView>
-                <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3,
-                  opacity: 1,
-                  radius: 4,
-                  offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
-                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                          icon={
-                            <ShadowedView style={[shadowStyle({
-                              color: theme.colors.grey2, opacity: 0.8,
-                              radius: 4, offset: [0, 0],
-                            }), styles.profileAppDataBtnIconContainer]}>
-                              <View>
-                                {/*<Icon type={"ionicon"} name={"log-in-outline"} color={theme.colors.text} size={30} />*/}
-                              </View>
-                            </ShadowedView>
-                          } iconPosition={"left"}>
-                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Выход</Text>
                   </Button>
                 </ShadowedView>
               </View>
