@@ -65,7 +65,7 @@ const TabButton = React.memo((props) => {
   const translateYValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const activeTabBarIconColor = theme.colors.accent;
-  const inActiveTabBarIconColor = theme.colors.grey1;
+  const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : "";
   const accentColor = theme.colors.accent;
   const bgColor = theme.colors.secondary;
@@ -133,7 +133,7 @@ const TabButton = React.memo((props) => {
                   <Icon
                     type={item.type}
                     name={focused ? item.activeIcon : item.inActiveIcon}
-                    color={bgColor}
+                    color={theme.colors.background}
                     size={22}
                   />
                 </Animated.View>
