@@ -16,7 +16,7 @@ const Main = ({theme, user}) => {
         <ScreenHeader theme={theme} user={user} page={'main'} navigation={navigation}/>
         <View style={{flexGrow: 1, backgroundColor: theme.colors.background}} source={require('../../assets/images/sun.png')}>
           <Button onPress={() => navigation.navigate('ProfileStack', {screen: 'Auth'})} title={'auth'}/>
-          <Text>Anonymous: {auth().currentUser.uid}</Text>
+          {auth().currentUser.isAnonymous && <Text>Anonymous: {auth().currentUser.uid}</Text>}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
