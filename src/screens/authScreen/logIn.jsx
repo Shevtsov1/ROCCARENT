@@ -25,9 +25,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
   const [hasValidEmail, setHasValidEmail] = useState(false);
 
   useEffect(() => {
-    if(auth().currentUser.isAnonymous) {
       onGoogleButtonPress().then();
-    }
   }, []);
 
 
