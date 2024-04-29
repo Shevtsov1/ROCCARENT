@@ -41,7 +41,7 @@ const App = () => {
       setUser(user);
     } else {
       // Пользователь не вошел в аккаунт, предлагаем выбрать аккаунт Google
-      await auth().signInAnonymously();
+      auth().signInAnonymously().then();
     }
   }
 
@@ -60,7 +60,9 @@ const App = () => {
     };
 
     init().then();
-    setInitializing(false);
+    setTimeout(() => {
+      setInitializing(false)
+    }, 2500);
   }, []);
 
   const waitForEmailVerification = async () => {
