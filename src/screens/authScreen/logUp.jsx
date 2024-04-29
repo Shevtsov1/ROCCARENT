@@ -232,7 +232,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
           <View style={styles.contentContainer}>
             <View style={{ marginBottom: 12 }}>
               <ShadowedView style={[shadowStyle({
-                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+                color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
               }), { borderRadius: 15 }]}>
                 <View style={styles.inputViewContainer}>
                   <Input
@@ -261,7 +261,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
             </View>
             <View style={{ marginBottom: 12 }}>
               <ShadowedView style={[shadowStyle({
-                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+                color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
               }), { borderRadius: 15 }]}>
                 <View style={styles.inputViewContainer}>
                   <Input
@@ -290,7 +290,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
               </ShadowedView>
             </View>
             <ShadowedView style={[shadowStyle({
-              color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+              color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
             }), { borderRadius: 15 }]}>
               <View style={styles.inputViewContainer}>
                 <Input
@@ -327,7 +327,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
             <View style={styles.logupBtnContainer}>
               <View style={{ marginEnd: wp(2) }}>
                 <ShadowedView style={[!authBtnDisabled && shadowStyle({
-                  color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <TouchableOpacity
                     style={[styles.buttonSubmit, {
@@ -341,7 +341,7 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
                 </ShadowedView>
               </View>
               <ShadowedView style={[shadowStyle({
-                color: theme.colors.text, opacity: 0.3, radius: 8, offset: [0, 0],
+                color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
               }), { borderRadius: 15 }]}>
                 <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
                         onPress={onGoogleButtonPress}
