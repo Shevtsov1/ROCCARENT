@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Animated, Easing, Image, Text, View } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -52,14 +52,14 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
     setResendBtnLoading(true);
     await auth().currentUser.sendEmailVerification()
       .then(text = "Письмо с подтверждением отправлено на Email\nОжидание подтверждения")
-      .catch((error) => text = "Ошибка при отправке подтвержденя на Email");
+      .catch(() => text = "Ошибка при отправке подтвержденя на Email");
 
     console.log("Письмо с подтверждением отправлено");
     console.log("Регистрация завершена");
 
     // Ожидание подтверждения почты
     await waitForEmailVerification()
-      .catch((error) => text = "Ошибка при подтверждении почты");
+      .catch(() => text = "Ошибка при подтверждении почты");
 
     setResendBtnLoading(false);
     text='';
@@ -71,7 +71,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.secondary,
     }}>
       <View style={{
         alignItems: "center",
