@@ -53,7 +53,7 @@ const App = () => {
 
     const init = async () => {
       initializeApp().then();
-      if (!auth().currentUser.emailVerified) {
+      if (auth().currentUser && !auth().currentUser.emailVerified) {
         await waitForEmailVerification()
           .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
       }
