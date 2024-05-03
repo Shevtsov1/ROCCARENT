@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Icon } from "@rneui/base";
-import { Overlay, Avatar, Button, Skeleton, Divider } from "@rneui/themed";
+import { Overlay, Avatar, Button} from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -365,9 +365,6 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                                                    style={styles.profilePersonalDataText}>Имя:</Text></View>
                 <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
                                                                    style={styles.profilePersonalDataText}>Фамилия:</Text></View>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={styles.profilePersonalDataText}>Номер
-                  телефона:</Text></View>
                 <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
                                                                    style={styles.profilePersonalDataText}>Email:</Text></View>
                 <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
