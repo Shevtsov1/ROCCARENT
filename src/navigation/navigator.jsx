@@ -109,91 +109,92 @@ const TabButton = React.memo((props) => {
   if (item.route === "CreateAd") {
     // Отдельные стили для кнопки "CreateAd"
     return (
-        <TouchableOpacity
-          onPress={handlePress}
-          activeOpacity={1}
-          style={[styles.container, {
-            flex: 1, alignItems: "center", backgroundColor: bgColor,
-          }]}
-        >
-          <View style={{ justifyContent: "center", alignItems: "center", bottom: 2, width: "100%", height: 64 }}>
-              <View
-                style={
-                  {
-                    width: 48,
-                    height: 36,
-                    borderRadius: 15,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: accentColor,
-                  }
-                }
-              >
-                <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
-                  <Icon
-                    type={item.type}
-                    name={focused ? item.activeIcon : item.inActiveIcon}
-                    color={theme.colors.background}
-                    size={22}
-                  />
-                </Animated.View>
-              </View>
+      <TouchableOpacity
+        onPress={handlePress}
+        activeOpacity={1}
+        style={[styles.container, {
+          flex: 1, alignItems: "center", backgroundColor: bgColor,
+        }]}
+      >
+        <View style={{ justifyContent: "center", alignItems: "center", bottom: 2, width: "100%", height: 64 }}>
+          <View
+            style={
+              {
+                width: 48,
+                height: 36,
+                borderRadius: 15,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: accentColor,
+              }
+            }
+          >
+            <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
+              <Icon
+                type={item.type}
+                name={focused ? item.activeIcon : item.inActiveIcon}
+                color={theme.colors.background}
+                size={22}
+              />
+            </Animated.View>
           </View>
-        </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   } else {
     // Стили для остальных кнопок
     return (
-        <TouchableOpacity onPress={handlePress} activeOpacity={1}
-                          style={[styles.container, {
-                            top: 0,
-                            alignItems: "center",
-                            backgroundColor: bgColor,
-                          }]}>
+      <TouchableOpacity onPress={handlePress} activeOpacity={1}
+                        style={[styles.container, {
+                          top: 0,
+                          alignItems: "center",
+                          backgroundColor: bgColor,
+                        }]}>
 
-          <View style={styles.iconContainer}>
-            <Animated.View
-              style={{ transform: [{ scale: scaleValue }, { translateY: translateYValue }] }}>
-              <Icon
-                type={item.type}
-                name={focused ? item.activeIcon : item.inActiveIcon}
-                color={focused ? activeTabBarIconColor : inActiveTabBarIconColor}
-              />
+        <View style={styles.iconContainer}>
+          <Animated.View
+            style={{ transform: [{ scale: scaleValue }, { translateY: translateYValue }] }}>
+            <Icon
+              type={item.type}
+              name={focused ? item.activeIcon : item.inActiveIcon}
+              color={focused ? activeTabBarIconColor : inActiveTabBarIconColor}
+            />
+          </Animated.View>
+          {focused && (
+            <Animated.View style={{ opacity: opacityValue }}>
+              <Text style={{ fontFamily: "Roboto-Black", fontSize: 12, color: accentColor }}>{label}</Text>
             </Animated.View>
-            {focused && (
-              <Animated.View style={{ opacity: opacityValue }}>
-                <Text style={{ fontFamily: "Roboto-Black", fontSize: 12, color: accentColor }}>{label}</Text>
-              </Animated.View>
-            )}
-          </View>
-        </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
     );
   }
 });
 
 // Компонент нижней навигации по вкладкам
 const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializing, setLoadingScreenText }) => {
+  const routeNamesToCheck = ["LogIn", "LogUp", "EditProfile", "Settings", "DealArchive"];
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
-        screenOptions={({route}) => ({
+        screenOptions={({ route }) => ({
           headerShown: false,
         })}
       >
         {TabArr.map((item, index) => {
           return (
             <Tab.Screen key={index} name={item.route}
-                        options={({route}) => ({
+                        options={({ route }) => ({
                           tabBarStyle: ((route) => {
-                            const routeName = getFocusedRouteNameFromRoute(route) ?? ""
-                            if (routeName === 'LogIn' || routeName === 'LogUp') {
-                              return { display: "none" }
-                            } else  {
+                            const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+                            if (routeNamesToCheck.includes(routeName)) {
+                              return { display: "none" };
+                            } else {
                               return {
                                 borderTopWidth: 0,
                                 height: 60,
                                 elevation: 0,
-                              }
+                              };
                             }
                           })(route),
                           tabBarShowLabel: false,
