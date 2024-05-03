@@ -1,10 +1,13 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/profileScreen/profile";
 import LogIn from "../screens/authScreen/logIn";
 import LogUp from "../screens/authScreen/logUp";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
+import EditProfile from "../screens/profileScreen/components/editProfile";
+import Settings from "../screens/profileScreen/components/settings";
+import DealArchive from "../screens/profileScreen/components/dealArchive";
 
 const Stack = createNativeStackNavigator();
 
@@ -59,9 +62,18 @@ export const ProfileStackNavigator = ({
       <Stack.Screen name="LogIn" options={{ title: "Вход", headerShown: false }}>{(props) =>
         <LogIn {...props} user={user} theme={theme} setInitializing={setInitializing}
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
-      <Stack.Screen name="LogUp" options={{ title: "Регистрация", headerShown: false, }}>{(props) =>
+      <Stack.Screen name="LogUp" options={{ title: "Регистрация", headerShown: false }}>{(props) =>
         <LogUp {...props} user={user} theme={theme} setInitializing={setInitializing}
-               setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress}/>}</Stack.Screen>
+               setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
+      <Stack.Screen name="EditProfile" options={{ headerShown: false }}>{(props) =>
+        <EditProfile {...props} theme={theme} setInitializing={setInitializing}
+                     setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+      <Stack.Screen name="Settings" options={{ headerShown: false }}>{(props) =>
+        <Settings {...props} theme={theme} setInitializing={setInitializing}
+                     setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+      <Stack.Screen name="DealArchive" options={{ headerShown: false }}>{(props) =>
+        <DealArchive {...props} theme={theme} setInitializing={setInitializing}
+                  setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
     </Stack.Navigator>
   );
-}
+};
