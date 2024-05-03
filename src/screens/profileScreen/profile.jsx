@@ -104,6 +104,13 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
       height: 240,
       backgroundColor: theme.colors.background,
       borderRadius: 15,
+      paddingHorizontal: 12,
+      paddingBottom: 6,
+      paddingTop: 12,
+    }, profilePersonalDataName: {
+      flex: 1, justifyContent: "center", alignItems: "flex-start",
+    }, profilePersonalDataText: {
+      width: "100%", fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text,
     }, profileAppDataContainer: {}, profileDataLogoContainer: {
       marginVertical: 24,
     }, profileAppDataBtnContainer: {
@@ -230,7 +237,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 </>}
                 {!auth().currentUser.isAnonymous && <>
                   <View style={styles.profileMainCardHeader}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
                       <Icon type={"ionicon"} name={"settings-outline"} size={24} color={theme.colors.text} />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -249,7 +256,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                     <Overlay overlayStyle={styles.logoutOverlay} isVisible={visible} onBackdropPress={toggleOverlay}>
                       <ShadowedView style={[{ alignSelf: "center", borderRadius: 15 }, shadowStyle({
                         color: theme.colors.error,
-                        opacity: 0.3,
+                        opacity: 0.1,
                         radius: 15,
                         offset: [0, 2],
                       })]}>
@@ -315,15 +322,17 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                     </Overlay>
                   </View>
                   <View style={styles.profileMainCardBody}>
-                    <Avatar
-                      size={"large"}
-                      rounded
-                      title={auth().currentUser.email.substring(0, 2).toUpperCase()}
-                      containerStyle={{ backgroundColor: "blue" }}
-                    />
-                    <Text style={{
+                    <TouchableOpacity>
+                      <Avatar
+                        size={"large"}
+                        rounded
+                        title={auth().currentUser.email.substring(0, 2).toUpperCase()}
+                        containerStyle={{ backgroundColor: "blue" }}
+                      />
+                    </TouchableOpacity>
+                    <Text numberOfLines={1} style={{
                       fontFamily: "Roboto-Bold",
-                      fontSize: 20,
+                      fontSize: 18,
                       color: theme.colors.text,
                     }}>{auth().currentUser.email}</Text>
                   </View>
@@ -343,14 +352,24 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 radius: 4,
                 offset: [0, 0],
               }), styles.profilePersonalDataCard]}>
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}><Text
-                  style={{ fontFamily: "Roboto-Black", fontSize: 24 }}>Вика</Text></View>
-                <Divider color={theme.colors.text} />
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}><Text
-                  style={{ fontFamily: "Roboto-Black", fontSize: 24 }}>Мелкая</Text></View>
-                <Divider color={theme.colors.text} />
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}><Text
-                  style={{ fontFamily: "Roboto-Black", fontSize: 24 }}>КРЫСА</Text></View>
+                <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}
+                                  onPress={() => navigation.navigate("EditProfile")}>
+                  <Image source={require("../../assets/images/user-pen.png")} style={{ width: 24, height: 24 }}
+                         resizeMode={"contain"} />
+                </TouchableOpacity>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={[styles.profilePersonalDataText, { width: "90%" }]}>Никнейм: {auth().currentUser.email}daskdhajdhajdhajdhajh</Text></View>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={styles.profilePersonalDataText}>Имя:</Text></View>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={styles.profilePersonalDataText}>Фамилия:</Text></View>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={styles.profilePersonalDataText}>Номер
+                  телефона:</Text></View>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={styles.profilePersonalDataText}>Email:</Text></View>
+                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
+                                                                   style={styles.profilePersonalDataText}>Паспорт:</Text></View>
               </ShadowedView>
             </View>
           </View>}
@@ -373,10 +392,17 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                               color: theme.colors.grey2, opacity: 0.8,
                               radius: 4, offset: [0, 0],
                             }), styles.profileAppDataBtnIconContainer]}>
-                              <Icon type={"ionicon"} name={"heart"} color={theme.colors.accent} size={34} />
+                              <Icon type={"ionicon"} name={"bookmarks"} color={theme.colors.accent} size={30} />
                             </ShadowedView>
-                          } iconPosition={"left"}>
-                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Избранное</Text>
+                          } iconPosition={"left"} onPress={() => navigation.navigate("Favorites")}>
+                    <View style={{ width: "70%", alignItems: "center" }}>
+                      <Text numberOfLines={1}
+                            style={{
+                              fontFamily: "Roboto-Bold",
+                              fontSize: 18,
+                              color: theme.colors.text,
+                            }}>Избранное</Text>
+                    </View>
                   </Button>
                 </ShadowedView>
                 <ShadowedView style={[shadowStyle({
@@ -393,11 +419,18 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                               radius: 4, offset: [0, 0],
                             }), styles.profileAppDataBtnIconContainer]}>
                               <View>
-                                <Icon type={"ionicon"} name={"settings"} color={theme.colors.accent} size={34} />
+                                <Icon type={"ionicon"} name={"settings"} color={theme.colors.accent} size={30} />
                               </View>
                             </ShadowedView>
-                          } iconPosition={"left"}>
-                    <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Настройки</Text>
+                          } iconPosition={"left"} onPress={() => navigation.navigate('Settings')}>
+                    <View style={{ width: "70%", alignItems: "center" }}>
+                      <Text numberOfLines={1}
+                            style={{
+                              fontFamily: "Roboto-Bold",
+                              fontSize: 18,
+                              color: theme.colors.text,
+                            }}>Настройки</Text>
+                    </View>
                   </Button>
                 </ShadowedView>
               </View>
@@ -416,12 +449,15 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                 color: theme.colors.grey2, opacity: 0.8,
                                 radius: 4, offset: [0, 0],
                               }), styles.profileAppDataBtnIconContainer]}>
-                                <Icon type={"ionicon"} name={"information-circle"} color={theme.colors.accent}
-                                      size={34} />
+                                <Icon type={"ionicon"} name={"archive"} color={theme.colors.accent}
+                                      size={30} />
                               </ShadowedView>
-                            } iconPosition={"left"}>
-                      <Text
-                        style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Поддержка</Text>
+                            } iconPosition={"left"} onPress={() => navigation.navigate('DealArchive')}>
+                      <View style={{ width: "70%", flexShrink: 2, alignItems: "center" }}>
+                        <Text numberOfLines={2}
+                              style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>История
+                          сделок</Text>
+                      </View>
                     </Button>
                   </ShadowedView>
                   <ShadowedView style={[shadowStyle({
@@ -443,7 +479,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                 </View>
                               </ShadowedView>
                             } iconPosition={"left"}>
-                      <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>Выход</Text>
+                      <View style={{ width: "70%", alignItems: "center" }}>
+                        <Text numberOfLines={1}
+                              style={{
+                                fontFamily: "Roboto-Bold",
+                                fontSize: 18,
+                                color: theme.colors.text,
+                              }}>Выход</Text>
+                      </View>
                     </Button>
                   </ShadowedView>
                 </View>}
