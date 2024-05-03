@@ -165,7 +165,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 {auth().currentUser.isAnonymous && <>
                   <View style={styles.profileMainCardHeader}>
                     <TouchableOpacity style={{ position: "absolute", top: 0, left: 0 }}>
-                      <Icon type={"ionicon"} name={"settings-outline"} size={30} color={theme.colors.text} />
+                      <Icon type={"ionicon"} name={"settings-outline"} size={30} color={theme.colors.text} onPress={() => navigation.navigate('Settings')}/>
                     </TouchableOpacity>
                     <Text style={{
                       fontFamily: "Roboto-Black",
