@@ -165,7 +165,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 {auth().currentUser.isAnonymous && <>
                   <View style={styles.profileMainCardHeader}>
                     <TouchableOpacity style={{ position: "absolute", top: 0, left: 0 }}>
-                      <Icon type={"ionicon"} name={"settings-outline"} size={30} color={theme.colors.text} onPress={() => navigation.navigate('Settings')}/>
+                      <Icon type={"ionicon"} name={"settings-outline"} size={30} color={theme.colors.text}
+                            onPress={() => navigation.navigate("Settings")} />
                     </TouchableOpacity>
                     <Text style={{
                       fontFamily: "Roboto-Black",
@@ -237,7 +238,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 </>}
                 {!auth().currentUser.isAnonymous && <>
                   <View style={styles.profileMainCardHeader}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
                       <Icon type={"ionicon"} name={"settings-outline"} size={24} color={theme.colors.text} />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -354,7 +355,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               }), styles.profilePersonalDataCard]}>
                 <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}
                                   onPress={() => navigation.navigate("EditProfile")}>
-                  <Image source={require("../../assets/images/user-pen.png")} style={{ width: 24, height: 24 }}
+                  <Image source={require("../../assets/images/user-pen.png")}
+                         style={{ width: 24, height: 24, tintColor: theme.colors.text }}
                          resizeMode={"contain"} />
                 </TouchableOpacity>
                 <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
@@ -422,7 +424,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                 <Icon type={"ionicon"} name={"settings"} color={theme.colors.accent} size={30} />
                               </View>
                             </ShadowedView>
-                          } iconPosition={"left"} onPress={() => navigation.navigate('Settings')}>
+                          } iconPosition={"left"} onPress={() => navigation.navigate("Settings")}>
                     <View style={{ width: "70%", alignItems: "center" }}>
                       <Text numberOfLines={1}
                             style={{
@@ -452,7 +454,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                 <Icon type={"ionicon"} name={"archive"} color={theme.colors.accent}
                                       size={30} />
                               </ShadowedView>
-                            } iconPosition={"left"} onPress={() => navigation.navigate('DealArchive')}>
+                            } iconPosition={"left"} onPress={() => navigation.navigate("DealArchive")}>
                       <View style={{ width: "70%", flexShrink: 2, alignItems: "center" }}>
                         <Text numberOfLines={2}
                               style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>История
