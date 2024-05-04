@@ -6,8 +6,28 @@ import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { Avatar, Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button, color } from "@rneui/base";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const EditProfile = ({ theme, navigation }) => {
+
+  const handleLaunchCamera = async () => {
+    const result = await launchCamera({
+      mediaType: 'photo',
+      allowsEditing: false,
+      aspectRatio: 'square',
+      quality: 1,
+    });
+  }
+
+  const handleLaunchCameraLibrary = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      allowsEditing: false,
+      aspectRatio: 'square',
+      quality: 1,
+    });
+  }
+
 
   const styles = StyleSheet.create({
     container: {
@@ -174,9 +194,8 @@ const EditProfile = ({ theme, navigation }) => {
                 <Text style={styles.editImageCardText}>Пасспортные данные</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Input />
-                <Input />
-                <Input />
+                <Button title={'camera'} onPress={handleLaunchCamera}/>
+                <Button title={'gallery'} onPress={handleLaunchCameraLibrary}/>
               </View>
             </View>
           </ShadowedView>
