@@ -6,7 +6,6 @@ import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { Avatar, Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button, color } from "@rneui/base";
-import PhoneInput from "react-native-phone-number-input";
 
 const EditProfile = ({ theme, navigation }) => {
 
