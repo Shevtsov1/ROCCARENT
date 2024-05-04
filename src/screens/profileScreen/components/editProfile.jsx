@@ -7,25 +7,37 @@ import { Avatar, Icon, Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button, color } from "@rneui/base";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 
 const EditProfile = ({ theme, navigation }) => {
 
+  const [passportData, setPassportData] = useState('');
+
   const handleLaunchCamera = async () => {
-    const result = await launchCamera({
+    const photo = await launchCamera({
       mediaType: 'photo',
       allowsEditing: false,
       aspectRatio: 'square',
       quality: 1,
     });
+    const result = await TextRecognition.recognize(photo.assets[0].uri);
+    const resultLength = result.blocks.length;
+    setPassportData(result.blocks[resultLength-1].text);
+    console.log(result.blocks.pop().text);
   }
 
   const handleLaunchCameraLibrary = async () => {
-    const result = await launchImageLibrary({
+    const photo = await launchImageLibrary({
       mediaType: 'photo',
       allowsEditing: false,
       aspectRatio: 'square',
       quality: 1,
+      selectionLimit: 1,
     });
+    const result = await TextRecognition.recognize(photo.assets[0].uri);
+    const resultLength = result.blocks.length;
+    setPassportData(result.blocks[resultLength-1].text);
+    console.log(result.blocks.pop().text);
   }
 
 
@@ -200,6 +212,7 @@ const EditProfile = ({ theme, navigation }) => {
             </View>
           </ShadowedView>
         </View>
+        <Text>{passportData}</Text>
         <Button containerStyle={styles.confirmBtnContainer} buttonStyle={styles.confirmBtn}
                 titleStyle={{ color: theme.colors.grey1 }}>
           <Text style={styles.confirmBtnText}>Сохранить изменения</Text>
