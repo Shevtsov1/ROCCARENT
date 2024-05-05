@@ -67,8 +67,6 @@ const TabButton = React.memo((props) => {
   const activeTabBarIconColor = theme.colors.accent;
   const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : "";
-  const accentColor = theme.colors.accent;
-  const bgColor = theme.colors.secondary;
 
   const rotateInterpolation = rotation.interpolate({
     inputRange: [0, 1],
@@ -113,7 +111,7 @@ const TabButton = React.memo((props) => {
         onPress={handlePress}
         activeOpacity={1}
         style={[styles.container, {
-          flex: 1, alignItems: "center", backgroundColor: bgColor,
+          flex: 1, alignItems: "center", backgroundColor: theme.colors.secondary,
         }]}
       >
         <View style={{ justifyContent: "center", alignItems: "center", bottom: 2, width: "100%", height: 64 }}>
@@ -125,7 +123,7 @@ const TabButton = React.memo((props) => {
                 borderRadius: 15,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: accentColor,
+                backgroundColor: theme.colors.accent,
               }
             }
           >
@@ -133,7 +131,7 @@ const TabButton = React.memo((props) => {
               <Icon
                 type={item.type}
                 name={focused ? item.activeIcon : item.inActiveIcon}
-                color={theme.colors.background}
+                color={theme.colors.accentText}
                 size={22}
               />
             </Animated.View>
@@ -148,7 +146,7 @@ const TabButton = React.memo((props) => {
                         style={[styles.container, {
                           top: 0,
                           alignItems: "center",
-                          backgroundColor: bgColor,
+                          backgroundColor: theme.colors.secondary,
                         }]}>
 
         <View style={styles.iconContainer}>
@@ -162,7 +160,7 @@ const TabButton = React.memo((props) => {
           </Animated.View>
           {focused && (
             <Animated.View style={{ opacity: opacityValue }}>
-              <Text style={{ fontFamily: "Roboto-Black", fontSize: 12, color: accentColor }}>{label}</Text>
+              <Text style={{ fontFamily: "Roboto-Black", fontSize: 12, color: theme.colors.accent }}>{label}</Text>
             </Animated.View>
           )}
         </View>
@@ -192,7 +190,7 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
                             } else {
                               return {
                                 borderTopWidth: 0,
-                                height: 60,
+                                height: 48,
                                 elevation: 0,
                               };
                             }
