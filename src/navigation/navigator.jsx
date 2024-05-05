@@ -175,7 +175,7 @@ const BottomTabNavigator = ({ user, theme, toggleMode, isDarkMode, setInitializi
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
-        screenOptions={({ route }) => ({
+        screenOptions={() => ({
           headerShown: false,
         })}
       >
