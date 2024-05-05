@@ -349,7 +349,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           </View>
           {!auth().currentUser.isAnonymous && <View style={styles.profilePersonalDataContainer}>
             <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.accent, fontSize: 20 }}>Личные
+              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 20 }}>Личные
                 данные</Text>
             </View>
             <View>
@@ -380,7 +380,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           </View>}
           <View style={styles.profileAppDataContainer}>
             <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.accent, fontSize: 20 }}>Профиль</Text>
+              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 20 }}>Профиль</Text>
             </View>
             <View>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
