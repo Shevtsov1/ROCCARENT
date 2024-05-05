@@ -58,14 +58,13 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
 
     body: {
       flex: 1,
-      paddingHorizontal: wp(4),
       backgroundColor: theme.colors.secondary,
     }, profileMainCardContainer: {
-      marginTop: hp(1),
+      width: "100%",
       justifyContent: "center",
       alignSelf: "center",
     }, profileMainCard: {
-      width: wp(90),
+      width: "100%",
       height: auth().currentUser.isAnonymous ? 360 : 240,
       padding: 12,
       backgroundColor: theme.colors.background,
@@ -116,18 +115,18 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
     }, profilePersonalDataText: {
       fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text,
     }, profileAppDataContainer: {}, profileDataLogoContainer: {
-      marginVertical: 24,
+      marginVertical: 6,
     }, profileAppDataBtnContainer: {
-      width: "48%",
+      width: "49%",
       height: 120,
       borderRadius: 15,
       backgroundColor: `${theme.colors.accent}AA`,
+      marginBottom: 6,
     }, profileAppDataBtn: {
       width: "100%",
       height: 120,
       flexDirection: "row",
       justifyContent: "flex-start",
-      paddingVertical: 6,
       paddingHorizontal: 12,
       backgroundColor: theme.colors.background,
       borderRadius: 15,
@@ -157,7 +156,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
-        <View style={{ paddingTop: hp(3) }}>
+        <View style={{
+          paddingVertical: hp(1),
+          paddingHorizontal: wp(2),
+        }}>
           <View style={styles.profileMainCardContainer}>
             <ShadowedView style={[shadowStyle({
               color: theme.colors.grey3,
@@ -273,7 +275,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                             fontFamily: "Roboto-Black",
                             fontSize: 18,
                             color: theme.colors.text,
-                            marginBottom: 12,
+                            marginBottom: 6,
                           }}>
                           Выход из аккаунта
                         </Text>
@@ -350,7 +352,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.accent, fontSize: 20 }}>Личные
                 данные</Text>
             </View>
-            <View style={{ paddingHorizontal: 6 }}>
+            <View>
               <ShadowedView style={[shadowStyle({
                 color: theme.colors.grey3,
                 opacity: 1,
@@ -364,8 +366,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                          resizeMode={"contain"} />
                 </TouchableOpacity>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
-                                                              style={styles.profilePersonalDataName}>Никнейм:</Text><Text
-                numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
+                                                               style={styles.profilePersonalDataName}>Никнейм:</Text><Text
+                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
                                                                style={styles.profilePersonalDataName}>Email:</Text><Text
                   numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
@@ -380,14 +382,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
             <View style={styles.profileDataLogoContainer}>
               <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.accent, fontSize: 20 }}>Профиль</Text>
             </View>
-            <View style={{ paddingHorizontal: 6 }}>
+            <View>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <ShadowedView style={[shadowStyle({
                   color: theme.colors.grey3,
                   opacity: 1,
                   radius: 4,
                   offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                }), styles.profileAppDataBtnContainer, {borderRadius: 15 }]}>
                   <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
                           buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                           icon={
@@ -413,7 +415,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   opacity: 1,
                   radius: 4,
                   offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
                   <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
                           buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                           icon={
@@ -444,7 +446,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                     opacity: 1,
                     radius: 4,
                     offset: [0, 0],
-                  }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                  }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
                     <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
                             buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                             icon={
@@ -468,7 +470,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                     opacity: 1,
                     radius: 4,
                     offset: [0, 0],
-                  }), styles.profileAppDataBtnContainer, { marginBottom: 12, borderRadius: 15 }]}>
+                  }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
                     <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
                             buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                             onPress={toggleOverlay}
