@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/profileScreen/profile";
 import LogIn from "../screens/authScreen/logIn";
@@ -43,6 +43,8 @@ export const ProfileStackNavigator = ({
     }
   };
 
+  const [passportData, setPassportData] = useState('');
+
   return (
     <Stack.Navigator
       initialRouteName={"Profile"}
@@ -58,7 +60,7 @@ export const ProfileStackNavigator = ({
       }}>
       <Stack.Screen name="Profile" options={{ title: "Профиль", headerShown: false }}>{(props) =>
         <Profile {...props} user={user} theme={theme} toggleMode={toggleMode}
-                 setInitializing={setInitializing} />}</Stack.Screen>
+                 setInitializing={setInitializing} passportData={passportData} />}</Stack.Screen>
       <Stack.Screen name="LogIn" options={{ title: "Вход", headerShown: false }}>{(props) =>
         <LogIn {...props} user={user} theme={theme} setInitializing={setInitializing}
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
@@ -67,7 +69,7 @@ export const ProfileStackNavigator = ({
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
       <Stack.Screen name="EditProfile" options={{ headerShown: false }}>{(props) =>
         <EditProfile {...props} theme={theme} setInitializing={setInitializing}
-                     setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+                     setLoadingScreenText={setLoadingScreenText} passportData={passportData} setPassportData={setPassportData}/>}</Stack.Screen>
       <Stack.Screen name="Settings" options={{ headerShown: false }}>{(props) =>
         <Settings {...props} theme={theme} setInitializing={setInitializing}
                      setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>

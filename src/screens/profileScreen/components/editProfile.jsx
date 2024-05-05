@@ -8,38 +8,11 @@ import auth from "@react-native-firebase/auth";
 import { Button, color } from "@rneui/base";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import TextRecognition, { TextRecognitionScript } from "@react-native-ml-kit/text-recognition";
-import DocumentScanner from 'react-native-document-scanner-plugin'
 
-const EditProfile = ({ theme, navigation }) => {
+const EditProfile = ({ theme, navigation, passportData, setPassportData }) => {
 
-  const [passportData, setPassportData] = useState('');
-  const passportRegexPattern = /^[0-9]{7}[A-Z][0-9]{3}[A-Z]{2}[0-9]$/;
-
-  const scanDocument = async () => {
-    // start the document scanner
-    const { scannedImages } = await DocumentScanner.scanDocument({croppedImageQuality: 100, maxNumDocuments: 1})
-
-    // get back an array with scanned image file paths
-    if (scannedImages.length > 0) {
-      console.log(scannedImages);
-      // set the img src, so we can view the first scanned image
-      const result = await TextRecognition.recognize(scannedImages[0])
-      console.log(result.blocks)
-      const matchingBlock = result.blocks.find(block => block.text.includes('HYMAP'));
-      if (matchingBlock) {
-        const textArr = matchingBlock.text.split('\n');
-        for (const word of textArr) {
-          if (word.match(passportRegexPattern)){
-            setPassportData(word);
-            break;
-          }
-        }
-      } else {
-        // No matching block was found
-        console.log('No matching block found');
-      }
-    }
-  }
+  const [passportVerified, setPassportVerified] = useState(false);
+  const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
   const handleLaunchCamera = async () => {
     const photo = await launchCamera({
@@ -55,7 +28,7 @@ const EditProfile = ({ theme, navigation }) => {
   }
 
   const handleLaunchCameraLibrary = async () => {
-    const photo = await launchImageLibrary({
+    const passportImage = await launchImageLibrary({
       mediaType: 'photo',
       allowsEditing: false,
       aspectRatio: 'square',
@@ -63,12 +36,27 @@ const EditProfile = ({ theme, navigation }) => {
       selectionLimit: 1,
       includeBase64: true
     });
-    const result = await TextRecognition.recognize(photo.assets[0].uri);
-    const resultLength = result.blocks.length;
-    setPassportData(result.text);
-    console.log(result.blocks.pop().text);
+    await verifyPassport(passportImage);
   }
 
+  const verifyPassport = async (passportImage) => {
+    const result = await TextRecognition.recognize(passportImage.assets[0].uri)
+    const textArr = result.text.split('\n');
+    const finalArray = [];
+    for (let i = 0; i < textArr.length; i++) {
+      const words = textArr[i].split(' ');
+      finalArray.push(...words);
+    }
+    for (let i = 0; i < finalArray.length; i++) {
+      const element = finalArray[i];
+      if (passportRegexPattern.test(element)) {
+        setPassportData(element);
+        setPassportVerified(true);
+        console.log("Passport data found:", element);
+      }
+    }
+    if (!passportVerified) console.log('Не удалось просканировать пасспорт, повторите попытку')
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -237,7 +225,6 @@ const EditProfile = ({ theme, navigation }) => {
               <View style={{ flex: 1 }}>
                 <Button title={'camera'} onPress={handleLaunchCamera}/>
                 <Button title={'gallery'} onPress={handleLaunchCameraLibrary}/>
-                <Button title={'scan'} onPress={scanDocument}/>
               </View>
             </View>
           </ShadowedView>

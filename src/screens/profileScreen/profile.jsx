@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Icon } from "@rneui/base";
-import { Overlay, Avatar, Button} from "@rneui/themed";
+import { Overlay, Avatar, Button } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -9,7 +9,7 @@ import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import switchTheme from "react-native-theme-switch-animation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
+const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
 
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
@@ -101,16 +101,20 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
       alignItems: "center",
     }, profilePersonalDataContainer: {}, profilePersonalDataCard: {
       width: "100%",
-      height: 240,
+      height: 144,
       backgroundColor: theme.colors.background,
       borderRadius: 15,
       paddingHorizontal: 12,
       paddingBottom: 6,
       paddingTop: 12,
+    }, profilePersonalData: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
     }, profilePersonalDataName: {
-      flex: 1, justifyContent: "center", alignItems: "flex-start",
+      fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text, marginEnd: 6,
     }, profilePersonalDataText: {
-      width: "100%", fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text,
+      fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text,
     }, profileAppDataContainer: {}, profileDataLogoContainer: {
       marginVertical: 24,
     }, profileAppDataBtnContainer: {
@@ -359,16 +363,16 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                          style={{ width: 24, height: 24, tintColor: theme.colors.text }}
                          resizeMode={"contain"} />
                 </TouchableOpacity>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={[styles.profilePersonalDataText, { width: "90%" }]}>Никнейм: {auth().currentUser.email}daskdhajdhajdhajdhajh</Text></View>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={styles.profilePersonalDataText}>Имя:</Text></View>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={styles.profilePersonalDataText}>Фамилия:</Text></View>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={styles.profilePersonalDataText}>Email:</Text></View>
-                <View style={styles.profilePersonalDataName}><Text numberOfLines={1}
-                                                                   style={styles.profilePersonalDataText}>Паспорт:</Text></View>
+                <View style={styles.profilePersonalData}><Text numberOfLines={1}
+                                                              style={styles.profilePersonalDataName}>Никнейм:</Text><Text
+                numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
+                <View style={styles.profilePersonalData}><Text numberOfLines={1}
+                                                               style={styles.profilePersonalDataName}>Email:</Text><Text
+                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
+                <View style={styles.profilePersonalData}><Text numberOfLines={1}
+                                                               style={styles.profilePersonalDataName}>Паспорт:</Text><Text
+                  numberOfLines={1}
+                  style={styles.profilePersonalDataText}>{passportData ? (passportData.substring(0, 3) + "*".repeat(passportData.length - 3)) : "Заполните профиль"}</Text></View>
               </ShadowedView>
             </View>
           </View>}
@@ -491,10 +495,6 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                 </View>}
             </View>
           </View>
-          {/*{user && <Text>{user.uid}</Text>}*/}
-          {/*<Button onPress={() => auth()*/}
-          {/*  .signOut()*/}
-          {/*  .then(() => GoogleSignin.signOut().then(() => console.log("User signed out!")))} title={"LOGOUT"} />*/}
         </View>
       </ScrollView>
     </SafeAreaView>
