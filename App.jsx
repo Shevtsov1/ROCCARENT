@@ -17,8 +17,8 @@ const App = () => {
   const [loadingScreenText, setLoadingScreenText] = useState(null);
 
   StatusBar.setTranslucent(true);
-  StatusBar.setBackgroundColor(theme.colors.secondary);
-  StatusBar.setBarStyle(theme.mode === 'dark' ? 'light-content' : 'dark-content', true);
+  StatusBar.setBackgroundColor(theme.colors.accent);
+  StatusBar.setBarStyle('light-content', true);
 
   changeNavigationBarColor(theme.colors.secondary, theme.mode !== 'dark', false);
 
