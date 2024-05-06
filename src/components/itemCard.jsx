@@ -13,18 +13,18 @@ const ItemCard = ({ theme, item }) => {
     const lastTwoDigits = count % 100;
 
     if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-      return 'оценок';
+      return "оценок";
     }
 
     if (lastDigit === 1) {
-      return 'оценка';
+      return "оценка";
     }
 
     if (lastDigit >= 2 && lastDigit <= 4) {
-      return 'оценки';
+      return "оценки";
     }
 
-    return 'оценок';
+    return "оценок";
   }
 
   const styles = StyleSheet.create({
@@ -83,20 +83,22 @@ const ItemCard = ({ theme, item }) => {
                  style={styles.mainCardImage} />
         </View>
         <View style={styles.mainCardTextContainer}>
-          <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price} <Text style={{ fontSize: 14 }}>BYN/сут</Text></Text>
-          <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
+          <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price} <Text
+            style={{ fontSize: 14 }}>BYN/сут</Text></Text>
+          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.owner}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
           <View style={{ flexDirection: "row" }}>
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
             </View>
             <Text numberOfLines={1} style={styles.mainCardTextMark}>
-              {'\ '}{item.mark.toFixed(1).replace('.', ',')}{'\ '}
+              {"\ "}{item.mark.toFixed(1).replace(".", ",")}{"\ "}
             </Text>
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
             </View>
-            <Text numberOfLines={1} style={styles.mainCardTextRating}>{'\ '}{item.ratings} {getRatingWord(item.ratings)}</Text>
+            <Text numberOfLines={1}
+                  style={styles.mainCardTextRating}>{"\ "}{item.ratings} {getRatingWord(item.ratings)}</Text>
           </View>
         </View>
       </View>
