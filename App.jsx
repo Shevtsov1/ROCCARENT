@@ -12,7 +12,6 @@ const App = () => {
 
   const { theme, toggleMode, loadMode } = useCustomTheme();
 
-  const [user, setUser] = useState(null);
   const [initializing, setInitializing] = useState(true);
   const [loadingScreenText, setLoadingScreenText] = useState(null);
 
@@ -36,10 +35,7 @@ const App = () => {
   };
 
   async function onAuthStateChanged(user) {
-    if (user) {
-      // Пользователь вошел в аккаунт
-      setUser(user);
-    } else {
+    if (!user) {
       // Пользователь не вошел в аккаунт, предлагаем выбрать аккаунт Google
       auth().signInAnonymously().then();
     }
@@ -86,7 +82,7 @@ const App = () => {
         initializing ? (
           <LoadingScreen theme={theme} text={loadingScreenText}/>
         ) : (
-          <AppNavigator user={user} theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
+          <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
         )
       )}
     </SafeAreaProvider>
