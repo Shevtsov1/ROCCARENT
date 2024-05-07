@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Animated, Easing, Image, Text, View } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { heightPercentageToDP, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -66,36 +66,41 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
   };
 
   return (
-  <SafeAreaView style={{flex: 1}}>
-    <View style={{
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: theme.colors.secondary,
-    }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={{
+        flex: 1,
+        justifyContent: 'center',
         alignItems: "center",
+        backgroundColor: theme.colors.secondary,
       }}>
-        <Animated.View
-          style={{
-            opacity,
-          }}
-        >
-          <Image
-            source={require("../assets/images/logo/logo.png")}
-            style={{ width: wp("60%") }}
-            resizeMode="contain"
-          />
-        </Animated.View>
-        <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>{text}</Text>
-        {resendEmailVerify && <Button onPress={handleResendVerification}
-                                      buttonStyle={{ borderRadius: 15, backgroundColor: theme.colors.accent }}
-                                      title={"Отправить повторно"}
-                                      titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.accentText }}
-                                      loading={resendBtnLoading} />}
+        <View style={{
+          flex: 1,
+          justifyContent: 'space-between',
+          alignItems: "center",
+        }}>
+          <Animated.View
+            style={{
+              opacity,
+              top: heightPercentageToDP(30),
+            }}
+          >
+            <Image
+              source={require("../assets/images/logo/logo.png")}
+              style={{ width: wp("60%"), height: wp(60) }}
+              resizeMode="contain"
+            />
+          </Animated.View>
+          <View>
+            <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>{text}</Text>
+            {resendEmailVerify && <Button onPress={handleResendVerification}
+                                          buttonStyle={{ borderRadius: 15, backgroundColor: theme.colors.accent }}
+                                          title={"Отправить повторно"}
+                                          titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.accentText }}
+                                          loading={resendBtnLoading} />}
+          </View>
+        </View>
       </View>
-    </View>
-  </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
