@@ -174,7 +174,7 @@ const EditProfile = ({ theme, navigation, passportData, setPassportData }) => {
                 size={"medium"}
                 rounded
                 title={auth().currentUser.email.substring(0, 2).toUpperCase()}
-                source={!auth().currentUser.email ? require('../../../assets/images/telephone.png') : null}
+                source={!auth().currentUser.email ? require('../../../../assets/images/telephone.png') : null}
                 containerStyle={{ backgroundColor: auth().currentUser.email && AvatarBackground, marginEnd: 12}}
               />
               <View style={{flex: 1}}>

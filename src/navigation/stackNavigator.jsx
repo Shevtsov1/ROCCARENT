@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/profileScreen/profile";
 import LogIn from "../screens/authScreen/logIn";
 import LogUp from "../screens/authScreen/logUp";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
-import EditProfile from "../screens/profileScreen/components/editProfile";
+import EditProfile from "../screens/profileScreen/components/editProfile/editProfile";
 import Settings from "../screens/profileScreen/components/settings";
 import DealArchive from "../screens/profileScreen/components/dealArchive";
 
@@ -67,15 +67,37 @@ export const ProfileStackNavigator = ({
       <Stack.Screen name="LogUp" options={{ title: "Регистрация", headerShown: false }}>{(props) =>
         <LogUp {...props} user={user} theme={theme} setInitializing={setInitializing}
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
-      <Stack.Screen name="EditProfile" options={{ headerShown: false }}>{(props) =>
-        <EditProfile {...props} theme={theme} setInitializing={setInitializing}
-                     setLoadingScreenText={setLoadingScreenText} passportData={passportData} setPassportData={setPassportData}/>}</Stack.Screen>
       <Stack.Screen name="Settings" options={{ headerShown: false }}>{(props) =>
         <Settings {...props} theme={theme} setInitializing={setInitializing}
                      setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
       <Stack.Screen name="DealArchive" options={{ headerShown: false }}>{(props) =>
         <DealArchive {...props} theme={theme} setInitializing={setInitializing}
                   setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+      <Stack.Screen name="EditProfileStackNavigator" options={{ headerShown: false }}>{(props) =>
+        <EditProfileStackNavigator {...props} theme={theme}/>}</Stack.Screen>
+    </Stack.Navigator>
+  );
+};
+
+export const EditProfileStackNavigator = ({
+                                        theme,
+                                      }) => {
+
+  return (
+    <Stack.Navigator
+      initialRouteName={"EditProfile"}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        headerTitleStyle: {
+          color: theme.colors.text,
+        },
+        headerTitleAlign: "center",
+        headerTintColor: theme.colors.text,
+      }}>
+      <Stack.Screen name="EditProfile" options={{ title: "Изменить профиль", headerShown: false }}>{(props) =>
+        <EditProfile {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };

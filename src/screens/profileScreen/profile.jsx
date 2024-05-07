@@ -360,7 +360,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                 offset: [0, 0],
               }), styles.profilePersonalDataCard]}>
                 <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}
-                                  onPress={() => navigation.navigate("EditProfile")}>
+                                  onPress={() => navigation.navigate("EditProfileStackNavigator")}>
                   <Image source={require("../../assets/images/user-pen.png")}
                          style={{ width: 24, height: 24, tintColor: theme.colors.text }}
                          resizeMode={"contain"} />
