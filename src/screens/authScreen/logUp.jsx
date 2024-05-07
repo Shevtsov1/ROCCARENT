@@ -10,7 +10,8 @@ import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoadingScreenText }) => {
+const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPress, navigation }) => {
+
     const [isPasswordSecure, setIsPasswordSecure] = useState(true);
     const [isConfirmPasswordSecure, setIsConfirmPasswordSecure] = useState(true);
     const [authBtnDisabled, setAuthBtnDisabled] = useState(true);
@@ -94,40 +95,41 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
       setTermsAccepted(isChecked);
     };
 
-    const handleLogUpBtn = async () => {
-      setInitializing(true);
-      try {
-        const newDisplayName = "";
-        const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
-        await auth().currentUser.linkWithCredential(emailAuthCredential);
-        // Регистрация завершена, отправляем письмо с подтверждением
-        await auth().currentUser.sendEmailVerification()
-          .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
-          .catch(() => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
+  const handleLogUpBtn = async () => {
+    setInitializing(true);
+    try {
+      const newDisplayName = name.trim() + ' ' + surname.trim();
+      const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
+      await auth().currentUser.linkWithCredential(emailAuthCredential);
 
-        console.log("Письмо с подтверждением отправлено");
+      // Установка displayName
+      const currentUser = auth().currentUser;
+      await currentUser.updateProfile({
+        displayName: newDisplayName,
+      });
 
-        // Ожидание подтверждения почты
-        await waitForEmailVerification()
-          .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
+      // Регистрация завершена, отправляем письмо с подтверждением
+      await auth().currentUser.sendEmailVerification()
+        .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
+        .catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
 
-        await auth().currentUser.updateProfile({
-          displayName: newDisplayName,
-        });
+      // Ожидание подтверждения почты
+      await waitForEmailVerification()
+        .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
 
-        setTimeout(() => {
-          setLoadingScreenText("Почта подтверждена");
-        }, 3000);
-        console.log("Почта подтверждена");
-        setLoadingScreenText(null);
-      } catch (error) {
-        if (error.code === "auth/unknown") {
-          console.log("Пользователь с таким Email уже зарегистрирован");
-        }
-        // Обработка других ошибок при регистрации
+      setTimeout(() => {
+        setLoadingScreenText("Почта подтверждена");
+      }, 3000);
+      console.log("Почта подтверждена");
+      setLoadingScreenText(null);
+    } catch (error) {
+      if (error.code === "auth/unknown") {
+        console.log("Пользователь с таким Email уже зарегистрирован");
       }
-      setInitializing(false);
-    };
+      // Обработка других ошибок при регистрации
+    }
+    setInitializing(false);
+  };
 
     const waitForEmailVerification = async () => {
       return new Promise((resolve) => {
