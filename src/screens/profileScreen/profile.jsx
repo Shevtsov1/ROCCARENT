@@ -366,8 +366,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                          resizeMode={"contain"} />
                 </TouchableOpacity>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
-                                                               style={styles.profilePersonalDataName}>Никнейм:</Text><Text
-                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
+                                                               style={styles.profilePersonalDataName}>Имя:</Text><Text
+                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
                                                                style={styles.profilePersonalDataName}>Email:</Text><Text
                   numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
