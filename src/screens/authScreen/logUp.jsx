@@ -103,13 +103,13 @@ const LogUp = ({ theme, setInitializing, onGoogleButtonPress, navigation, setLoa
         // Регистрация завершена, отправляем письмо с подтверждением
         await auth().currentUser.sendEmailVerification()
           .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
-          .catch((error) => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
+          .catch(() => setLoadingScreenText("Ошибка при отправке подтвержденя на Email"));
 
         console.log("Письмо с подтверждением отправлено");
 
         // Ожидание подтверждения почты
         await waitForEmailVerification()
-          .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
+          .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
 
         await auth().currentUser.updateProfile({
           displayName: newDisplayName,
