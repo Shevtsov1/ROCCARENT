@@ -36,8 +36,14 @@ const App = () => {
 
   async function onAuthStateChanged(user) {
     if (!user) {
-      // Пользователь не вошел в аккаунт, предлагаем выбрать аккаунт Google
-      auth().signInAnonymously().then();
+      const currentUser = auth().currentUser;
+      if (!currentUser || (currentUser && currentUser.isAnonymous)) {
+        auth()
+          .signInAnonymously()
+          .catch((error) => {
+            console.log(error)
+          });
+      }
     }
   }
 
@@ -49,15 +55,15 @@ const App = () => {
 
     const init = async () => {
       initializeApp().then();
-      if (auth().currentUser && !auth().currentUser.emailVerified) {
-        await waitForEmailVerification()
-          .catch((error) => setLoadingScreenText("Ошибка при подтверждении почты"));
+      const currentUser = auth().currentUser;
+      if (currentUser && !currentUser.isAnonymous && !currentUser.emailVerified) {
+        await waitForEmailVerification().catch((error) => setLoadingScreenText("Ошибка при подтверждении почты: " + error));
       }
     };
 
     init().then();
     setTimeout(() => {
-      setInitializing(false)
+      setInitializing(false);
     }, 2500);
   }, []);
 
