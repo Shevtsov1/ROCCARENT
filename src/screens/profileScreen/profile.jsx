@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,13 +21,24 @@ import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
 import LoadingScreen from "../../components/loadingScreen";
+import firestore from "@react-native-firebase/firestore";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
-
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    setBackendProcess(true);
+    try {
+      getNickname().then(() => setBackendProcess(false));
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
 
   const handleToggleModePress = () => {
     switchTheme({
@@ -45,6 +56,16 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       },
     });
   };
+
+  const getNickname = async () => {
+    await firestore().collection('users').doc(auth().currentUser.uid).get().then(snapshot => {
+      if (snapshot.exists && snapshot.data().nickname) {
+        setNickname(snapshot.data().nickname);
+      } else {
+        return setNickname('');
+      }
+    })
+  }
 
   const toggleOverlay = () => {
     setVisible(!visible);
@@ -87,7 +108,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
         console.log("Ошибка съемки фотографии:", response.error);
       }
     });
-    await compressAndUploadAvatar(selectedImage.assets[0]);
+    if(selectedImage) {
+      await compressAndUploadAvatar(selectedImage.assets[0]);
+    }
   };
 
   const compressAndUploadAvatar = async (image) => {
@@ -239,7 +262,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
 
   if (backendProcess) {
     return (
-      <LoadingScreen theme={theme} />
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator color={theme.colors.accent} size={72}/>
+      </SafeAreaView>
     );
   }
 
@@ -443,7 +468,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                       fontFamily: "Roboto-Bold",
                       fontSize: 18,
                       color: theme.colors.text,
-                    }}>{auth().currentUser.displayName}</Text>
+                    }}>{nickname ? nickname : auth().currentUser.displayName}</Text>
                   </View>
                 </>}
               </View>
@@ -466,12 +491,12 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   fontSize: 16,
                   marginStart: 12,
                 }}>Имя</Text>
-                <Text style={{
+                <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>{auth().currentUser.displayName}</Text>
+                }}>{nickname ? (nickname + ` (${auth().currentUser.displayName})`) : auth().currentUser.displayName}</Text>
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
@@ -487,7 +512,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   fontSize: 16,
                   marginStart: 12,
                 }}>Email</Text>
-                <Text style={{
+                <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
@@ -508,7 +533,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   fontSize: 16,
                   marginStart: 12,
                 }}>Пасспорт</Text>
-                <Text style={{
+                <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
@@ -529,7 +554,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   fontSize: 16,
                   marginStart: 12,
                 }}>Номер телефона</Text>
-                <Text style={{
+                <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
