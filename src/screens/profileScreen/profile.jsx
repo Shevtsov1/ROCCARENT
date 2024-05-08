@@ -331,10 +331,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   <View style={styles.profileMainCardBody}>
                     <TouchableOpacity>
                       <Avatar
-                        size={"large"}
+                        size={'large'}
                         rounded
-                        title={auth().currentUser.email.substring(0, 2).toUpperCase()}
-                        containerStyle={{ backgroundColor: "blue" }}
+                        icon={{ name: "person", type: "ionicon" }}
+                        containerStyle={{ backgroundColor: theme.colors.greyOutline }}
                       />
                     </TouchableOpacity>
                     <Text numberOfLines={1} style={{
