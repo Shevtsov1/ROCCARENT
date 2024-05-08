@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import MainTabBarOutlined from '../bottomTab/home.png';
 import MainTabBarFilled from '../bottomTab/homeFilled.png';
 import CatalogTabBarOutlined from '../bottomTab/catalog.png';
@@ -10,6 +10,7 @@ import ProfileTabBarOutlined from '../bottomTab/profile.png';
 import ProfileTabBarFilled from '../bottomTab/profileFilled.png';
 import CreateAd from '../bottomTab/add.png';
 import CreateAdFilled from '../bottomTab/addFilled.png';
+import FastImage from "react-native-fast-image";
 
 export const Icons = {
     Main: {
@@ -47,9 +48,10 @@ const Icon = ({ type, name, color, size = 22, style }: IconProps) => {
     return (
       <>
           {type && name && (
-            <Image
+            <FastImage
               source={name}
-              style={[{ tintColor: color, width: size, height: size }, style]}
+              style={[{ width: size, height: size }, style]}
+              tintColor={color}
               resizeMode={"contain"}
             />
           )}

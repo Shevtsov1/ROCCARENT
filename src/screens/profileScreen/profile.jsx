@@ -8,6 +8,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import switchTheme from "react-native-theme-switch-animation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import FastImage from "react-native-fast-image";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
 
@@ -184,7 +185,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                       style={{ position: "absolute", top: 0, right: 0 }}
                       onPress={handleToggleModePress}
                     >
-                      <Image
+                      <FastImage
                         source={isSun ? require("../../assets/images/sun.png") : require("../../assets/images/moon.png")}
                         style={{
                           width: 32,
@@ -195,7 +196,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                     </TouchableOpacity>
                   </View>
                   <View style={styles.profileMainCardBody}>
-                    <Image source={require("../../assets/images/usingPhone/auth.png")} resizeMode={"contain"}
+                    <FastImage source={require("../../assets/images/usingPhone/auth.png")} resizeMode={"contain"}
                            style={{ width: 240, height: 240 }} />
                     <View style={styles.profileMainCardAuthBtnContainer}>
                       <ShadowedView style={[shadowStyle({

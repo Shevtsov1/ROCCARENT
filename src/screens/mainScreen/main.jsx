@@ -1,11 +1,11 @@
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import ScreenHeader from "../../components/ScreenHeader";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
+import auth from "@react-native-firebase/auth";
 
-const Main = ({ theme, user }) => {
+const Main = ({ theme }) => {
 
   const navigation = useNavigation();
 
@@ -30,13 +30,15 @@ const Main = ({ theme, user }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
-        <ScreenHeader theme={theme} user={user} page={"main"} navigation={navigation} />
         <ScrollView style={{
           flex: 1,
           backgroundColor: theme.colors.secondary,
           borderRadius: 15,
         }}>
-          <CardsGrid theme={theme} items={items}/>
+          {auth().currentUser.isAnonymous && <View>
+
+          </View>}
+          <CardsGrid theme={theme} items={items} />
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>

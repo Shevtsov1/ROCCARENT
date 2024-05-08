@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
 import { useCustomTheme } from "./src/assets/theme/theme";
-import { StatusBar } from "react-native";
+import { StatusBar, Image } from "react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "./src/components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import NetInfo from "@react-native-community/netinfo";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import FastImage from "react-native-fast-image";
+import interfaceIcons from "./src/components/interfaceIcons";
 
 const App = () => {
 
@@ -20,22 +22,31 @@ const App = () => {
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor(theme.colors.accent);
-  StatusBar.setBarStyle('light-content', true);
+  StatusBar.setBarStyle("light-content", true);
 
-  changeNavigationBarColor(theme.colors.secondary, theme.mode !== 'dark', false);
+  changeNavigationBarColor(theme.colors.secondary, theme.mode !== "dark", false);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
     try {
-      const savedTheme = await AsyncStorage.getItem('theme');
+      const savedTheme = await AsyncStorage.getItem("theme");
       if (savedTheme) {
         const theme = JSON.parse(savedTheme);
         loadMode(theme);
       }
     } catch (error) {
-      console.error('Error loading theme:', error);
+      console.error("Error loading theme:", error);
     }
   };
+
+  function preloadImages() {
+    const uris = interfaceIcons.map(image => ({
+      uri: Image.resolveAssetSource(image).uri
+    }));
+
+    FastImage.preload(uris);
+  }
+
 
   async function onAuthStateChanged(user) {
     if (!user) {
@@ -44,7 +55,7 @@ const App = () => {
         auth()
           .signInAnonymously()
           .catch((error) => {
-            console.log(error)
+            console.log(error);
           });
       }
     }
@@ -52,9 +63,16 @@ const App = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
-      await loadTheme();
-      await auth().onAuthStateChanged(onAuthStateChanged);
-      await onGoogleButtonPress();
+      try {
+        await preloadImages();
+        console.log("Images loaded");
+        await loadTheme()
+        console.log("Theme loaded");
+        await auth().onAuthStateChanged(onAuthStateChanged);
+        await onGoogleButtonPress();
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     const init = async () => {
@@ -62,22 +80,27 @@ const App = () => {
       setIsInternetConnected(isConnected);
 
       if (isConnected) {
-        initializeApp().then();
-        const currentUser = auth().currentUser;
-        if (
-          currentUser &&
-          !currentUser.isAnonymous &&
-          !currentUser.emailVerified
-        ) {
-          await waitForEmailVerification().catch((error) =>
-            setLoadingScreenText("Ошибка при подтверждении почты: " + error)
-          );
+        try {
+          await initializeApp();
+          const currentUser = auth().currentUser;
+          if (
+            currentUser &&
+            !currentUser.isAnonymous &&
+            !currentUser.emailVerified
+          ) {
+            await waitForEmailVerification().catch((error) =>
+              setLoadingScreenText("Ошибка при подтверждении почты: " + error),
+            );
+          }
+        } catch (error) {
+          // Обработка ошибки при предварительной загрузке иконок
+          console.error("Ошибка при предварительной загрузке иконок:", error);
         }
       }
     };
 
     init().then();
-    setTimeout(() => {
+    setTimeout(async () => {
       setInitializing(false);
     }, 2500);
   }, []);
@@ -125,7 +148,7 @@ const App = () => {
   if (!isInternetConnected) {
     return (
       <SafeAreaProvider>
-        <LoadingScreen theme={theme} text={'Нет подключения к интернету'} textColor={theme.colors.error}/>
+        <LoadingScreen theme={theme} text={"Нет подключения к интернету"} textColor={theme.colors.error} />
       </SafeAreaProvider>
     );
   }
@@ -133,12 +156,14 @@ const App = () => {
   return (
     <SafeAreaProvider>
       {auth().currentUser && !auth().currentUser.isAnonymous && !auth().currentUser.emailVerified ? (
-        <LoadingScreen theme={theme} text={'Письмо с подтверждением отправлено на Email\nОжидание подтверждения'} resendEmailVerify/>
+        <LoadingScreen theme={theme} text={"Письмо с подтверждением отправлено на Email\nОжидание подтверждения"}
+                       resendEmailVerify />
       ) : (
         initializing ? (
-          <LoadingScreen theme={theme} text={loadingScreenText}/>
+          <LoadingScreen theme={theme} text={loadingScreenText} />
         ) : (
-          <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing} setLoadingScreenText={setLoadingScreenText}/>
+          <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
+                        setLoadingScreenText={setLoadingScreenText} />
         )
       )}
     </SafeAreaProvider>
