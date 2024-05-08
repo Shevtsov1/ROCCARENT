@@ -71,7 +71,7 @@ const LoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
         flex: 1,
         justifyContent: 'center',
         alignItems: "center",
-        backgroundColor: theme.colors.secondary,
+        backgroundColor: theme.colors.background,
       }}>
         <View style={{
           flex: 1,
