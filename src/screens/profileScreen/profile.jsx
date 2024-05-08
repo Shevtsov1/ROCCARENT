@@ -321,14 +321,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                         size={"large"}
                         rounded
                         icon={{ name: "person", type: "ionicon" }}
-                        containerStyle={{ backgroundColor: theme.colors.greyOutline }}
+                        containerStyle={{ backgroundColor: `${theme.colors.greyOutline}AA` }}
                       />
                     </TouchableOpacity>
                     <Text numberOfLines={1} style={{
                       fontFamily: "Roboto-Bold",
                       fontSize: 18,
                       color: theme.colors.text,
-                    }}>{auth().currentUser.email}</Text>
+                    }}>{auth().currentUser.displayName}</Text>
                   </View>
                 </>}
               </View>
@@ -410,13 +410,23 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn, { height: 96 }]} titleStyle={{ color: theme.colors.grey1 }}
               onPress={() => navigation.navigate("SupportStackNavigator")}>
-              <Text style={{
-                fontFamily: "Roboto-Regular",
-                color: theme.colors.text,
-                fontSize: 16,
-                marginStart: 12,
-              }}>Поддержка</Text>
-              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Поддержка</Text>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: `${theme.colors.text}AA`,
+                  fontSize: 14,
+                  marginStart: 12,
+                }}>Задайте вопрос, если вам требуется консультация</Text>
+              </View>
+              <FastImage style={{ width: 72, height: 72, marginEnd: 12 }}
+                         source={require("../../assets/images/support.png")}
+                         resizeMode={FastImage.resizeMode.contain} />
             </Button>
           </ShadowedView>
         </View>
