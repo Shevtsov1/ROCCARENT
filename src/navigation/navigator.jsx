@@ -111,7 +111,7 @@ const TabButton = React.memo((props) => {
         onPress={handlePress}
         activeOpacity={1}
         style={[styles.container, {
-          flex: 1, alignItems: "center", backgroundColor: theme.colors.secondary,
+          flex: 1, alignItems: "center", backgroundColor: theme.colors.background,
         }]}
       >
         <View style={{ justifyContent: "center", alignItems: "center", bottom: 2, width: "100%", height: 64 }}>
@@ -146,7 +146,7 @@ const TabButton = React.memo((props) => {
                         style={[styles.container, {
                           top: 0,
                           alignItems: "center",
-                          backgroundColor: theme.colors.secondary,
+                          backgroundColor: theme.colors.background,
                         }]}>
 
         <View style={styles.iconContainer}>
@@ -191,7 +191,8 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, se
                               return {
                                 borderTopWidth: 0,
                                 height: 48,
-                                elevation: 0,
+                                elevation: 32,
+                                shadowColor: 'grey',
                               };
                             }
                           })(route),

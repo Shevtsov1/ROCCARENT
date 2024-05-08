@@ -12,6 +12,7 @@ const CardsGrid = ({theme, items}) => {
       flexWrap: "wrap",
       justifyContent: "space-between",
       borderRadius: 15,
+      backgroundColor: theme.colors.background,
     },
   });
 

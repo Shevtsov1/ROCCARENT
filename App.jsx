@@ -24,7 +24,7 @@ const App = () => {
   StatusBar.setBackgroundColor(theme.colors.accent);
   StatusBar.setBarStyle("light-content", true);
 
-  changeNavigationBarColor(theme.colors.secondary, theme.mode !== "dark", false);
+  changeNavigationBarColor(theme.colors.background, theme.mode !== "dark", false);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
@@ -69,7 +69,7 @@ const App = () => {
         await loadTheme()
         console.log("Theme loaded");
         await auth().onAuthStateChanged(onAuthStateChanged);
-        await onGoogleButtonPress();
+        // await onGoogleButtonPress();
       } catch (error) {
         console.log(error);
       }
