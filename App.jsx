@@ -39,12 +39,12 @@ const App = () => {
     }
   };
 
-  function preloadImages() {
+  async function preloadImages() {
     const uris = interfaceIcons.map(image => ({
       uri: Image.resolveAssetSource(image).uri
     }));
 
-    FastImage.preload(uris);
+    await FastImage.preload(uris);
   }
 
 
