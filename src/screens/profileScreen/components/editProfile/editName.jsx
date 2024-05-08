@@ -9,36 +9,11 @@ import { Button, color } from "@rneui/base";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import TextRecognition, { TextRecognitionScript } from "@react-native-ml-kit/text-recognition";
 
-const EditProfile = ({ theme, navigation, passportData, setPassportData }) => {
+const EditName = ({ theme, navigation, passportData, setPassportData }) => {
 
   const [passportVerified, setPassportVerified] = useState(false);
   const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
   const AvatarBackground = getRandomColor();
-
-  const handleLaunchCamera = async () => {
-    const photo = await launchCamera({
-      mediaType: "photo",
-      allowsEditing: false,
-      aspectRatio: "square",
-      quality: 1,
-    });
-    const result = await TextRecognition.recognize(photo.assets[0].uri, TextRecognitionScript.LATIN);
-    const resultLength = result.blocks.length;
-    setPassportData(result.blocks[resultLength - 1].text);
-    console.log(result.blocks.pop().text);
-  };
-
-  const handleLaunchCameraLibrary = async () => {
-    const passportImage = await launchImageLibrary({
-      mediaType: "photo",
-      allowsEditing: false,
-      aspectRatio: "square",
-      quality: 1,
-      selectionLimit: 1,
-      includeBase64: true,
-    });
-    await verifyPassport(passportImage);
-  };
 
   const verifyPassport = async (passportImage) => {
     const result = await TextRecognition.recognize(passportImage.assets[0].uri);
@@ -68,23 +43,25 @@ const EditProfile = ({ theme, navigation, passportData, setPassportData }) => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.background,
     }, editAvatarAndNameContainer: {
       width: "100%",
-      height: 120,
+      height: 'auto',
       backgroundColor: theme.colors.background,
-      padding: 12,
+      paddingTop: 12,
       marginBottom: 12,
       borderBottomStartRadius: 15,
       borderBottomEndRadius: 15,
     }, header: {
-      height: 24,
+      height: 36,
+      paddingHorizontal: 12,
       flexDirection: "row",
       justifyContent: "space-between",
+      alignItems: 'center',
     }, headerBackBtn: {
       justifyContent: "center",
     }, headerBackBtnText: {
-      fontFamily: "Roboto-Medium",
+      fontFamily: "Roboto-Regular",
       fontSize: 16,
       color: theme.colors.text,
       alignSelf: "center",
@@ -150,47 +127,24 @@ const EditProfile = ({ theme, navigation, passportData, setPassportData }) => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={{ paddingBottom: hp(1) }}>
-          <ShadowedView style={[styles.editAvatarAndNameContainer, shadowStyle({
-            color: theme.colors.grey3,
-            opacity: 1,
-            radius: 4,
-            offset: [0, 0],
-          })]}>
+          <View style={styles.editAvatarAndNameContainer}>
             <View style={styles.header}>
-              <Text style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text, alignSelf: "center" }}>Мои
-                данные</Text>
+              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.text, alignSelf: "center" }}>Имя</Text>
               <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.headerBackBtnText}>Назад</Text>
               </TouchableOpacity>
             </View>
-            <Button containerStyle={{
-              flex: 2,
-              width: '100%',
-              flexDirection: "row",
-              alignItems: "center",
-              borderRadius: 15,
-            }} buttonStyle={{  width: '100%', borderRadius: 15, justifyContent: 'flex-start', backgroundColor: 'transparent' }} titleStyle={{color: theme.colors.grey1}} >
-              <Avatar
-                size={"medium"}
-                rounded
-                title={auth().currentUser.email.substring(0, 2).toUpperCase()}
-                source={!auth().currentUser.email ? require('../../../../assets/images/telephone.png') : null}
-                containerStyle={{ backgroundColor: auth().currentUser.email && AvatarBackground, marginEnd: 12}}
-              />
-              <View style={{flex: 1}}>
-                <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text, opacity: 0.8}}>Имя Фамилия</Text>
-                <Text style={{fontFamily: 'Roboto-Medium', fontSize: 16, color: theme.colors.text}}>{auth().currentUser.displayName}</Text>
-                <TouchableOpacity style={{position: 'absolute', top: '20%', right: 0}}><Icon type='ionicon' name='chevron-forward-outline' size={18} color={theme.colors.text}/></TouchableOpacity>
-              </View>
-            </Button>
-          </ShadowedView>
+            <Input/>
+            <Input/>
+            <Input/>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default EditProfile;
+export default EditName;
 
 // <View style={{paddingBottom: hp(1)}}>
 //   <View style={styles.editAvatarAndNameContainer}>
