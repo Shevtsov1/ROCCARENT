@@ -5,14 +5,22 @@ import { Text } from "@rneui/base";
 const AuthHint = ({theme}) => {
 
   const styles = StyleSheet.create({
+    container: {
 
+    }, hintContainer: {
+
+    }, hint: {
+
+    }
   })
 
   return (
-    <View>
-        <Text>
-          Auth Hint
-        </Text>
+    <View style={styles.container}>
+        <View style={styles.hintContainer}>
+          <View style={styles.hint}>
+
+          </View>
+        </View>
     </View>
   );
 };

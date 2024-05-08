@@ -33,7 +33,7 @@ const ItemCard = ({ theme, item }) => {
       width: "100%",
       height: "100%",
       flexDirection: "column",
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.background,
       paddingVertical: 0,
       paddingHorizontal: 0,
       borderRadius: 15,

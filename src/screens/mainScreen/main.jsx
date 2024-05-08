@@ -5,6 +5,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
 import AuthHint from "./components/authHint";
+import ScreenHeader from "../../components/ScreenHeader";
 
 const Main = ({ theme }) => {
 
@@ -31,9 +32,10 @@ const Main = ({ theme }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
+        <ScreenHeader theme={theme} page={'main'}/>
         <ScrollView style={{
           flex: 1,
-          backgroundColor: theme.colors.secondary,
+          backgroundColor: theme.colors.background,
           borderRadius: 15,
         }}>
           {auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
