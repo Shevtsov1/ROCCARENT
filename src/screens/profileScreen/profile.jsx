@@ -143,8 +143,6 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       height: 42,
       borderRadius: 15,
     }, footerText: {
-      position: 'absolute',
-      bottom: 0,
       alignSelf: 'center',
     },
   });
