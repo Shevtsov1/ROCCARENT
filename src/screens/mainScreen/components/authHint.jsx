@@ -21,7 +21,7 @@ const AuthHint = ({ theme }) => {
       color: theme.colors.grey3,
       opacity: 0.8,
       radius: 24,
-      offset: [0, 0],
+      offset: [0, 6],
     })]}>
       <Text>Hello</Text>
     </ShadowedView>
