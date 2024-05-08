@@ -5,7 +5,7 @@ import { useCustomTheme } from "./src/assets/theme/theme";
 import { StatusBar, Image } from "react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LoadingScreen from "./src/components/loadingScreen";
+import AppLoadingScreen from "./src/components/appLoadingScreen";
 import auth from "@react-native-firebase/auth";
 import NetInfo from "@react-native-community/netinfo";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -148,7 +148,7 @@ const App = () => {
   if (!isInternetConnected) {
     return (
       <SafeAreaProvider>
-        <LoadingScreen theme={theme} text={"Нет подключения к интернету"} textColor={theme.colors.error} />
+        <AppLoadingScreen theme={theme} text={"Нет подключения к интернету"} textColor={theme.colors.error} />
       </SafeAreaProvider>
     );
   }
@@ -156,11 +156,11 @@ const App = () => {
   return (
     <SafeAreaProvider>
       {auth().currentUser && !auth().currentUser.isAnonymous && !auth().currentUser.emailVerified ? (
-        <LoadingScreen theme={theme} text={"Письмо с подтверждением отправлено на Email\nОжидание подтверждения"}
-                       resendEmailVerify />
+        <AppLoadingScreen theme={theme} text={"Письмо с подтверждением отправлено на Email\nОжидание подтверждения"}
+                          resendEmailVerify />
       ) : (
         initializing ? (
-          <LoadingScreen theme={theme} text={loadingScreenText} />
+          <AppLoadingScreen theme={theme} text={loadingScreenText} />
         ) : (
           <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
                         setLoadingScreenText={setLoadingScreenText} />
