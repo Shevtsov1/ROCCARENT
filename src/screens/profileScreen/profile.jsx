@@ -65,7 +65,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       alignSelf: "center",
     }, profileMainCard: {
       width: "100%",
-      height: auth().currentUser.isAnonymous ? 360 : 240,
+      height: (auth().currentUser && auth().currentUser.isAnonymous) ? 360 : 240,
       padding: 12,
       backgroundColor: theme.colors.background,
       borderRadius: 15,

@@ -5,7 +5,7 @@ import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
+const LoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
 
   const [resendBtnLoading, setResendBtnLoading] = useState(false);
 
@@ -91,7 +91,7 @@ const LoadingScreen = ({ theme, text, resendEmailVerify }) => {
             />
           </Animated.View>
           <View>
-            <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>{text}</Text>
+            <Text style={{ fontFamily: "Roboto-Medium", color: textColor ? textColor : theme.colors.text }}>{text}</Text>
             {resendEmailVerify && <Button onPress={handleResendVerification}
                                           buttonStyle={{ borderRadius: 15, backgroundColor: theme.colors.accent }}
                                           title={"Отправить повторно"}

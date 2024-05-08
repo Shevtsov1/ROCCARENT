@@ -7,6 +7,7 @@ import changeNavigationBarColor from "react-native-navigation-bar-color";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "./src/components/loadingScreen";
 import auth from "@react-native-firebase/auth";
+import NetInfo from "@react-native-community/netinfo";
 
 const App = () => {
 
@@ -14,6 +15,7 @@ const App = () => {
 
   const [initializing, setInitializing] = useState(true);
   const [loadingScreenText, setLoadingScreenText] = useState(null);
+  const [isInternetConnected, setIsInternetConnected] = useState(true);
 
   StatusBar.setTranslucent(true);
   StatusBar.setBackgroundColor(theme.colors.accent);
@@ -54,10 +56,21 @@ const App = () => {
     };
 
     const init = async () => {
-      initializeApp().then();
-      const currentUser = auth().currentUser;
-      if (currentUser && !currentUser.isAnonymous && !currentUser.emailVerified) {
-        await waitForEmailVerification().catch((error) => setLoadingScreenText("Ошибка при подтверждении почты: " + error));
+      const isConnected = await checkInternetConnectivity();
+      setIsInternetConnected(isConnected);
+
+      if (isConnected) {
+        initializeApp().then();
+        const currentUser = auth().currentUser;
+        if (
+          currentUser &&
+          !currentUser.isAnonymous &&
+          !currentUser.emailVerified
+        ) {
+          await waitForEmailVerification().catch((error) =>
+            setLoadingScreenText("Ошибка при подтверждении почты: " + error)
+          );
+        }
       }
     };
 
@@ -66,6 +79,11 @@ const App = () => {
       setInitializing(false);
     }, 2500);
   }, []);
+
+  const checkInternetConnectivity = async () => {
+    const state = await NetInfo.fetch();
+    return state.isConnected && state.isInternetReachable;
+  };
 
   const waitForEmailVerification = async () => {
     return new Promise((resolve) => {
@@ -79,6 +97,14 @@ const App = () => {
       }, 1000); // Проверяем каждую секунду
     });
   };
+
+  if (!isInternetConnected) {
+    return (
+      <SafeAreaProvider>
+        <LoadingScreen theme={theme} text={'Нет подключения к интернету'} textColor={theme.colors.error}/>
+      </SafeAreaProvider>
+    );
+  }
 
   return (
     <SafeAreaProvider>
