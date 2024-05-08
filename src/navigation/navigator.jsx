@@ -191,8 +191,6 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, se
                               return {
                                 borderTopWidth: 0,
                                 height: 48,
-                                elevation: 32,
-                                shadowColor: 'grey',
                               };
                             }
                           })(route),
