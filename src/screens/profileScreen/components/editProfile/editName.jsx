@@ -45,8 +45,8 @@ const EditName = ({ theme, navigation }) => {
     const validateData = () => {
       // Validation logic for nickname, name, and surname
       const nicknameRegex = /^[a-zA-Zа-яА-Я\d_]{3,15}$/; // Example: Alphanumeric with 3-15 characters
-      const nameRegex = /^[a-zA-Zа-яА-Я\s]{2,}$/; // Example: Alphabetic with at least 2 characters
-      const surnameRegex = /^[a-zA-Zа-яА-Я\s]{2,}$/; // Example: Alphabetic with at least 2 characters
+      const nameRegex = /^[a-zA-Zа-яА-Я\s]{2,99}$/; // Example: Alphabetic with at least 2 characters
+      const surnameRegex = /^[a-zA-Zа-яА-Я\s]{2,99}$/; // Example: Alphabetic with at least 2 characters
 
       let isNicknameValid;
       let isNameValid;
