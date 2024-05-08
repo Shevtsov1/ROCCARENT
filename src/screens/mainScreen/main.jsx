@@ -41,7 +41,7 @@ const Main = ({ theme }) => {
           borderRadius: 15,
           paddingBottom: hp(5),
         }}>
-          {auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
+          {auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
           <ShadowedView style={[{marginBottom: 12}, shadowStyle({
             color: theme.colors.grey3,
             opacity: 0.8,
