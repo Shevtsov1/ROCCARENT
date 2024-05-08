@@ -115,3 +115,28 @@ const EditPassport = ({ theme, navigation, passportData, setPassportData }) => {
 };
 
 export default EditPassport;
+
+import TextRecognition from "@react-native-ml-kit/text-recognition";
+
+// const [passportVerified, setPassportVerified] = useState(false);
+// const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
+
+
+// const verifyPassport = async (passportImage) => {
+//   const result = await TextRecognition.recognize(passportImage.assets[0].uri);
+//   const textArr = result.text.split("\n");
+//   const finalArray = [];
+//   for (let i = 0; i < textArr.length; i++) {
+//     const words = textArr[i].split(" ");
+//     finalArray.push(...words);
+//   }
+//   for (let i = 0; i < finalArray.length; i++) {
+//     const element = finalArray[i];
+//     if (passportRegexPattern.test(element)) {
+//       setPassportData(element);
+//       setPassportVerified(true);
+//       console.log("Passport data found:", element);
+//     }
+//   }
+//   if (!passportVerified) console.log("Не удалось просканировать пасспорт, повторите попытку");
+// };
