@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "./src/components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import NetInfo from "@react-native-community/netinfo";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const App = () => {
 
@@ -52,7 +53,8 @@ const App = () => {
   useEffect(() => {
     const initializeApp = async () => {
       await loadTheme();
-      return auth().onAuthStateChanged(onAuthStateChanged);
+      await auth().onAuthStateChanged(onAuthStateChanged);
+      await onGoogleButtonPress();
     };
 
     const init = async () => {
@@ -96,6 +98,28 @@ const App = () => {
         }
       }, 1000); // Проверяем каждую секунду
     });
+  };
+
+  GoogleSignin.configure({
+    webClientId: "771592361046-c50gd0p0heu9i02kp2j8j3s27m45h8cl.apps.googleusercontent.com",
+  });
+
+  const onGoogleButtonPress = async () => {
+    try {
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      // Get the users ID token
+      const { idToken } = await GoogleSignin.signIn();
+      setInitializing(true);
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      await auth().signInWithCredential(googleCredential);
+      setInitializing(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (!isInternetConnected) {
