@@ -402,7 +402,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPassport" })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
@@ -423,7 +423,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPhoneNumber" })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
