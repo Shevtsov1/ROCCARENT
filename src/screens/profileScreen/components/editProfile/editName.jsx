@@ -169,8 +169,8 @@ const EditName = ({ theme, navigation }) => {
 
   if(isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator color={theme.colors.accent} size={96}/>
+      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator color={theme.colors.accent} size={72}/>
       </SafeAreaView>
     );
   }
