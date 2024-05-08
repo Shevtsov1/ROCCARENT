@@ -1,45 +1,121 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
+import firestore from "@react-native-firebase/firestore";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
+import { query } from "@react-native-firebase/firestore/lib/modular/query";
 
 const EditName = ({ theme, navigation, passportData, setPassportData }) => {
 
+  const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
+  const [name, setName] = useState(auth().currentUser.displayName.split(" ")[0]);
+  const [surname, setSurname] = useState(auth().currentUser.displayName.split(" ")[1]);
+  const [newNickname, setNewNickname] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newSurname, setNewSurname] = useState('');
+  const [updates, setUpdates] = useState(false);
+  const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
+
+  const nameRef = useRef(null);
+  const surnameRef = useRef(null);
 
   // const [passportVerified, setPassportVerified] = useState(false);
   // const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
+  const getNickname = async () => {
+    const loadedNickname = await firestore().collection("users").doc(auth().currentUser.uid).get().then(querySnapshot => {
+      if (querySnapshot.exists && querySnapshot.data().nickname) {
+        return querySnapshot.data().nickname;
+      } else {
+        return "";
+      }
+    });
+    setNickname(loadedNickname);
+  };
+
   useEffect(() => {
+    getNickname().then();
     const displayNameArray = auth().currentUser.displayName.split(" ");
     setName(displayNameArray[0]);
-    setSurname(displayNameArray[1]);
+    if (displayNameArray.length > 1) setSurname(displayNameArray[1]);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
+    const validateData = () => {
+      // Validation logic for nickname, name, and surname
+      const nicknameRegex = /^[a-zA-Zа-яА-Я\d_]{3,15}$/; // Example: Alphanumeric with 3-15 characters
+      const nameRegex = /^[a-zA-Zа-яА-Я\s]{2,}$/; // Example: Alphabetic with at least 2 characters
+      const surnameRegex = /^[a-zA-Zа-яА-Я\s]{2,}$/; // Example: Alphabetic with at least 2 characters
 
-  }, [name, surname]);
+      let isNicknameValid;
+      let isNameValid;
+      let isSurnameValid;
+      if (newNickname) {
+        isNicknameValid = nicknameRegex.test(newNickname);
+      } else {
+        isNicknameValid = true;
+      }
+      if (newName) {
+        isNameValid = nameRegex.test(newName);
+      } else {
+        isNameValid = true;
+      }
+      if (newSurname) {
+        isSurnameValid = surnameRegex.test(newSurname);
+      } else {
+        isSurnameValid = true;
+      }
+
+      return isNicknameValid && isNameValid && isSurnameValid;
+    };
+
+    const areDataValid = validateData();
+
+    setUpdates(areDataValid);
+  }, [newNickname, newName, newSurname]);
 
   const handleChangeNickname = (value) => {
-    setNickname(value);
+    setNewNickname(value);
   };
 
   const handleChangeName = (value) => {
-    setName(value);
+    setNewName(value);
   };
 
   const handleChangeSurname = (value) => {
-    setSurname(value);
+    setNewSurname(value);
   };
 
-  const handleSubmitBtn = () => {
-    console.log(`New name data:\n${nickname}\n${name}\n${surname}\n`);
+  const handleSubmitBtn = async () => {
+    setIsSubmitBtnLoading(true);
+    try {
+      if (newNickname) {
+        await firestore().collection("users").doc(auth().currentUser.uid).set({ nickname: newNickname });
+      }
+      if (newName && newSurname) {
+        await auth().currentUser.updateProfile({
+          displayName: newName.trim() + " " + newSurname.trim(),
+        });
+      } else if (newName) {
+        await auth().currentUser.updateProfile({
+          displayName: newName.trim() + " " + surname.trim(),
+        });
+      } else if (newSurname) {
+        await auth().currentUser.updateProfile({
+          displayName: name.trim() + " " + newSurname.trim(),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setIsSubmitBtnLoading(false);
+    navigation.navigate("Profile");
   };
 
   // const verifyPassport = async (passportImage) => {
@@ -112,6 +188,15 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
       backgroundColor: theme.colors.accent,
     },
   });
+
+  if(isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator color={theme.colors.accent} size={96}/>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -149,8 +234,12 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputTextStyle}
               placeholder={nickname ? nickname : "Придумайте никнейм"}
-              value={nickname}
+              value={newNickname}
               onChangeText={handleChangeNickname}
+              onSubmitEditing={() => {
+                // Переход к следующему инпуту (в данном случае, к инпуту password)
+               nameRef.current.focus();
+              }}
             />
             <Input
               label={"Имя"}
@@ -159,8 +248,13 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputTextStyle}
               placeholder={name ? name : "Введите имя"}
-              value={name}
+              value={newName}
               onChangeText={handleChangeName}
+              onSubmitEditing={() => {
+                // Переход к следующему инпуту (в данном случае, к инпуту password)
+                surnameRef.current.focus();
+              }}
+              ref={nameRef}
             />
             <Input
               label={"Фамилия"}
@@ -169,11 +263,13 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputTextStyle}
               placeholder={surname ? surname : "Введите фамилию"}
-              value={surname}
+              value={newSurname}
               onChangeText={handleChangeSurname}
+              ref={surnameRef}
             />
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                    titleStyle={{ color: theme.colors.grey1 }} onPress={handleSubmitBtn}><Text
+                    titleStyle={{ color: theme.colors.grey1 }} loadingStyle={styles.submitBtn} disabled={!updates}
+                    loading={isSubmitBtnLoading} onPress={handleSubmitBtn}><Text
               style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Сохранить
               изменения</Text></Button>
           </View>
