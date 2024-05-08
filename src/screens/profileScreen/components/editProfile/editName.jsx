@@ -6,10 +6,8 @@ import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import firestore from "@react-native-firebase/firestore";
-import TextRecognition from "@react-native-ml-kit/text-recognition";
-import { query } from "@react-native-firebase/firestore/lib/modular/query";
 
-const EditName = ({ theme, navigation, passportData, setPassportData }) => {
+const EditName = ({ theme, navigation }) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
@@ -23,9 +21,6 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
 
   const nameRef = useRef(null);
   const surnameRef = useRef(null);
-
-  // const [passportVerified, setPassportVerified] = useState(false);
-  // const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
   const getNickname = async () => {
     const loadedNickname = await firestore().collection("users").doc(auth().currentUser.uid).get().then(querySnapshot => {
@@ -118,24 +113,7 @@ const EditName = ({ theme, navigation, passportData, setPassportData }) => {
     navigation.navigate("Profile");
   };
 
-  // const verifyPassport = async (passportImage) => {
-  //   const result = await TextRecognition.recognize(passportImage.assets[0].uri);
-  //   const textArr = result.text.split("\n");
-  //   const finalArray = [];
-  //   for (let i = 0; i < textArr.length; i++) {
-  //     const words = textArr[i].split(" ");
-  //     finalArray.push(...words);
-  //   }
-  //   for (let i = 0; i < finalArray.length; i++) {
-  //     const element = finalArray[i];
-  //     if (passportRegexPattern.test(element)) {
-  //       setPassportData(element);
-  //       setPassportVerified(true);
-  //       console.log("Passport data found:", element);
-  //     }
-  //   }
-  //   if (!passportVerified) console.log("Не удалось просканировать пасспорт, повторите попытку");
-  // };
+
 
   const styles = StyleSheet.create({
     container: {
