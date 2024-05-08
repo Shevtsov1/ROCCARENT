@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import { Animated, Easing, Image, Text, View } from "react-native";
-import { heightPercentageToDP, widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { Button } from "@rneui/base";
-import auth from "@react-native-firebase/auth";
+import React from "react";
+import { ActivityIndicator, Animated, Easing, Image, Text, View } from "react-native";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Overlay } from "@rneui/themed";
 
-const LoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
-
-  const [resendBtnLoading, setResendBtnLoading] = useState(false);
+const LoadingScreen = ({ theme, text, textColor }) => {
 
   const animation = new Animated.Value(0);
 
@@ -35,72 +32,37 @@ const LoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
     outputRange: [1, 0.6, 1],
   });
 
-  const waitForEmailVerification = async () => {
-    return new Promise((resolve) => {
-      const intervalId = setInterval(async () => {
-        const user = auth().currentUser;
-        await user.reload();
-        if (user.emailVerified) {
-          clearInterval(intervalId);
-          resolve();
-        }
-      }, 1000); // Проверяем каждую секунду
-    });
-  };
-
-  const handleResendVerification = async () => {
-    setResendBtnLoading(true);
-    await auth().currentUser.sendEmailVerification()
-      .then(text = "Письмо с подтверждением отправлено на Email\nОжидание подтверждения")
-      .catch(() => text = "Ошибка при отправке подтвержденя на Email");
-
-    console.log("Письмо с подтверждением отправлено");
-    console.log("Регистрация завершена");
-
-    // Ожидание подтверждения почты
-    await waitForEmailVerification()
-      .catch(() => text = "Ошибка при подтверждении почты");
-
-    setResendBtnLoading(false);
-    text='';
-  };
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <Overlay style={{
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.background,
+    }}>
       <View style={{
+        width: wp(100),
+        height: hp(100),
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: theme.colors.background,
       }}>
-        <View style={{
-          flex: 1,
-          justifyContent: 'space-between',
-          alignItems: "center",
-        }}>
-          <Animated.View
-            style={{
-              opacity,
-              top: heightPercentageToDP(30),
-            }}
-          >
-            <Image
-              source={require("../assets/images/logo/logo.png")}
-              style={{ width: wp("60%"), height: wp(60) }}
-              resizeMode="contain"
-            />
-          </Animated.View>
-          <View>
-            <Text style={{ fontFamily: "Roboto-Medium", color: textColor ? textColor : theme.colors.text }}>{text}</Text>
-            {resendEmailVerify && <Button onPress={handleResendVerification}
-                                          buttonStyle={{ borderRadius: 15, backgroundColor: theme.colors.accent }}
-                                          title={"Отправить повторно"}
-                                          titleStyle={{ fontFamily: "Roboto-Bold", color: theme.colors.accentText }}
-                                          loading={resendBtnLoading} />}
-          </View>
+        <Animated.View
+          style={{
+            opacity,
+            top: hp(30),
+          }}
+        >
+          <Image
+            source={require("../assets/images/logo/logo.png")}
+            style={{ width: wp("60%"), height: wp(60) }}
+            resizeMode="contain"
+          />
+          <ActivityIndicator color={theme.colors.accent} size={60} />
+        </Animated.View>
+        <View>
+          <Text style={{ fontFamily: "Roboto-Medium", color: textColor ? textColor : theme.colors.text }}>{text}</Text>
         </View>
       </View>
-    </SafeAreaView>
+    </Overlay>
   );
 };
 
