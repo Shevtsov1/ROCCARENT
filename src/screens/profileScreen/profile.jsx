@@ -197,7 +197,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   </View>
                   <View style={styles.profileMainCardBody}>
                     <FastImage source={require("../../assets/images/usingPhone/auth.png")} resizeMode={"contain"}
-                           style={{ width: 240, height: 240 }} />
+                               style={{ width: 240, height: 240 }} />
                     <View style={styles.profileMainCardAuthBtnContainer}>
                       <ShadowedView style={[shadowStyle({
                         color: theme.colors.grey3,
@@ -252,7 +252,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                       style={{ position: "absolute", top: 0, right: 0 }}
                       onPress={handleToggleModePress}
                     >
-                      <Image
+                      <FastImage
                         source={isSun ? require("../../assets/images/sun.png") : require("../../assets/images/moon.png")}
                         style={{
                           width: 32,
@@ -332,7 +332,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   <View style={styles.profileMainCardBody}>
                     <TouchableOpacity>
                       <Avatar
-                        size={'large'}
+                        size={"large"}
                         rounded
                         icon={{ name: "person", type: "ionicon" }}
                         containerStyle={{ backgroundColor: theme.colors.greyOutline }}
@@ -362,13 +362,15 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               }), styles.profilePersonalDataCard]}>
                 <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}
                                   onPress={() => navigation.navigate("EditProfileStackNavigator")}>
-                  <Image source={require("../../assets/images/user-pen.png")}
-                         style={{ width: 24, height: 24, tintColor: theme.colors.text }}
-                         resizeMode={"contain"} />
+                  <FastImage source={require("../../assets/images/user-pen.png")}
+                             style={{ width: 24, height: 24 }}
+                             tintColor={theme.colors.text}
+                             resizeMode={"contain"} />
                 </TouchableOpacity>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
                                                                style={styles.profilePersonalDataName}>Имя:</Text><Text
-                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>
+                  numberOfLines={1}
+                  style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>
                 <View style={styles.profilePersonalData}><Text numberOfLines={1}
                                                                style={styles.profilePersonalDataName}>Email:</Text><Text
                   numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
@@ -390,7 +392,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   opacity: 1,
                   radius: 4,
                   offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, {borderRadius: 15 }]}>
+                }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
                   <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
                           buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                           icon={
