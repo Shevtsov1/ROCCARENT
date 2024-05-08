@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View, Text, TouchableOpacity, Image, StyleSheet, ScrollView,
-} from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Icon, Input } from "@rneui/themed";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { Avatar, Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
@@ -95,41 +93,40 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
       setTermsAccepted(isChecked);
     };
 
-  const handleLogUpBtn = async () => {
-    setInitializing(true);
-    try {
-      const newDisplayName = name.trim() + ' ' + surname.trim();
-      const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
-      await auth().currentUser.linkWithCredential(emailAuthCredential);
+    const handleLogUpBtn = async () => {
+      setInitializing(true);
+      try {
+        const newDisplayName = name.trim() + " " + surname.trim();
+        const emailAuthCredential = auth.EmailAuthProvider.credential(email, password);
+        await auth().currentUser.linkWithCredential(emailAuthCredential);
 
-      // Установка displayName
-      const currentUser = auth().currentUser;
-      await currentUser.updateProfile({
-        displayName: newDisplayName,
-      });
+        // Установка displayName
+        const currentUser = auth().currentUser;
+        await currentUser.updateProfile({
+          displayName: newDisplayName,
+        });
 
-      // Регистрация завершена, отправляем письмо с подтверждением
-      await auth().currentUser.sendEmailVerification()
-        .then(setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения"))
-        .catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
+        // Регистрация завершена, отправляем письмо с подтверждением
+        await auth().currentUser.sendEmailVerification().catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
+        setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения");
 
-      // Ожидание подтверждения почты
-      await waitForEmailVerification()
-        .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
+        // Ожидание подтверждения почты
+        await waitForEmailVerification()
+          .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
 
-      setTimeout(() => {
-        setLoadingScreenText("Почта подтверждена");
-      }, 3000);
-      console.log("Почта подтверждена");
-      setLoadingScreenText(null);
-    } catch (error) {
-      if (error.code === "auth/unknown") {
-        console.log("Пользователь с таким Email уже зарегистрирован");
+        setTimeout(() => {
+          setLoadingScreenText("Почта подтверждена");
+        }, 3000);
+        console.log("Почта подтверждена");
+        setLoadingScreenText(null);
+      } catch (error) {
+        if (error.code === "auth/unknown") {
+          console.log("Пользователь с таким Email уже зарегистрирован");
+        }
+        // Обработка других ошибок при регистрации
       }
-      // Обработка других ошибок при регистрации
-    }
-    setInitializing(false);
-  };
+      setInitializing(false);
+    };
 
     const waitForEmailVerification = async () => {
       return new Promise((resolve) => {
@@ -143,7 +140,6 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         }, 1000); // Проверяем каждую секунду
       });
     };
-
 
     const styles = StyleSheet.create({
       container: {
