@@ -381,7 +381,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
             <Button
               containerStyle={[styles.profileAppDataBtnContainer]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditEmail" })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",

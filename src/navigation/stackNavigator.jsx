@@ -9,6 +9,7 @@ import EditName from "../screens/profileScreen/components/editProfile/editName";
 import Settings from "../screens/profileScreen/components/settings";
 import DealArchive from "../screens/profileScreen/components/dealArchive";
 import Support from "../screens/profileScreen/components/support/support";
+import EditEmail from "../screens/profileScreen/components/editProfile/editEmail";
 
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +101,8 @@ export const EditProfileStackNavigator = ({
       }}>
       <Stack.Screen name="EditName" options={{headerShown: false }}>{(props) =>
         <EditName {...props} theme={theme}/>}</Stack.Screen>
+      <Stack.Screen name="EditEmail" options={{headerShown: false }}>{(props) =>
+        <EditEmail {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };
