@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
+import AuthHint from "./components/authHint";
 
 const Main = ({ theme }) => {
 
@@ -35,9 +36,7 @@ const Main = ({ theme }) => {
           backgroundColor: theme.colors.secondary,
           borderRadius: 15,
         }}>
-          {auth().currentUser.isAnonymous && <View>
-
-          </View>}
+          {auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
           <CardsGrid theme={theme} items={items} />
         </ScrollView>
       </SafeAreaView>
