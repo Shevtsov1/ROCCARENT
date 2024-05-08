@@ -69,7 +69,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       height: (auth().currentUser && auth().currentUser.isAnonymous) ? 360 : 240,
       padding: 12,
       backgroundColor: theme.colors.background,
-      borderRadius: 15,
+      borderBottomStartRadius: 15,
+      borderBottomEndRadius: 15,
     }, profileMainCardHeader: {
       flex: auth().currentUser.isAnonymous ? 1 : 2,
       flexDirection: "row",
@@ -112,20 +113,21 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       flexDirection: "row",
       alignItems: "center",
     }, profilePersonalDataName: {
-      fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text, marginEnd: 6,
+      fontFamily: "Roboto-Bold", fontSize: 14, color: theme.colors.text, marginEnd: 6,
     }, profilePersonalDataText: {
-      fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text,
+      fontFamily: "Roboto-Bold", fontSize: 14, color: theme.colors.text,
     }, profileAppDataContainer: {}, profileDataLogoContainer: {
+      paddingHorizontal: wp(2),
       marginVertical: 6,
     }, profileAppDataBtnContainer: {
       width: "49%",
-      height: 120,
+      height: 96,
       borderRadius: 15,
       backgroundColor: `${theme.colors.accent}AA`,
       marginBottom: 6,
     }, profileAppDataBtn: {
       width: "100%",
-      height: 120,
+      height: "100%",
       flexDirection: "row",
       justifyContent: "flex-start",
       paddingHorizontal: 12,
@@ -158,8 +160,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
         <View style={{
-          paddingVertical: hp(1),
-          paddingHorizontal: wp(2),
+          paddingBottom: hp(1),
         }}>
           <View style={styles.profileMainCardContainer}>
             <ShadowedView style={[shadowStyle({
@@ -350,7 +351,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           </View>
           {!auth().currentUser.isAnonymous && <View style={styles.profilePersonalDataContainer}>
             <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 20 }}>Личные
+              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Личные
                 данные</Text>
             </View>
             <View>
@@ -383,9 +384,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           </View>}
           <View style={styles.profileAppDataContainer}>
             <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 20 }}>Профиль</Text>
+              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Профиль</Text>
             </View>
-            <View>
+            <View style={{ paddingHorizontal: wp(1) }}>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <ShadowedView style={[shadowStyle({
                   color: theme.colors.grey3,
@@ -407,7 +408,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                       <Text numberOfLines={1}
                             style={{
                               fontFamily: "Roboto-Bold",
-                              fontSize: 18,
+                              fontSize: 16,
                               color: theme.colors.text,
                             }}>Избранное</Text>
                     </View>
@@ -435,7 +436,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                       <Text numberOfLines={1}
                             style={{
                               fontFamily: "Roboto-Bold",
-                              fontSize: 18,
+                              fontSize: 16,
                               color: theme.colors.text,
                             }}>Настройки</Text>
                     </View>
@@ -463,7 +464,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                             } iconPosition={"left"} onPress={() => navigation.navigate("DealArchive")}>
                       <View style={{ width: "70%", flexShrink: 2, alignItems: "center" }}>
                         <Text numberOfLines={2}
-                              style={{ fontFamily: "Roboto-Bold", fontSize: 18, color: theme.colors.text }}>История
+                              style={{ fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text }}>История
                           сделок</Text>
                       </View>
                     </Button>
@@ -491,7 +492,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                         <Text numberOfLines={1}
                               style={{
                                 fontFamily: "Roboto-Bold",
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: theme.colors.text,
                               }}>Выход</Text>
                       </View>
