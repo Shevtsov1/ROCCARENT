@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import { Overlay, Avatar, Button, Divider, Icon } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
+import storage from "@react-native-firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import switchTheme from "react-native-theme-switch-animation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
+import { launchImageLibrary } from "react-native-image-picker";
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+import LoadingScreen from "../../components/loadingScreen";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
 
+  const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
 
@@ -50,6 +55,63 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       await auth().signOut().then(GoogleSignin.signOut());
     }
     setInitializing(false);
+  };
+
+  const handleAvatarImagePicker = async () => {
+    const options = {
+      title: 'Выберите изображение',
+      cancelButtonTitle: 'Отмена',
+      takePhotoButtonTitle: 'Выбрать изображение',
+      quality: 1,
+      mediaType: 'photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+      selectionLimit: 1,
+    };
+    const selectedImage = await launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('Пользователь отменил съемку фотографии');
+      } else if (response.error) {
+        console.log('Ошибка съемки фотографии:', response.error);
+      }
+    });
+    await compressAndUploadAvatar(selectedImage.assets[0]);
+  };
+
+  const compressAndUploadAvatar = async (image) => {
+    setBackendProcess(true);
+
+    try {
+      // Resize the image
+      const resizedImage = await ImageResizer.createResizedImage(
+        image.uri,
+        500, // target width
+        500, // target height
+        'JPEG',
+        80, // compression quality
+      );
+
+      // Reference to the Firebase Storage bucket
+      const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
+
+      // Upload the compressed image file to Firebase Storage
+      await storageRef.putFile(resizedImage.uri);
+
+      // Get the download URL of the uploaded image
+      const imageUrl = await storageRef.getDownloadURL();
+
+      await auth().currentUser.updateProfile({
+        photoURL: imageUrl,
+      });
+
+      console.log('Image uploaded successfully');
+    } catch (error) {
+      console.log('Error uploading image:', error);
+    }
+
+    setBackendProcess(false);
   };
 
   const styles = StyleSheet.create({
@@ -148,6 +210,12 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       color: theme.colors.text,
     },
   });
+
+  if (backendProcess) {
+    return (
+      <LoadingScreen theme={theme}/>
+    )
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -338,7 +406,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                         justifyContent: "center",
                         alignSelf: "center",
                         backgroundColor: `${theme.colors.background}5A`,
-                      }}><Icon type={"ionicon"} name={"camera-outline"} color={theme.colors.text}
+                      }} onPress={handleAvatarImagePicker}><Icon type={"ionicon"} name={"camera-outline"} color={theme.colors.text}
                                size={30} /></TouchableOpacity>
                     </View>
                     <Text numberOfLines={1} style={{
