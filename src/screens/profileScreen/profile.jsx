@@ -142,6 +142,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       width: "46%",
       height: 42,
       borderRadius: 15,
+    }, footerText: {
+      position: 'absolute',
+      bottom: 0,
+      alignSelf: 'center',
     },
   });
 
@@ -429,6 +433,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
           </ShadowedView>
+          <Text style={styles.footerText}>
+            Все права защищены © 2024 RoccaRent
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
