@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
-import { Overlay, Avatar, Button, Divider, Icon } from "@rneui/themed";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  ToastAndroid,
+} from "react-native";
+import { Overlay, Avatar, Button, Divider, Icon, Skeleton } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,11 +19,12 @@ import switchTheme from "react-native-theme-switch-animation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
-import ImageResizer from '@bam.tech/react-native-image-resizer';
+import ImageResizer from "@bam.tech/react-native-image-resizer";
 import LoadingScreen from "../../components/loadingScreen";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
 
+  const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
@@ -59,38 +69,54 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
 
   const handleAvatarImagePicker = async () => {
     const options = {
-      title: 'Выберите изображение',
-      cancelButtonTitle: 'Отмена',
-      takePhotoButtonTitle: 'Выбрать изображение',
+      title: "Выберите изображение",
+      cancelButtonTitle: "Отмена",
+      takePhotoButtonTitle: "Выбрать изображение",
       quality: 1,
-      mediaType: 'photo',
+      mediaType: "photo",
       storageOptions: {
         skipBackup: true,
-        path: 'images',
+        path: "images",
       },
       selectionLimit: 1,
     };
     const selectedImage = await launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log('Пользователь отменил съемку фотографии');
+        console.log("Пользователь отменил съемку фотографии");
       } else if (response.error) {
-        console.log('Ошибка съемки фотографии:', response.error);
+        console.log("Ошибка съемки фотографии:", response.error);
       }
     });
     await compressAndUploadAvatar(selectedImage.assets[0]);
   };
 
   const compressAndUploadAvatar = async (image) => {
-    setBackendProcess(true);
+    setIsAvatarLoading(true);
 
     try {
+      const fileSize = image.fileSize;
+      let compressionQuality;
+      if(fileSize > 10 * 1024 && fileSize < 1024 * 1024) {
+        compressionQuality = 100;
+      } else if (fileSize >= 1024 * 1024) {
+        for (let i = 20; i <= 100; i++) {
+          if ((fileSize * i/100 <= 1024 * 1024) && (fileSize * i/100 >= 10 * 1024)){
+            compressionQuality = i;
+          }
+        }
+        if (!compressionQuality) {
+          ToastAndroid.show('Размер изображения должен быть от 100кБ до 5МБ', 5000)
+          setIsAvatarLoading(false);
+          return;
+        }
+      }
       // Resize the image
       const resizedImage = await ImageResizer.createResizedImage(
         image.uri,
-        500, // target width
-        500, // target height
-        'JPEG',
-        80, // compression quality
+        512, // target width
+        512, // target height
+        "JPEG",
+        compressionQuality, // compression quality
       );
 
       // Reference to the Firebase Storage bucket
@@ -106,12 +132,12 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
         photoURL: imageUrl,
       });
 
-      console.log('Image uploaded successfully');
+      console.log("Image uploaded successfully");
     } catch (error) {
-      console.log('Error uploading image:', error);
+      console.log("Error uploading image:", error);
     }
 
-    setBackendProcess(false);
+    setIsAvatarLoading(false);
   };
 
   const styles = StyleSheet.create({
@@ -206,15 +232,15 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       borderRadius: 15,
     }, footerText: {
       alignSelf: "center",
-      fontFamily: 'Roboto-Regular',
+      fontFamily: "Roboto-Regular",
       color: theme.colors.text,
     },
   });
 
   if (backendProcess) {
     return (
-      <LoadingScreen theme={theme}/>
-    )
+      <LoadingScreen theme={theme} />
+    );
   }
 
   return (
@@ -316,7 +342,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                           width: 32,
                           height: 32,
                         }}
-                        resizeMode="contain"
+                        resizeMode={FastImage.resizeMode.contain}
                       />
                     </TouchableOpacity>
                     <Overlay overlayStyle={styles.logoutOverlay} isVisible={visible} onBackdropPress={toggleOverlay}>
@@ -389,13 +415,16 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                   </View>
                   <View style={styles.profileMainCardBody}>
                     <View>
-                      <Avatar
-                        size={"large"}
-                        rounded
-                        icon={{ name: "person", type: "ionicon" }}
-                        containerStyle={{ backgroundColor: `${theme.colors.greyOutline}AA` }}
-                        source={{uri: auth().currentUser.photoURL}}
-                      />
+                        <View style={{ width: 78, height: 78 }}>
+                          {isAvatarLoading ? (
+                            <Skeleton circle width={'100%'} height={'100%'} style={{position: 'absolute', zIndex: 1}}/>
+                          ) : null}
+                          <FastImage
+                            style={{ width: '100%', height: '100%', borderRadius: 78 / 2 }}
+                            source={{ uri: auth().currentUser.photoURL }}
+                            onLoad={() => setIsAvatarLoading(false)}
+                          />
+                        </View>
                       <TouchableOpacity style={{
                         position: "absolute",
                         borderRadius: 15,
@@ -406,8 +435,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                         justifyContent: "center",
                         alignSelf: "center",
                         backgroundColor: `${theme.colors.background}5A`,
-                      }} onPress={handleAvatarImagePicker}><Icon type={"ionicon"} name={"camera-outline"} color={theme.colors.text}
-                               size={30} /></TouchableOpacity>
+                      }} onPress={handleAvatarImagePicker}><Icon type={"ionicon"} name={"camera-outline"}
+                                                                 color={theme.colors.text}
+                                                                 size={30} /></TouchableOpacity>
                     </View>
                     <Text numberOfLines={1} style={{
                       fontFamily: "Roboto-Bold",
