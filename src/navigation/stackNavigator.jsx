@@ -5,7 +5,7 @@ import LogIn from "../screens/authScreen/logIn";
 import LogUp from "../screens/authScreen/logUp";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
-import EditProfile from "../screens/profileScreen/components/editProfile/editProfile";
+import EditName from "../screens/profileScreen/components/editProfile/editName";
 import Settings from "../screens/profileScreen/components/settings";
 import DealArchive from "../screens/profileScreen/components/dealArchive";
 import Support from "../screens/profileScreen/components/support/support";
@@ -88,7 +88,6 @@ export const EditProfileStackNavigator = ({
 
   return (
     <Stack.Navigator
-      initialRouteName={"EditProfile"}
       screenOptions={{
         headerStyle: {
           backgroundColor: theme.colors.background,
@@ -99,8 +98,8 @@ export const EditProfileStackNavigator = ({
         headerTitleAlign: "center",
         headerTintColor: theme.colors.text,
       }}>
-      <Stack.Screen name="EditProfile" options={{headerShown: false }}>{(props) =>
-        <EditProfile {...props} theme={theme}/>}</Stack.Screen>
+      <Stack.Screen name="EditName" options={{headerShown: false }}>{(props) =>
+        <EditName {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };

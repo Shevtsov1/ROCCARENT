@@ -143,7 +143,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       height: 42,
       borderRadius: 15,
     }, footerText: {
-      alignSelf: 'center',
+      alignSelf: "center",
+      fontFamily: 'Roboto-Regular',
+      color: theme.colors.text,
     },
   });
 
@@ -318,14 +320,27 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                     </Overlay>
                   </View>
                   <View style={styles.profileMainCardBody}>
-                    <TouchableOpacity>
+                    <View>
                       <Avatar
                         size={"large"}
                         rounded
                         icon={{ name: "person", type: "ionicon" }}
                         containerStyle={{ backgroundColor: `${theme.colors.greyOutline}AA` }}
+                        source={{uri: auth().currentUser.photoURL}}
                       />
-                    </TouchableOpacity>
+                      <TouchableOpacity style={{
+                        position: "absolute",
+                        borderRadius: 15,
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        justifyContent: "center",
+                        alignSelf: "center",
+                        backgroundColor: `${theme.colors.background}5A`,
+                      }}><Icon type={"ionicon"} name={"camera-outline"} color={theme.colors.text}
+                               size={30} /></TouchableOpacity>
+                    </View>
                     <Text numberOfLines={1} style={{
                       fontFamily: "Roboto-Bold",
                       fontSize: 18,
@@ -336,39 +351,96 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               </View>
             </ShadowedView>
           </View>
-          {/*{!auth().currentUser.isAnonymous && <View style={styles.profileDataContainer}>*/}
-          {/*  /!*<View style={styles.profileDataLogoContainer}>*!/*/}
-          {/*  /!*  <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Личные*!/*/}
-          {/*  /!*    данные</Text>*!/*/}
-          {/*  /!*</View>*!/*/}
-          {/*  /!*<View>*!/*/}
-          {/*  /!*  <ShadowedView style={[shadowStyle({*!/*/}
-          {/*  /!*    color: theme.colors.grey3,*!/*/}
-          {/*  /!*    opacity: 1,*!/*/}
-          {/*  /!*    radius: 4,*!/*/}
-          {/*  /!*    offset: [0, 0],*!/*/}
-          {/*  /!*  }), styles.profilePersonalDataCard]}>*!/*/}
-          {/*  /!*    <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}*!/*/}
-          {/*  /!*                      onPress={() => navigation.navigate("EditProfileStackNavigator")}>*!/*/}
-          {/*  /!*      <FastImage source={require("../../assets/images/user-pen.png")}*!/*/}
-          {/*  /!*                 style={{ width: 24, height: 24 }}*!/*/}
-          {/*  /!*                 tintColor={theme.colors.text}*!/*/}
-          {/*  /!*                 resizeMode={"contain"} />*!/*/}
-          {/*  /!*    </TouchableOpacity>*!/*/}
-          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
-          {/*  /!*                                                   style={styles.profilePersonalDataName}>Имя:</Text><Text*!/*/}
-          {/*  /!*      numberOfLines={1}*!/*/}
-          {/*  /!*      style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>*!/*/}
-          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
-          {/*  /!*                                                   style={styles.profilePersonalDataName}>Email:</Text><Text*!/*/}
-          {/*  /!*      numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>*!/*/}
-          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
-          {/*  /!*                                                   style={styles.profilePersonalDataName}>Паспорт:</Text><Text*!/*/}
-          {/*  /!*      numberOfLines={1}*!/*/}
-          {/*  /!*      style={styles.profilePersonalDataText}>{passportData ? (passportData.substring(0, 3) + "*".repeat(passportData.length - 3)) : "Заполните профиль"}</Text></View>*!/*/}
-          {/*  /!*  </ShadowedView>*!/*/}
-          {/*  /!*</View>*!/*/}
-          {/*</View>}*/}
+          {!auth().currentUser.isAnonymous && <ShadowedView style={[styles.profileDataContainer, shadowStyle({
+            color: theme.colors.grey3,
+            opacity: 0.8,
+            radius: 24,
+            offset: [0, 6],
+          })]}>
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
+              buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditName" })}>
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Имя</Text>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: `${theme.colors.text}AA`,
+                  fontSize: 14,
+                  marginStart: 12,
+                }}>{auth().currentUser.displayName}</Text>
+              </View>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+            <Divider />
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer]}
+              buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Email</Text>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: `${theme.colors.text}AA`,
+                  fontSize: 14,
+                  marginStart: 12,
+                }}>{auth().currentUser.email}</Text>
+              </View>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+            <Divider />
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
+              buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Пасспорт</Text>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: `${theme.colors.text}AA`,
+                  fontSize: 14,
+                  marginStart: 12,
+                }}>Номер</Text>
+              </View>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+            <Divider />
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
+              buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Номер телефона</Text>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: `${theme.colors.text}AA`,
+                  fontSize: 14,
+                  marginStart: 12,
+                }}>номер телефона</Text>
+              </View>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+          </ShadowedView>}
           <ShadowedView style={[styles.profileDataContainer, shadowStyle({
             color: theme.colors.grey3,
             opacity: 0.8,
@@ -405,7 +477,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
             offset: [0, 6],
           })]}>
             <Button
-              containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
+              containerStyle={[styles.profileAppDataBtnContainer, {
+                borderTopStartRadius: 15,
+                borderTopEndRadius: 15,
+              }]}
               buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
               onPress={() => navigation.navigate("Favorites")}>
               <Text style={{
@@ -416,11 +491,27 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               }}>Избранное</Text>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
+            {!auth().currentUser.isAnonymous && <>
+              <Divider />
+              <Button containerStyle={[styles.profileAppDataBtnContainer, {
+                borderBottomStartRadius: 15,
+                borderBottomEndRadius: 15,
+              }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                      onPress={() => navigation.navigate("DealArchive")}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Архив сделок</Text>
+                <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+              </Button>
+            </>}
             <Divider />
-            <Button containerStyle={[styles.profileAppDataBtnContainer, {
+            <Button containerStyle={[styles.profileAppDataBtnContainer, (auth().currentUser.isAnonymous && {
               borderBottomStartRadius: 15,
               borderBottomEndRadius: 15,
-            }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+            })]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
                     onPress={() => navigation.navigate("Settings")}>
               <Text style={{
                 fontFamily: "Roboto-Regular",
@@ -430,6 +521,22 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               }}>Настройки</Text>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
+            {!auth().currentUser.isAnonymous && <>
+              <Divider />
+              <Button containerStyle={[styles.profileAppDataBtnContainer, {
+                borderBottomStartRadius: 15,
+                borderBottomEndRadius: 15,
+              }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                      onPress={toggleOverlay}>
+                <Text style={{
+                  fontFamily: "Roboto-Regular",
+                  color: theme.colors.text,
+                  fontSize: 16,
+                  marginStart: 12,
+                }}>Выход</Text>
+                <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+              </Button>
+            </>}
           </ShadowedView>
           <Text style={styles.footerText}>
             Все права защищены © 2024 RoccaRent
