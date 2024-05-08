@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
-import { Icon } from "@rneui/base";
-import { Overlay, Avatar, Button } from "@rneui/themed";
+import { Overlay, Avatar, Button, Divider, Icon } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -59,7 +58,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
 
     body: {
       flex: 1,
-      backgroundColor: theme.colors.secondary,
+      backgroundColor: theme.colors.background,
     }, profileMainCardContainer: {
       width: "100%",
       justifyContent: "center",
@@ -116,39 +115,29 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
       fontFamily: "Roboto-Bold", fontSize: 14, color: theme.colors.text, marginEnd: 6,
     }, profilePersonalDataText: {
       fontFamily: "Roboto-Bold", fontSize: 14, color: theme.colors.text,
-    }, profileAppDataContainer: {}, profileDataLogoContainer: {
-      paddingHorizontal: wp(2),
-      marginVertical: 6,
-    }, profileAppDataBtnContainer: {
-      width: "49%",
-      height: 96,
-      borderRadius: 15,
-      backgroundColor: `${theme.colors.accent}AA`,
-      marginBottom: 6,
-    }, profileAppDataBtn: {
-      width: "100%",
-      height: "100%",
-      flexDirection: "row",
-      justifyContent: "flex-start",
-      paddingHorizontal: 12,
+    }, profileDataContainer: {
+      height: "auto",
+      width: wp(100),
       backgroundColor: theme.colors.background,
       borderRadius: 15,
-    }, profileAppDataBtnIconContainer: {
-      width: "30%",
-      height: 48,
-      borderRadius: 15,
-      backgroundColor: theme.colors.secondary,
-      justifyContent: "center",
+      marginTop: 12,
+    }, profileAppDataBtnContainer: {
+      borderRadius: 5,
+    }, profileAppDataBtn: {
+      width: "100%",
+      height: 60,
+      backgroundColor: "transparent",
+      flexDirection: "row",
       alignItems: "center",
-      marginEnd: 6,
+      justifyContent: "space-between",
     },
+
     /* BODY END */
 
     btnStyle: {
       width: "100%",
       height: "100%",
     },
-
     btnShadowContainer: {
       width: "46%",
       height: 42,
@@ -165,17 +154,13 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           <View style={styles.profileMainCardContainer}>
             <ShadowedView style={[shadowStyle({
               color: theme.colors.grey3,
-              opacity: 1,
-              radius: 4,
-              offset: [0, 0],
-            }), { borderRadius: 15 }]}>
+              opacity: 0.8,
+              radius: 24,
+              offset: [0, 6],
+            })]}>
               <View style={styles.profileMainCard}>
                 {auth().currentUser.isAnonymous && <>
                   <View style={styles.profileMainCardHeader}>
-                    <TouchableOpacity style={{ position: "absolute", top: 0, left: 0 }}>
-                      <Icon type={"ionicon"} name={"settings-outline"} size={30} color={theme.colors.text}
-                            onPress={() => navigation.navigate("Settings")} />
-                    </TouchableOpacity>
                     <Text style={{
                       fontFamily: "Roboto-Black",
                       fontSize: 24,
@@ -349,158 +334,91 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
               </View>
             </ShadowedView>
           </View>
-          {!auth().currentUser.isAnonymous && <View style={styles.profilePersonalDataContainer}>
-            <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Личные
-                данные</Text>
-            </View>
-            <View>
-              <ShadowedView style={[shadowStyle({
-                color: theme.colors.grey3,
-                opacity: 1,
-                radius: 4,
-                offset: [0, 0],
-              }), styles.profilePersonalDataCard]}>
-                <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}
-                                  onPress={() => navigation.navigate("EditProfileStackNavigator")}>
-                  <FastImage source={require("../../assets/images/user-pen.png")}
-                             style={{ width: 24, height: 24 }}
-                             tintColor={theme.colors.text}
-                             resizeMode={"contain"} />
-                </TouchableOpacity>
-                <View style={styles.profilePersonalData}><Text numberOfLines={1}
-                                                               style={styles.profilePersonalDataName}>Имя:</Text><Text
-                  numberOfLines={1}
-                  style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>
-                <View style={styles.profilePersonalData}><Text numberOfLines={1}
-                                                               style={styles.profilePersonalDataName}>Email:</Text><Text
-                  numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>
-                <View style={styles.profilePersonalData}><Text numberOfLines={1}
-                                                               style={styles.profilePersonalDataName}>Паспорт:</Text><Text
-                  numberOfLines={1}
-                  style={styles.profilePersonalDataText}>{passportData ? (passportData.substring(0, 3) + "*".repeat(passportData.length - 3)) : "Заполните профиль"}</Text></View>
-              </ShadowedView>
-            </View>
-          </View>}
-          <View style={styles.profileAppDataContainer}>
-            <View style={styles.profileDataLogoContainer}>
-              <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Профиль</Text>
-            </View>
-            <View style={{ paddingHorizontal: wp(1) }}>
-              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3,
-                  opacity: 1,
-                  radius: 4,
-                  offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
-                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                          icon={
-                            <ShadowedView style={[shadowStyle({
-                              color: theme.colors.grey2, opacity: 0.8,
-                              radius: 4, offset: [0, 0],
-                            }), styles.profileAppDataBtnIconContainer]}>
-                              <Icon type={"ionicon"} name={"bookmarks"} color={theme.colors.accent} size={30} />
-                            </ShadowedView>
-                          } iconPosition={"left"} onPress={() => navigation.navigate("Favorites")}>
-                    <View style={{ width: "70%", alignItems: "center" }}>
-                      <Text numberOfLines={1}
-                            style={{
-                              fontFamily: "Roboto-Bold",
-                              fontSize: 16,
-                              color: theme.colors.text,
-                            }}>Избранное</Text>
-                    </View>
-                  </Button>
-                </ShadowedView>
-                <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3,
-                  opacity: 1,
-                  radius: 4,
-                  offset: [0, 0],
-                }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
-                  <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                          buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                          icon={
-                            <ShadowedView style={[shadowStyle({
-                              color: theme.colors.grey2, opacity: 0.8,
-                              radius: 4, offset: [0, 0],
-                            }), styles.profileAppDataBtnIconContainer]}>
-                              <View>
-                                <Icon type={"ionicon"} name={"settings"} color={theme.colors.accent} size={30} />
-                              </View>
-                            </ShadowedView>
-                          } iconPosition={"left"} onPress={() => navigation.navigate("Settings")}>
-                    <View style={{ width: "70%", alignItems: "center" }}>
-                      <Text numberOfLines={1}
-                            style={{
-                              fontFamily: "Roboto-Bold",
-                              fontSize: 16,
-                              color: theme.colors.text,
-                            }}>Настройки</Text>
-                    </View>
-                  </Button>
-                </ShadowedView>
-              </View>
-              {!auth().currentUser.isAnonymous &&
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <ShadowedView style={[shadowStyle({
-                    color: theme.colors.grey3,
-                    opacity: 1,
-                    radius: 4,
-                    offset: [0, 0],
-                  }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
-                    <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                            buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                            icon={
-                              <ShadowedView style={[shadowStyle({
-                                color: theme.colors.grey2, opacity: 0.8,
-                                radius: 4, offset: [0, 0],
-                              }), styles.profileAppDataBtnIconContainer]}>
-                                <Icon type={"ionicon"} name={"archive"} color={theme.colors.accent}
-                                      size={30} />
-                              </ShadowedView>
-                            } iconPosition={"left"} onPress={() => navigation.navigate("DealArchive")}>
-                      <View style={{ width: "70%", flexShrink: 2, alignItems: "center" }}>
-                        <Text numberOfLines={2}
-                              style={{ fontFamily: "Roboto-Bold", fontSize: 16, color: theme.colors.text }}>История
-                          сделок</Text>
-                      </View>
-                    </Button>
-                  </ShadowedView>
-                  <ShadowedView style={[shadowStyle({
-                    color: theme.colors.grey3,
-                    opacity: 1,
-                    radius: 4,
-                    offset: [0, 0],
-                  }), styles.profileAppDataBtnContainer, { borderRadius: 15 }]}>
-                    <Button type={"clear"} containerStyle={{ borderRadius: 15 }}
-                            buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                            onPress={toggleOverlay}
-                            icon={
-                              <ShadowedView style={[shadowStyle({
-                                color: theme.colors.grey2, opacity: 0.8,
-                                radius: 4, offset: [0, 0],
-                              }), styles.profileAppDataBtnIconContainer]}>
-                                <View>
-                                  <Icon type={"ionicon"} name={"log-out"} color={theme.colors.accent} size={34} />
-                                </View>
-                              </ShadowedView>
-                            } iconPosition={"left"}>
-                      <View style={{ width: "70%", alignItems: "center" }}>
-                        <Text numberOfLines={1}
-                              style={{
-                                fontFamily: "Roboto-Bold",
-                                fontSize: 16,
-                                color: theme.colors.text,
-                              }}>Выход</Text>
-                      </View>
-                    </Button>
-                  </ShadowedView>
-                </View>}
-            </View>
-          </View>
+          {/*{!auth().currentUser.isAnonymous && <View style={styles.profileDataContainer}>*/}
+          {/*  /!*<View style={styles.profileDataLogoContainer}>*!/*/}
+          {/*  /!*  <Text style={{ fontFamily: "Roboto-Black", color: theme.colors.text, fontSize: 18 }}>Личные*!/*/}
+          {/*  /!*    данные</Text>*!/*/}
+          {/*  /!*</View>*!/*/}
+          {/*  /!*<View>*!/*/}
+          {/*  /!*  <ShadowedView style={[shadowStyle({*!/*/}
+          {/*  /!*    color: theme.colors.grey3,*!/*/}
+          {/*  /!*    opacity: 1,*!/*/}
+          {/*  /!*    radius: 4,*!/*/}
+          {/*  /!*    offset: [0, 0],*!/*/}
+          {/*  /!*  }), styles.profilePersonalDataCard]}>*!/*/}
+          {/*  /!*    <TouchableOpacity style={{ position: "absolute", top: 6, right: 6 }}*!/*/}
+          {/*  /!*                      onPress={() => navigation.navigate("EditProfileStackNavigator")}>*!/*/}
+          {/*  /!*      <FastImage source={require("../../assets/images/user-pen.png")}*!/*/}
+          {/*  /!*                 style={{ width: 24, height: 24 }}*!/*/}
+          {/*  /!*                 tintColor={theme.colors.text}*!/*/}
+          {/*  /!*                 resizeMode={"contain"} />*!/*/}
+          {/*  /!*    </TouchableOpacity>*!/*/}
+          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
+          {/*  /!*                                                   style={styles.profilePersonalDataName}>Имя:</Text><Text*!/*/}
+          {/*  /!*      numberOfLines={1}*!/*/}
+          {/*  /!*      style={styles.profilePersonalDataText}>{auth().currentUser.displayName}</Text></View>*!/*/}
+          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
+          {/*  /!*                                                   style={styles.profilePersonalDataName}>Email:</Text><Text*!/*/}
+          {/*  /!*      numberOfLines={1} style={styles.profilePersonalDataText}>{auth().currentUser.email}</Text></View>*!/*/}
+          {/*  /!*    <View style={styles.profilePersonalData}><Text numberOfLines={1}*!/*/}
+          {/*  /!*                                                   style={styles.profilePersonalDataName}>Паспорт:</Text><Text*!/*/}
+          {/*  /!*      numberOfLines={1}*!/*/}
+          {/*  /!*      style={styles.profilePersonalDataText}>{passportData ? (passportData.substring(0, 3) + "*".repeat(passportData.length - 3)) : "Заполните профиль"}</Text></View>*!/*/}
+          {/*  /!*  </ShadowedView>*!/*/}
+          {/*  /!*</View>*!/*/}
+          {/*</View>}*/}
+          <ShadowedView style={[styles.profileDataContainer, shadowStyle({
+            color: theme.colors.grey3,
+            opacity: 0.8,
+            radius: 24,
+            offset: [0, 6],
+          })]}>
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
+              buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("Favorites")}>
+              <Text style={{
+                fontFamily: "Roboto-Regular",
+                color: theme.colors.text,
+                fontSize: 16,
+                marginStart: 12,
+              }}>Избранное</Text>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+            <Divider />
+            <Button containerStyle={[styles.profileAppDataBtnContainer, {
+              borderBottomStartRadius: 15,
+              borderBottomEndRadius: 15,
+            }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                    onPress={() => navigation.navigate("Settings")}>
+              <Text style={{
+                fontFamily: "Roboto-Regular",
+                color: theme.colors.text,
+                fontSize: 16,
+                marginStart: 12,
+              }}>Настройки</Text>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+          </ShadowedView>
+          <ShadowedView style={[styles.profileDataContainer, { marginBottom: 24 }, shadowStyle({
+            color: theme.colors.grey3,
+            opacity: 0.8,
+            radius: 24,
+            offset: [0, 6],
+          })]}>
+            <Button
+              containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
+              buttonStyle={[styles.profileAppDataBtn, { height: 96 }]} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("SupportStackNavigator")}>
+              <Text style={{
+                fontFamily: "Roboto-Regular",
+                color: theme.colors.text,
+                fontSize: 16,
+                marginStart: 12,
+              }}>Поддержка</Text>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+          </ShadowedView>
         </View>
       </ScrollView>
     </SafeAreaView>

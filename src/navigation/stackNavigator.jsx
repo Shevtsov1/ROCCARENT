@@ -8,6 +8,7 @@ import auth from "@react-native-firebase/auth";
 import EditProfile from "../screens/profileScreen/components/editProfile/editProfile";
 import Settings from "../screens/profileScreen/components/settings";
 import DealArchive from "../screens/profileScreen/components/dealArchive";
+import Support from "../screens/profileScreen/components/support/support";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +76,8 @@ export const ProfileStackNavigator = ({
                   setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
       <Stack.Screen name="EditProfileStackNavigator" options={{ headerShown: false }}>{(props) =>
         <EditProfileStackNavigator {...props} theme={theme}/>}</Stack.Screen>
+      <Stack.Screen name="SupportStackNavigator" options={{ headerShown: false }}>{(props) =>
+        <SupportStackNavigator {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -96,8 +99,31 @@ export const EditProfileStackNavigator = ({
         headerTitleAlign: "center",
         headerTintColor: theme.colors.text,
       }}>
-      <Stack.Screen name="EditProfile" options={{ title: "Изменить профиль", headerShown: false }}>{(props) =>
+      <Stack.Screen name="EditProfile" options={{headerShown: false }}>{(props) =>
         <EditProfile {...props} theme={theme}/>}</Stack.Screen>
+    </Stack.Navigator>
+  );
+};
+
+export const SupportStackNavigator = ({
+                                            theme,
+                                          }) => {
+
+  return (
+    <Stack.Navigator
+      initialRouteName={"Support"}
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: theme.colors.background,
+        },
+        headerTitleStyle: {
+          color: theme.colors.text,
+        },
+        headerTitleAlign: "center",
+        headerTintColor: theme.colors.text,
+      }}>
+      <Stack.Screen name="Support" options={{headerShown: false }}>{(props) =>
+        <Support {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };
