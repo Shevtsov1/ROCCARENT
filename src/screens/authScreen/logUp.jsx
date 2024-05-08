@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Avatar, Icon, Input } from "@rneui/themed";
 import TermsCheckbox from "./TermsCheckbox";
@@ -7,6 +7,7 @@ import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FastImage from "react-native-fast-image";
 
 const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPress, navigation }) => {
 
@@ -253,7 +254,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
               </TouchableOpacity>
             </View>
             <View style={styles.imageContainer}>
-              <Image
+              <FastImage
                 source={require("../../assets/images/logo/logo.png")}
                 style={styles.image}
                 resizeMode={"contain"}
@@ -440,7 +441,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
                 }), { borderRadius: 15 }]}>
                   <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
                           onPress={onGoogleButtonPress}
-                          title={<Image source={require("../../assets/images/google-icon.png")}
+                          title={<FastImage source={require("../../assets/images/google-icon.png")}
                                         style={{ width: 30, height: 30 }} />} />
                 </ShadowedView>
               </View>

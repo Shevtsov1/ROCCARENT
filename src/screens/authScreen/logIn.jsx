@@ -8,6 +8,7 @@ import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FastImage from "react-native-fast-image";
 
 const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
   const [isPasswordSecure, setIsPasswordSecure] = useState(true);
@@ -168,7 +169,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.imageContainer}>
-        <Image
+        <FastImage
           source={require("../../assets/images/logo/logo.png")}
           style={styles.image}
           resizeMode={"contain"}
@@ -255,7 +256,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
           }), { borderRadius: 15 }]}>
             <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
                     onPress={onGoogleButtonPress}
-                    title={<Image source={require("../../assets/images/google-icon.png")}
+                    title={<FastImage source={require("../../assets/images/google-icon.png")}
                                   style={{ width: 30, height: 30 }} />} />
           </ShadowedView>
         </View>
