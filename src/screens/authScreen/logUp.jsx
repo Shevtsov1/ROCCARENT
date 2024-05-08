@@ -26,7 +26,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
     const passwordRef = useRef(null);
     const passwordConfirmationRef = useRef(null);
 
-    const backColor = theme.colors.secondary;
+    const backColor = theme.colors.background;
     const textColor = theme.colors.text;
     const accentColor = theme.colors.accent;
 
@@ -191,7 +191,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
       backButton: {
         position: "absolute",
         top: hp(2),
-        left: wp(2),
+        left: wp(4),
       }, underButtonsContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -201,6 +201,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
       }, underButtonText: {
         fontFamily: "Roboto-Medium",
         color: theme.colors.grey1,
+        fontSize: 15,
       },
       googleAuthBtnText: {
         marginEnd: 18,
@@ -249,8 +250,8 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.backButton}>
-              <TouchableOpacity style={{ width: 36, height: 36 }} onPress={() => navigation.navigate("Profile")}>
-                <Icon type={"ionicon"} name="chevron-back-outline" color={theme.colors.text} size={24} />
+              <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                <Text style={{fontFamily: 'Roboto-Medium', fontSize: 16, color: theme.colors.grey1}}>Назад</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.imageContainer}>
@@ -263,7 +264,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
             <View style={styles.contentContainer}>
               <View style={{ marginBottom: 12 }}>
                 <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <View style={styles.inputViewContainer}>
                     <Input
@@ -292,7 +293,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
               </View>
               <View style={{ marginBottom: 12 }}>
                 <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <View style={styles.inputViewContainer}>
                     <Input
@@ -322,7 +323,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
               </View>
               <View style={{ marginBottom: 12 }}>
                 <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <View style={styles.inputViewContainer}>
                     <Input
@@ -352,7 +353,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
               </View>
               <View style={{ marginBottom: 12 }}>
                 <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <View style={styles.inputViewContainer}>
                     <Input
@@ -385,7 +386,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
                 </ShadowedView>
               </View>
               <ShadowedView style={[shadowStyle({
-                color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
               }), { borderRadius: 15 }]}>
                 <View style={styles.inputViewContainer}>
                   <Input
@@ -423,7 +424,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
               <View style={styles.logupBtnContainer}>
                 <View style={{ marginEnd: wp(2) }}>
                   <ShadowedView style={[!authBtnDisabled && shadowStyle({
-                    color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                    color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                   }), { borderRadius: 15 }]}>
                     <TouchableOpacity
                       style={[styles.buttonSubmit, {
@@ -437,7 +438,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
                   </ShadowedView>
                 </View>
                 <ShadowedView style={[shadowStyle({
-                  color: theme.colors.grey3, opacity: 0.4, radius: 8, offset: [0, 0],
+                  color: theme.colors.grey3, opacity: 0.8, radius: 12, offset: [0, 0],
                 }), { borderRadius: 15 }]}>
                   <Button containerStyle={styles.googleAuthBtnContainer} buttonStyle={styles.googleAuthBtn}
                           onPress={onGoogleButtonPress}
@@ -449,7 +450,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
                 <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate("LogIn")}>
                   <Text style={styles.underButtonText}>Вход</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.underButton}>
+                <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate('SupportStackNavigator')}>
                   <Text style={styles.underButtonText}>Нужна помощь?</Text>
                 </TouchableOpacity>
               </View>
