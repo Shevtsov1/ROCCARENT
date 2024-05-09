@@ -31,6 +31,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
   const [isSun, setIsSun] = useState(theme.mode === "light");
   const [nickname, setNickname] = useState("");
   const [passportData, setPassportData] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,6 +41,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           await getUserAvatar();
           await getNickname();
           await getPassportData();
+          await getPhoneNumber();
         } catch (error) {
           console.log(error);
         }
@@ -93,6 +95,15 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
         setPassportData("");
       }
     });
+  };
+
+  const getPhoneNumber = async () => {
+    const loadedPhoneNumber = auth().currentUser.phoneNumber;
+    if (loadedPhoneNumber) {
+      setPhoneNumber(loadedPhoneNumber);
+    } else {
+      setPhoneNumber("");
+    }
   };
 
   const getUserAvatar = async () => {
@@ -601,21 +612,21 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPhoneNumber" })}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPhoneNumber", params: {phoneNumber: phoneNumber} })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Номер телефона{"\t"}{auth().currentUser.emailVerified &&
+                }}>Номер телефона{"\t"}{!phoneNumber &&
                   <Badge value={"Добавьте номер телефона"} status={"warning"} />}</Text>
-                {auth().currentUser.phoneNumber && <Text numberOfLines={1} style={{
+                {phoneNumber && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>номер телефона</Text>}
+                }}>{phoneNumber}</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>

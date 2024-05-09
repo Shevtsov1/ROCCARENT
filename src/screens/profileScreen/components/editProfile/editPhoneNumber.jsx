@@ -4,17 +4,45 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
+import auth from "@react-native-firebase/auth";
 
-const EditPhoneNumber = ({ theme, navigation, passportData, setPassportData }) => {
+const EditPhoneNumber = ({ theme, navigation, route }) => {
 
-  const [email, setEmail] = useState("");
+  const phoneNumber = route.params;
+  const [newPhoneNumber, setNewPhoneNumber] = useState('');
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [confirmationResult, setConfirmationResult] = useState('');
 
-  const handleChangeEmail = (value) => {
-    setEmail(value);
+  const handleChangePhoneNumber = (value) => {
+    setNewPhoneNumber(value);
   };
 
-  const handleSubmitBtn = () => {
-    console.log(`New Email:\n${email}`);
+  const handleChangeVerificationCode = (value) => {
+    setVerificationCode(value)
+  };
+
+  const handleSendVerification = async () => {
+    try {
+      const confirmationResult = await auth().verifyPhoneNumber(newPhoneNumber);
+      setVerificationSent(true);
+      setConfirmationResult(confirmationResult); // Сохраняем confirmationResult в состоянии
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleVerifyPhoneNumber = async () => {
+    try {
+      const credential = auth.PhoneAuthProvider.credential(
+        confirmationResult.verificationId,
+        verificationCode
+      );
+      await auth().currentUser.updatePhoneNumber(credential);
+      console.log('Phone number verified');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const styles = StyleSheet.create({
@@ -88,25 +116,41 @@ const EditPhoneNumber = ({ theme, navigation, passportData, setPassportData }) =
             </View>
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
-                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждени адреса электронной почты :{"\n"}
+                На указанный Вами номер телефона будет отправлено сообщение с кодом для подтверждения номера телефона :{"\n"}
               </Text>
               <Text style={styles.infoText}>
-                Вы можете придумать изменить электронный адрес ниже:
+                Вы можете указать новый номер мобильного телефона ниже:
               </Text>
             </View>
             <Input
-              label={"Email"}
+              label={"Номер телефона"}
               labelStyle={styles.inputTextStyle}
               containerStyle={styles.inputComponentContainer}
               inputContainerStyle={styles.inputContainer}
               inputStyle={styles.inputTextStyle}
-              placeholder={"Новый e-mail"}
-              value={email}
-              onChangeText={handleChangeEmail}
+              placeholder={"Введите номер телефона"}
+              onChangeText={handleChangePhoneNumber}
+              value={newPhoneNumber}
             />
+
+            {verificationSent && <>
+              <Text style={[styles.infoText, {marginStart: 12, marginBottom: 12}]}>
+                Код отправлен на номер: {newPhoneNumber}
+              </Text>
+              <Input
+                label={"Код подтверждения"}
+                labelStyle={styles.inputTextStyle}
+                containerStyle={styles.inputComponentContainer}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={styles.inputTextStyle}
+                placeholder={"Введите код подтверждения"}
+                onChangeText={handleChangeVerificationCode}
+                value={verificationCode}
+              />
+            </>}
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                    titleStyle={{ color: theme.colors.grey1 }} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Изменить Email</Text></Button>
+                    titleStyle={{ color: theme.colors.grey1 }} onPress={verificationSent ? handleVerifyPhoneNumber : handleSendVerification}><Text
+              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>{verificationSent ? 'Подтвердить номер' : 'Получить код'}</Text></Button>
           </View>
         </View>
       </ScrollView>

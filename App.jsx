@@ -68,7 +68,7 @@ const App = () => {
         console.log("Images loaded");
         await loadTheme();
         console.log("Theme loaded");
-        await auth().onAuthStateChanged(onAuthStateChanged);
+        await auth().onAuthStateChanged(user => onAuthStateChanged(user));
         // await onGoogleButtonPress();
       } catch (error) {
         console.log(error);
