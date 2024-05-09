@@ -20,7 +20,6 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
-import LoadingScreen from "../../components/loadingScreen";
 import firestore from "@react-native-firebase/firestore";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
