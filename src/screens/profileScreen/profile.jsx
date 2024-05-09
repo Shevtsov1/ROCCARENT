@@ -22,6 +22,7 @@ import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
 import firestore from "@react-native-firebase/firestore";
+import LoadingScreen from "../../components/loadingScreen";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData, route }) => {
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
@@ -279,10 +280,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
 
   if (backendProcess) {
     return (
-      <SafeAreaView
-        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background }}>
-        <ActivityIndicator color={theme.colors.accent} size={72} />
-      </SafeAreaView>
+      <LoadingScreen theme={theme}/>
     );
   }
 
@@ -459,7 +457,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   <View style={styles.profileMainCardBody}>
                     <View>
                       <View style={{ width: 78, height: 78 }}>
-                        {isAvatarLoading ? (
+                        {isAvatarLoading ?  (
                           <Skeleton circle width={"100%"} height={"100%"} style={{ position: "absolute", zIndex: 1 }} />
                         ) : null}
                         <FastImage
