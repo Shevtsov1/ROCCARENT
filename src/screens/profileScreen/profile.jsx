@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
@@ -21,40 +21,17 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
-import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "../../components/loadingScreen";
+import { AppContext } from "../../../App";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
+
+  const { userdata } = useContext(AppContext);
+
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
-  const [nickname, setNickname] = useState("");
-  const [passportData, setPassportData] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchData = async () => {
-        setBackendProcess(true);
-        try {
-          await getUserAvatar();
-          await getNickname();
-          await getPassportData();
-          await getPhoneNumber();
-        } catch (error) {
-          console.log(error);
-        }
-        setBackendProcess(false);
-      };
-
-      fetchData().then();
-
-      return () => {
-        // Cleanup or unsubscribe any resources if needed
-      };
-    }, []),
-  );
 
   const handleToggleModePress = () => {
     switchTheme({
@@ -70,49 +47,6 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           cyRatio: -1,
         },
       },
-    });
-  };
-
-  const getNickname = async () => {
-    await firestore().collection("users").doc(auth().currentUser.uid).get().then(snapshot => {
-      if (snapshot.exists && snapshot.data().nickname) {
-        setNickname(snapshot.data().nickname);
-      } else {
-        return setNickname("");
-      }
-    });
-  };
-
-  const getPassportData = async () => {
-    await firestore().collection("users").doc(auth().currentUser.uid).get().then(snapshot => {
-      if (snapshot.data().passportData) {
-        const localPassportData = snapshot.data().passportData;
-          const visibleText = localPassportData.slice(0, 3);
-          const hiddenText = localPassportData.slice(3, -1).replace(/./g, "*");
-          const lastVisibleChar = localPassportData.slice(-1);
-        setPassportData(visibleText + hiddenText + lastVisibleChar);
-      } else {
-        setPassportData("");
-      }
-    });
-  };
-
-  const getPhoneNumber = async () => {
-    const loadedPhoneNumber = auth().currentUser.phoneNumber;
-    if (loadedPhoneNumber) {
-      setPhoneNumber(loadedPhoneNumber);
-    } else {
-      setPhoneNumber("");
-    }
-  };
-
-  const getUserAvatar = async () => {
-    // Reference to the Firebase Storage bucket
-    const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
-    // Get the download URL of the uploaded image
-    const imageUrl = await storageRef.getDownloadURL();
-    await auth().currentUser.updateProfile({
-      photoURL: imageUrl,
     });
   };
 
@@ -519,26 +453,26 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                                                  color={theme.colors.text}
                                                                  size={30} /></TouchableOpacity>
                     </View>
-                    {nickname ?
+                    {userdata.nickname ?
                       <View>
                         <Text numberOfLines={1} style={{
                           fontFamily: "Roboto-Bold",
                           fontSize: 20,
                           color: theme.colors.text,
-                          alignSelf: 'center',
-                        }}>{nickname}</Text>
+                          alignSelf: "center",
+                        }}>{userdata.nickname}</Text>
                         <Text numberOfLines={1} style={{
                           fontFamily: "Roboto-Bold",
                           fontSize: 16,
                           color: theme.colors.grey1,
-                          alignSelf: 'center',
+                          alignSelf: "center",
                         }}>{auth().currentUser.displayName}</Text>
                       </View>
-                    : <Text numberOfLines={1} style={{
+                      : <Text numberOfLines={1} style={{
                         fontFamily: "Roboto-Bold",
                         fontSize: 18,
                         color: theme.colors.text,
-                        alignSelf: 'center',
+                        alignSelf: "center",
                       }}>{auth().currentUser.displayName}</Text>
                     }
                   </View>
@@ -557,7 +491,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
               onPress={() => navigation.navigate("EditProfileStackNavigator", {
                 screen: "EditName",
-                params: { nickname: nickname },
+                params: { nickname: userdata.nickname },
               })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
@@ -565,14 +499,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Имя{"\t"}{!nickname &&
+                }}>Имя{"\t"}{!userdata.nickname &&
                   <Badge value={"Придумайте никнейм"} status={"warning"} />}</Text>
                 <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>{nickname ? (nickname + ` (${auth().currentUser.displayName})`) : auth().currentUser.displayName}</Text>
+                }}>{userdata.nickname ? (userdata.nickname + ` (${auth().currentUser.displayName})`) : auth().currentUser.displayName}</Text>
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
@@ -606,7 +540,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
               onPress={() => navigation.navigate("EditProfileStackNavigator", {
                 screen: "EditPassport",
-                params: { passportData: passportData },
+                params: { passportData: userdata.passportData },
               })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
@@ -614,14 +548,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Пасспорт{"\t"}{!passportData &&
+                }}>Пасспорт{"\t"}{!userdata.passportData &&
                   <Badge value={"Подтвердите личность"} status={"error"} />}</Text>
-                {passportData && <Text numberOfLines={1} style={{
+                {userdata.passportData && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>{passportData}</Text>}
+                }}>{userdata.passportData}</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
@@ -629,21 +563,24 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPhoneNumber", params: {phoneNumber: phoneNumber} })}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", {
+                screen: "EditPhoneNumber",
+                params: { phoneNumber: userdata.phoneNumber },
+              })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Номер телефона{"\t"}{!phoneNumber &&
+                }}>Номер телефона{"\t"}{!userdata.phoneNumber &&
                   <Badge value={"Добавьте номер телефона"} status={"warning"} />}</Text>
-                {phoneNumber && <Text numberOfLines={1} style={{
+                {userdata.phoneNumber && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>{phoneNumber}</Text>}
+                }}>{userdata.phoneNumber}</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
