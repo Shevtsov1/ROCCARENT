@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
 import { useCustomTheme } from "./src/assets/theme/theme";
@@ -12,9 +12,13 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
 
+export const AppContext = createContext();
+
 const App = () => {
 
   const { theme, toggleMode, loadMode } = useCustomTheme();
+
+  const [userdata, setUserdata] = useState(null);
 
   const [initializing, setInitializing] = useState(true);
   const [loadingScreenText, setLoadingScreenText] = useState(null);
@@ -160,8 +164,10 @@ const App = () => {
         initializing ? (
           <AppLoadingScreen theme={theme} text={loadingScreenText} />
         ) : (
-          <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
-                        setLoadingScreenText={setLoadingScreenText} />
+          <AppContext.Provider value={userdata}>
+            <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
+                          setLoadingScreenText={setLoadingScreenText} />
+          </AppContext.Provider>
         )
       }
     </SafeAreaProvider>
