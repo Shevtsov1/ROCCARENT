@@ -36,6 +36,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
       const fetchData = async () => {
         setBackendProcess(true);
         try {
+          await getUserAvatar();
           await getNickname();
         } catch (error) {
           console.log(error);
@@ -76,6 +77,16 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
         return setNickname("");
       }
     });
+  };
+
+  const getUserAvatar = async () => {
+    // Reference to the Firebase Storage bucket
+    const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
+    // Get the download URL of the uploaded image
+    const imageUrl = await storageRef.getDownloadURL();
+    await auth().currentUser.updateProfile({
+      photoURL: imageUrl,
+    })
   };
 
   const toggleOverlay = () => {
@@ -500,7 +511,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditName" })}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditName", params: {nickname: nickname}})}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
