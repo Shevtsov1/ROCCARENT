@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -22,22 +23,32 @@ import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
 import firestore from "@react-native-firebase/firestore";
 
-const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData }) => {
+const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData, route }) => {
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
   const [nickname, setNickname] = useState('');
 
-  useEffect(() => {
-    setBackendProcess(true);
-    try {
-      getNickname().then(() => setBackendProcess(false));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        setBackendProcess(true);
+        try {
+          await getNickname();
+        } catch (error) {
+          console.log(error);
+        }
+        setBackendProcess(false);
+      };
 
+      fetchData().then();
+
+      return () => {
+        // Cleanup or unsubscribe any resources if needed
+      };
+    }, [])
+  );
 
   const handleToggleModePress = () => {
     switchTheme({
@@ -88,27 +99,31 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
   };
 
   const handleAvatarImagePicker = async () => {
-    const options = {
-      title: "Выберите изображение",
-      cancelButtonTitle: "Отмена",
-      takePhotoButtonTitle: "Выбрать изображение",
-      quality: 1,
-      mediaType: "photo",
-      storageOptions: {
-        skipBackup: true,
-        path: "images",
-      },
-      selectionLimit: 1,
-    };
-    const selectedImage = await launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log("Пользователь отменил съемку фотографии");
-      } else if (response.error) {
-        console.log("Ошибка съемки фотографии:", response.error);
+    try {
+      const options = {
+        title: "Выберите изображение",
+        cancelButtonTitle: "Отмена",
+        takePhotoButtonTitle: "Выбрать изображение",
+        quality: 1,
+        mediaType: "photo",
+        storageOptions: {
+          skipBackup: true,
+          path: "images",
+        },
+        selectionLimit: 1,
+      };
+      const selectedImage = await launchImageLibrary(options, (response) => {
+        if (response.didCancel) {
+          console.log("Пользователь отменил съемку фотографии");
+        } else if (response.error) {
+          console.log("Ошибка съемки фотографии:", response.error);
+        }
+      });
+      if(selectedImage && selectedImage.assets[0]) {
+        await compressAndUploadAvatar(selectedImage.assets[0]);
       }
-    });
-    if(selectedImage) {
-      await compressAndUploadAvatar(selectedImage.assets[0]);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -132,29 +147,32 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
           return;
         }
       }
-      // Resize the image
-      const resizedImage = await ImageResizer.createResizedImage(
-        image.uri,
-        512, // target width
-        512, // target height
-        "JPEG",
-        compressionQuality, // compression quality
-      );
 
-      // Reference to the Firebase Storage bucket
-      const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
+      if(compressionQuality){
+        // Resize the image
+        const resizedImage = await ImageResizer.createResizedImage(
+          image.uri,
+          512, // target width
+          512, // target height
+          "JPEG",
+          compressionQuality, // compression quality
+        );
 
-      // Upload the compressed image file to Firebase Storage
-      await storageRef.putFile(resizedImage.uri);
+        // Reference to the Firebase Storage bucket
+        const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
 
-      // Get the download URL of the uploaded image
-      const imageUrl = await storageRef.getDownloadURL();
+        // Upload the compressed image file to Firebase Storage
+        await storageRef.putFile(resizedImage.uri);
 
-      await auth().currentUser.updateProfile({
-        photoURL: imageUrl,
-      });
+        // Get the download URL of the uploaded image
+        const imageUrl = await storageRef.getDownloadURL();
 
-      console.log("Image uploaded successfully");
+        await auth().currentUser.updateProfile({
+          photoURL: imageUrl,
+        });
+        console.log("Image uploaded successfully");
+      }
+
     } catch (error) {
       console.log("Error uploading image:", error);
     }
