@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Input } from "@rneui/themed";
