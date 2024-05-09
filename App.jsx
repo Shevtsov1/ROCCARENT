@@ -11,6 +11,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
+import { getNickname, getPassportData, getPhoneNumber } from "./src/components/preloadUserdata";
 
 export const AppContext = createContext();
 
@@ -65,15 +66,28 @@ const App = () => {
     }
   }
 
+  const loadUserdata = async () => {
+    const nickname = await getNickname();
+    const passportData = await getPassportData();
+    const phoneNumber = await getPhoneNumber();
+    const updatedUserdata = {
+      nickname,
+      passportData,
+      phoneNumber,
+    };
+    setUserdata(updatedUserdata);
+  }
+
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        if (!auth().currentUser.isAnonymous) {
+          await loadUserdata();
+        }
         await preloadImages();
-        console.log("Images loaded");
         await loadTheme();
-        console.log("Theme loaded");
         await auth().onAuthStateChanged(user => onAuthStateChanged(user));
-        // await onGoogleButtonPress();
+        await onGoogleButtonPress();
       } catch (error) {
         console.log(error);
       }
@@ -104,10 +118,7 @@ const App = () => {
         }
       }
     };
-
     init().then();
-    setTimeout(async () => {
-    }, 2500);
   }, []);
 
   const checkInternetConnectivity = async () => {
@@ -164,7 +175,7 @@ const App = () => {
         initializing ? (
           <AppLoadingScreen theme={theme} text={loadingScreenText} />
         ) : (
-          <AppContext.Provider value={userdata}>
+          <AppContext.Provider value={{userdata, loadUserdata}}>
             <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
                           setLoadingScreenText={setLoadingScreenText} />
           </AppContext.Provider>
