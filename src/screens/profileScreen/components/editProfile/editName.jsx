@@ -186,8 +186,8 @@ const EditName = ({ theme, navigation }) => {
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
-                }}>Изменить
-                имя</Text>
+                }}>Изменение
+                имени</Text>
               <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.headerBackBtnText}>Назад</Text>
               </TouchableOpacity>
