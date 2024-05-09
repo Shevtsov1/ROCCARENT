@@ -1,20 +1,68 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
+import TextRecognition from "@react-native-ml-kit/text-recognition";
+import { useCameraDevice, useCameraPermission, Camera } from "react-native-vision-camera";
+import FastImage from "react-native-fast-image";
 
-const EditPassport = ({ theme, navigation, passportData, setPassportData }) => {
+const EditPassport = ({ theme, navigation }) => {
 
-  const [email, setEmail] = useState("");
+  const device = useCameraDevice("back");
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const camera = useRef(null);
+  const [loadingPhoto, setLoadingPhoto] = useState(false);
 
-  const handleChangeEmail = (value) => {
-    setEmail(value);
+  const [passportPhoto, setPassportPhoto] = useState("");
+  const [passportData, setPassportData] = useState("");
+  const [passportVerified, setPassportVerified] = useState(false);
+  const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
+
+  useEffect(() => {
+    if (!hasPermission) {
+      requestPermission().then();
+    }
+  }, []);
+
+
+  const verifyPassport = async (passportImage) => {
+    const result = await TextRecognition.recognize(passportImage.assets[0].uri);
+    const textArr = result.text.split("\n");
+    const finalArray = [];
+    for (let i = 0; i < textArr.length; i++) {
+      const words = textArr[i].split(" ");
+      finalArray.push(...words);
+    }
+    for (let i = 0; i < finalArray.length; i++) {
+      const element = finalArray[i];
+      if (passportRegexPattern.test(element)) {
+        setPassportData(element);
+        setPassportVerified(true);
+        console.log("Passport data found:", element);
+      }
+    }
+    if (!passportVerified) console.log("Не удалось просканировать пасспорт, повторите попытку");
+  };
+
+  const handleVerifyPassport = async () => {
+    setLoadingPhoto(true);
+    await verifyPassport(passportPhoto);
+    setLoadingPhoto(false);
+  }
+
+  const handleTakePhotoBtn = async () => {
+    setLoadingPhoto(true);
+    const photo = await camera.current.takePhoto({
+      flash: "auto",
+      enableShutterSound: "false",
+      enableAutoRedEyeReduction: true,
+    });
+    setPassportPhoto(photo.path);
+    setLoadingPhoto(false);
   };
 
   const handleSubmitBtn = () => {
-    console.log(`New Email:\n${email}`);
   };
 
   const styles = StyleSheet.create({
@@ -80,33 +128,44 @@ const EditPassport = ({ theme, navigation, passportData, setPassportData }) => {
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
-                }}>Изменить
-                Паспорт</Text>
+                }}>Подтверждение
+                Паспорта</Text>
               <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.headerBackBtnText}>Назад</Text>
               </TouchableOpacity>
             </View>
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
-                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждени адреса электронной почты :{"\n"}
+                Для подтверждения паспорта, пожалуйста, загрузите фотографию паспорта ниже.
+                Мы гарантируем конфиденциальность ваших данных и обеспечиваем их безопасность.
               </Text>
               <Text style={styles.infoText}>
-                Вы можете придумать изменить электронный адрес ниже:
+                Пожалуйста, убедитесь, что фотография является четкой и полностью воспроизводит информацию в паспорте.
               </Text>
             </View>
-            <Input
-              label={"Email"}
-              labelStyle={styles.inputTextStyle}
-              containerStyle={styles.inputComponentContainer}
-              inputContainerStyle={styles.inputContainer}
-              inputStyle={styles.inputTextStyle}
-              placeholder={"Новый e-mail"}
-              value={email}
-              onChangeText={handleChangeEmail}
-            />
+            {hasPermission &&
+              <View style={{
+                width: wp(90),
+                height: hp(30),
+                borderWidth: 1,
+                borderColor: theme.colors.accent,
+                alignSelf: "center",
+                marginBottom: 12,
+              }}>
+                {passportPhoto ? (
+                  <FastImage style={{ width: "100%", height: "100%" }} resizeMode={FastImage.resizeMode.cover}
+                             source={{ uri: "file://" + passportPhoto }} />) : (
+                  <Camera style={{ width: "100%", height: "100%" }} device={device} isActive={true} photo={true}
+                          ref={camera} />)}
+              </View>}
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                    titleStyle={{ color: theme.colors.grey1 }} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Изменить Email</Text></Button>
+                    titleStyle={{ color: theme.colors.grey1 }} loading={loadingPhoto} loadingStyle={styles.submitBtn}
+                    onPress={passportPhoto ? handleVerifyPassport : handleTakePhotoBtn}>{passportPhoto ?
+              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>
+                Отправить на проверку
+              </Text> : <Text
+                style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Сделать
+                снимок</Text>}</Button>
           </View>
         </View>
       </ScrollView>
@@ -115,28 +174,3 @@ const EditPassport = ({ theme, navigation, passportData, setPassportData }) => {
 };
 
 export default EditPassport;
-
-import TextRecognition from "@react-native-ml-kit/text-recognition";
-
-// const [passportVerified, setPassportVerified] = useState(false);
-// const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
-
-
-// const verifyPassport = async (passportImage) => {
-//   const result = await TextRecognition.recognize(passportImage.assets[0].uri);
-//   const textArr = result.text.split("\n");
-//   const finalArray = [];
-//   for (let i = 0; i < textArr.length; i++) {
-//     const words = textArr[i].split(" ");
-//     finalArray.push(...words);
-//   }
-//   for (let i = 0; i < finalArray.length; i++) {
-//     const element = finalArray[i];
-//     if (passportRegexPattern.test(element)) {
-//       setPassportData(element);
-//       setPassportVerified(true);
-//       console.log("Passport data found:", element);
-//     }
-//   }
-//   if (!passportVerified) console.log("Не удалось просканировать пасспорт, повторите попытку");
-// };
