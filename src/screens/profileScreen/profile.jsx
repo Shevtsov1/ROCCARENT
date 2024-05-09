@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from "react-native";
-import { Overlay, Avatar, Button, Divider, Icon, Skeleton } from "@rneui/themed";
+import { Overlay, Avatar, Button, Divider, Icon, Skeleton, Badge } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,7 +28,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState("");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,7 +47,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
       return () => {
         // Cleanup or unsubscribe any resources if needed
       };
-    }, [])
+    }, []),
   );
 
   const handleToggleModePress = () => {
@@ -68,14 +68,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
   };
 
   const getNickname = async () => {
-    await firestore().collection('users').doc(auth().currentUser.uid).get().then(snapshot => {
+    await firestore().collection("users").doc(auth().currentUser.uid).get().then(snapshot => {
       if (snapshot.exists && snapshot.data().nickname) {
         setNickname(snapshot.data().nickname);
       } else {
-        return setNickname('');
+        return setNickname("");
       }
-    })
-  }
+    });
+  };
 
   const toggleOverlay = () => {
     setVisible(!visible);
@@ -119,7 +119,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
           console.log("Ошибка съемки фотографии:", response.error);
         }
       });
-      if(selectedImage && selectedImage.assets[0]) {
+      if (selectedImage && selectedImage.assets[0]) {
         await compressAndUploadAvatar(selectedImage.assets[0]);
       }
     } catch (e) {
@@ -133,22 +133,22 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
     try {
       const fileSize = image.fileSize;
       let compressionQuality;
-      if(fileSize > 10 * 1024 && fileSize < 1024 * 1024) {
+      if (fileSize > 10 * 1024 && fileSize < 1024 * 1024) {
         compressionQuality = 100;
       } else if (fileSize >= 1024 * 1024) {
         for (let i = 20; i <= 100; i++) {
-          if ((fileSize * i/100 <= 1024 * 1024) && (fileSize * i/100 >= 10 * 1024)){
+          if ((fileSize * i / 100 <= 1024 * 1024) && (fileSize * i / 100 >= 10 * 1024)) {
             compressionQuality = i;
           }
         }
         if (!compressionQuality) {
-          ToastAndroid.show('Размер изображения должен быть от 100кБ до 5МБ', 5000)
+          ToastAndroid.show("Размер изображения должен быть от 100кБ до 5МБ", 5000);
           setIsAvatarLoading(false);
           return;
         }
       }
 
-      if(compressionQuality){
+      if (compressionQuality) {
         // Resize the image
         const resizedImage = await ImageResizer.createResizedImage(
           image.uri,
@@ -279,8 +279,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
 
   if (backendProcess) {
     return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background}}>
-        <ActivityIndicator color={theme.colors.accent} size={72}/>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background }}>
+        <ActivityIndicator color={theme.colors.accent} size={72} />
       </SafeAreaView>
     );
   }
@@ -457,17 +458,17 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   </View>
                   <View style={styles.profileMainCardBody}>
                     <View>
-                        <View style={{ width: 78, height: 78 }}>
-                          {isAvatarLoading ? (
-                            <Skeleton circle width={'100%'} height={'100%'} style={{position: 'absolute', zIndex: 1}}/>
-                          ) : null}
-                          <FastImage
-                            style={{ width: '100%', height: '100%', borderRadius: 78 / 2 }}
-                            source={auth().currentUser.photoURL ? { uri: auth().currentUser.photoURL } : require('../../assets/images/user.png')}
-                            onLoad={() => setIsAvatarLoading(false)}
-                            resizeMode={FastImage.resizeMode.cover}
-                          />
-                        </View>
+                      <View style={{ width: 78, height: 78 }}>
+                        {isAvatarLoading ? (
+                          <Skeleton circle width={"100%"} height={"100%"} style={{ position: "absolute", zIndex: 1 }} />
+                        ) : null}
+                        <FastImage
+                          style={{ width: "100%", height: "100%", borderRadius: 78 / 2 }}
+                          source={auth().currentUser.photoURL ? { uri: auth().currentUser.photoURL } : require("../../assets/images/user.png")}
+                          onLoad={() => setIsAvatarLoading(false)}
+                          resizeMode={FastImage.resizeMode.cover}
+                        />
+                      </View>
                       <TouchableOpacity style={{
                         position: "absolute",
                         borderRadius: 15,
@@ -508,7 +509,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Имя</Text>
+                }}>Имя{'\t'}{!nickname &&
+                  <Badge value={"Придумайте никнейм"} status={"warning"} />}</Text>
                 <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
@@ -529,7 +531,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Email</Text>
+                }}>Email{"\t"}{!auth().currentUser.emailVerified &&
+                  <Badge value={"Подтвердите Email"} status={"error"} />}</Text>
                 <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
@@ -550,13 +553,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Пасспорт</Text>
-                <Text numberOfLines={1} style={{
+                }}>Пасспорт{'\t'}{auth().currentUser.emailVerified &&
+                  <Badge value={"Подтвердите личность"} status={"error"} />}</Text>
+                {!auth().currentUser.emailVerified && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>Номер</Text>
+                }}>Номер</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
@@ -571,13 +575,14 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Номер телефона</Text>
-                <Text numberOfLines={1} style={{
+                }}>Номер телефона{'\t'}{auth().currentUser.emailVerified &&
+                  <Badge value={"Добавьте номер телефона"} status={"warning"} />}</Text>
+                {auth().currentUser.phoneNumber && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>номер телефона</Text>
+                }}>номер телефона</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
