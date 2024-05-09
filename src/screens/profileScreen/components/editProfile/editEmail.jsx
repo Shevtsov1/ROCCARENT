@@ -84,7 +84,7 @@ const EditEmail = ({ theme, navigation }) => {
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
-                }}>Подтвердить
+                }}>Подтверждение
                 Email</Text>
               <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.headerBackBtnText}>Назад</Text>
