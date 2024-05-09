@@ -8,10 +8,10 @@ import { Button } from "@rneui/base";
 import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "../../../../components/loadingScreen";
 
-const EditName = ({ theme, navigation }) => {
+const EditName = ({ theme, navigation, route }) => {
 
+  const { nickname } = route.params;
   const [isLoading, setIsLoading] = useState(true);
-  const [nickname, setNickname] = useState("");
   const [name, setName] = useState(auth().currentUser.displayName.split(" ")[0]);
   const [surname, setSurname] = useState(auth().currentUser.displayName.split(" ")[1]);
   const [newNickname, setNewNickname] = useState('');
@@ -23,19 +23,7 @@ const EditName = ({ theme, navigation }) => {
   const nameRef = useRef(null);
   const surnameRef = useRef(null);
 
-  const getNickname = async () => {
-    const loadedNickname = await firestore().collection("users").doc(auth().currentUser.uid).get().then(querySnapshot => {
-      if (querySnapshot.exists && querySnapshot.data().nickname) {
-        return querySnapshot.data().nickname;
-      } else {
-        return "";
-      }
-    });
-    setNickname(loadedNickname);
-  };
-
   useEffect(() => {
-    getNickname().then();
     const displayNameArray = auth().currentUser.displayName.split(" ");
     setName(displayNameArray[0]);
     if (displayNameArray.length > 1) setSurname(displayNameArray[1]);
@@ -92,7 +80,7 @@ const EditName = ({ theme, navigation }) => {
     setIsSubmitBtnLoading(true);
     try {
       if (newNickname) {
-        await firestore().collection("users").doc(auth().currentUser.uid).set({ nickname: newNickname });
+        await firestore().collection("users").doc(auth().currentUser.uid).update({ nickname: newNickname });
       }
       if (newName && newSurname) {
         await auth().currentUser.updateProfile({

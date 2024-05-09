@@ -24,12 +24,13 @@ import ImageResizer from "@bam.tech/react-native-image-resizer";
 import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "../../components/loadingScreen";
 
-const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData, route }) => {
+const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
   const [nickname, setNickname] = useState("");
+  const [passportData, setPassportData] = useState("");
 
   useFocusEffect(
     React.useCallback(() => {
@@ -38,6 +39,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
         try {
           await getUserAvatar();
           await getNickname();
+          await getPassportData();
         } catch (error) {
           console.log(error);
         }
@@ -79,6 +81,20 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
     });
   };
 
+  const getPassportData = async () => {
+    await firestore().collection("users").doc(auth().currentUser.uid).get().then(snapshot => {
+      if (snapshot.data().passportData) {
+        const localPassportData = snapshot.data().passportData;
+          const visibleText = localPassportData.slice(0, 3);
+          const hiddenText = localPassportData.slice(3, -1).replace(/./g, "*");
+          const lastVisibleChar = localPassportData.slice(-1);
+        setPassportData(visibleText + hiddenText + lastVisibleChar);
+      } else {
+        setPassportData("");
+      }
+    });
+  };
+
   const getUserAvatar = async () => {
     // Reference to the Firebase Storage bucket
     const storageRef = storage().ref(`users/${auth().currentUser.uid}/avatar/`);
@@ -86,7 +102,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
     const imageUrl = await storageRef.getDownloadURL();
     await auth().currentUser.updateProfile({
       photoURL: imageUrl,
-    })
+    });
   };
 
   const toggleOverlay = () => {
@@ -291,7 +307,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
 
   if (backendProcess) {
     return (
-      <LoadingScreen theme={theme}/>
+      <LoadingScreen theme={theme} />
     );
   }
 
@@ -468,7 +484,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   <View style={styles.profileMainCardBody}>
                     <View>
                       <View style={{ width: 78, height: 78 }}>
-                        {isAvatarLoading ?  (
+                        {isAvatarLoading ? (
                           <Skeleton circle width={"100%"} height={"100%"} style={{ position: "absolute", zIndex: 1 }} />
                         ) : null}
                         <FastImage
@@ -511,14 +527,17 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditName", params: {nickname: nickname}})}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", {
+                screen: "EditName",
+                params: { nickname: nickname },
+              })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Имя{'\t'}{!nickname &&
+                }}>Имя{"\t"}{!nickname &&
                   <Badge value={"Придумайте никнейм"} status={"warning"} />}</Text>
                 <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
@@ -533,7 +552,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
             <Button
               containerStyle={[styles.profileAppDataBtnContainer]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditEmail" })}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", {
+                screen: "EditEmail",
+              })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
@@ -555,21 +576,24 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
             <Button
               containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
               buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate("EditProfileStackNavigator", { screen: "EditPassport" })}>
+              onPress={() => navigation.navigate("EditProfileStackNavigator", {
+                screen: "EditPassport",
+                params: { passportData: passportData },
+              })}>
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontFamily: "Roboto-Regular",
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Пасспорт{'\t'}{auth().currentUser.emailVerified &&
+                }}>Пасспорт{"\t"}{!passportData &&
                   <Badge value={"Подтвердите личность"} status={"error"} />}</Text>
-                {!auth().currentUser.emailVerified && <Text numberOfLines={1} style={{
+                {passportData && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",
                   color: `${theme.colors.text}AA`,
                   fontSize: 14,
                   marginStart: 12,
-                }}>Номер</Text>}
+                }}>{passportData}</Text>}
               </View>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
@@ -584,7 +608,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData,
                   color: theme.colors.text,
                   fontSize: 16,
                   marginStart: 12,
-                }}>Номер телефона{'\t'}{auth().currentUser.emailVerified &&
+                }}>Номер телефона{"\t"}{auth().currentUser.emailVerified &&
                   <Badge value={"Добавьте номер телефона"} status={"warning"} />}</Text>
                 {auth().currentUser.phoneNumber && <Text numberOfLines={1} style={{
                   fontFamily: "Roboto-Regular",

@@ -7,9 +7,13 @@ import TextRecognition from "@react-native-ml-kit/text-recognition";
 import { useCameraDevice, useCameraPermission, Camera } from "react-native-vision-camera";
 import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
+import storage from "@react-native-firebase/storage";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
-const EditPassport = ({ theme, navigation }) => {
+const EditPassport = ({ theme, navigation, route }) => {
 
+  const { passportData } = route.params;
   const [isCameraActive, setCameraActive] = useState(false);
   const device = useCameraDevice("back");
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -19,7 +23,6 @@ const EditPassport = ({ theme, navigation }) => {
   const [isTakingPhotoFromCameraLibrary, setTakingPhotoFromCameraLibrary] = useState(false);
 
   const [passportPhoto, setPassportPhoto] = useState("");
-  const [passportData, setPassportData] = useState("");
   const [passportVerified, setPassportVerified] = useState(false);
   const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
@@ -28,13 +31,6 @@ const EditPassport = ({ theme, navigation }) => {
       requestPermission().then();
     }
   }, []);
-
-  useEffect(() => {
-    const visibleText = passportData.slice(0, 3);
-    const hiddenText = passportData.slice(3, -1).replace(/./g, "*");
-    const lastVisibleChar = passportData.slice(-1);
-    setPassportData(visibleText + hiddenText + lastVisibleChar);
-  }, [passportData]);
 
   const handleOpenCamera = async () => {
     setPassportPhoto("");
@@ -83,6 +79,7 @@ const EditPassport = ({ theme, navigation }) => {
   };
 
   const verifyPassport = async (passportImageUri) => {
+    let newPassportData;
     const result = await TextRecognition.recognize(passportImageUri);
     const textArr = result.text.split("\n");
     const finalArray = [];
@@ -93,13 +90,14 @@ const EditPassport = ({ theme, navigation }) => {
     for (let i = 0; i < finalArray.length; i++) {
       const element = finalArray[i];
       if (passportRegexPattern.test(element.trim())) {
-        setPassportData(element);
+        newPassportData = element;
         setPassportVerified(true);
       }
     }
-    if (passportVerified) {
+    if (newPassportData) {
+      await uploadPassportImage(passportImageUri, newPassportData);
       ToastAndroid.show("Паспорт успешно подтвержден", 7000);
-      // navigation.navigate("Profile");
+      navigation.navigate("Profile");
     } else {
       setPassportPhoto("");
       setCameraActive(true);
@@ -107,7 +105,28 @@ const EditPassport = ({ theme, navigation }) => {
     }
   };
 
-  const handleVerifyPassport = async () => {
+  const uploadPassportImage = async (imageUri, newPassportData) => {
+    try {
+      // Reference to the Firebase Storage bucket
+      const storageRef = storage().ref(`users/${auth().currentUser.uid}/passportPhoto/`);
+
+      // Upload the compressed image file to Firebase Storage
+      await storageRef.putFile(imageUri);
+
+      // Get the download URL of the uploaded image
+      const imageUrl = await storageRef.getDownloadURL();
+
+      await firestore().collection("users").doc(auth().currentUser.uid).update({
+        passportData: newPassportData,
+        passportPhotoURL: imageUrl,
+      });
+      console.log("Image uploaded successfully");
+    } catch (error) {
+      console.log("Error uploading image:", error);
+    }
+  };
+
+  const handleVerifyAndUploadPassport = async () => {
     setLoadingPhoto(true);
     await verifyPassport(passportPhoto);
     setLoadingPhoto(false);
@@ -162,7 +181,7 @@ const EditPassport = ({ theme, navigation }) => {
               paddingHorizontal: 12,
               paddingVertical: 12,
             }}>
-              <Text numberOfLines={1} style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>
+              <Text numberOfLines={1} style={{ fontFamily: "Roboto-Black", fontSize: 18, color: theme.colors.text, alignSelf: 'center' }}>
                 Ваш Паспорт подтвержден
               </Text>
               <Text numberOfLines={1} style={{
@@ -174,7 +193,7 @@ const EditPassport = ({ theme, navigation }) => {
               }}>
                 {passportData}
               </Text>
-              <FastImage style={{ width: wp(50), height: wp(50), alignSelf: 'center', marginTop: hp(1) }}
+              <FastImage style={{ width: wp(50), height: wp(50), alignSelf: "center", marginTop: hp(1) }}
                          source={require("../../../../assets/images/passport.png")}
                          resizeMode={FastImage.resizeMode.contain} />
             </View>
@@ -228,7 +247,7 @@ const EditPassport = ({ theme, navigation }) => {
               <Button containerStyle={[styles.submitBtnContainer, { marginTop: 12 }]} buttonStyle={styles.submitBtn}
                       titleStyle={{ color: theme.colors.grey1 }} loading={passportPhoto && loadingPhoto}
                       loadingStyle={styles.submitBtn}
-                      onPress={handleVerifyPassport}
+                      onPress={handleVerifyAndUploadPassport}
                       disabled={!passportPhoto || isTakingPhotoFromCamera || isTakingPhotoFromCameraLibrary}><Text
                 style={{
                   fontFamily: "Roboto-Medium",
