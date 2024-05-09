@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -12,7 +12,9 @@ const EditEmail = ({ theme, navigation }) => {
 
   const handleSubmitBtn = async () => {
     setBtnIsLoading(true);
-    await auth().currentUser.sendEmailVerification({handleCodeInApp: true});
+    await auth().currentUser.sendEmailVerification({handleCodeInApp: true}).then(() => {
+      ToastAndroid.show('Письмо с потдверждением отправлено', 5000);
+    });
     setBtnIsLoading(false);
     navigation.navigate('Profile');
   }
@@ -110,7 +112,7 @@ const EditEmail = ({ theme, navigation }) => {
               style={{
                 fontFamily: "Roboto-Medium",
                 fontSize: 18,
-                color: auth().currentUser.emailVerified ? theme.colors.text : theme.colors.accentText,
+                color: auth().currentUser.emailVerified ? theme.colors.greyOutline : theme.colors.accentText,
               }}>{auth().currentUser.emailVerified ? ('Почта подтверждена') : ('Отправить письмо')}</Text></Button>
           </View>
         </View>
