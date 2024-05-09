@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
+import AppLoadingScreen from "../../../../components/appLoadingScreen";
 
-const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
-
-  const [email, setEmail] = useState("");
-
-  const handleChangeEmail = (value) => {
-    setEmail(value);
-  };
+const EditEmail = ({ theme, navigation }) => {
 
   const handleSubmitBtn = () => {
-    console.log(`New Email:\n${email}`);
-  };
+    console.log('submit');
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -60,6 +55,7 @@ const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
       fontFamily: "Roboto-Regular",
       fontSize: 16,
       color: theme.colors.text,
+      opacity: 1,
     }, submitBtnContainer: {
       borderRadius: 5,
       marginHorizontal: wp(2),
@@ -69,6 +65,7 @@ const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
       backgroundColor: theme.colors.accent,
     },
   });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -81,7 +78,7 @@ const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
-                }}>Изменить
+                }}>Подтвердить
                 Email</Text>
               <TouchableOpacity style={styles.headerBackBtn} onPress={() => navigation.goBack()}>
                 <Text style={styles.headerBackBtnText}>Назад</Text>
@@ -89,10 +86,8 @@ const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
             </View>
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
-                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждени адреса электронной почты :{"\n"}
-              </Text>
-              <Text style={styles.infoText}>
-                Вы можете придумать изменить электронный адрес ниже:
+                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждени адреса электронной
+                почты:
               </Text>
             </View>
             <Input
@@ -100,14 +95,19 @@ const EditEmail = ({ theme, navigation, passportData, setPassportData }) => {
               labelStyle={styles.inputTextStyle}
               containerStyle={styles.inputComponentContainer}
               inputContainerStyle={styles.inputContainer}
-              inputStyle={styles.inputTextStyle}
               placeholder={"Новый e-mail"}
-              value={email}
-              onChangeText={handleChangeEmail}
+              value={auth().currentUser.email}
+              disabled={true}
+              disabledInputStyle={styles.inputTextStyle}
             />
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                    titleStyle={{ color: theme.colors.grey1 }} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Изменить Email</Text></Button>
+                    titleStyle={{ color: theme.colors.grey1 }} disabled={auth().currentUser.emailVerified}
+                    onPress={handleSubmitBtn}><Text
+              style={{
+                fontFamily: "Roboto-Medium",
+                fontSize: 18,
+                color: auth().currentUser.emailVerified ? theme.colors.text : theme.colors.accentText,
+              }}>{auth().currentUser.emailVerified ? ('Почта подтверждена') : ('Отправить письмо')}</Text></Button>
           </View>
         </View>
       </ScrollView>
