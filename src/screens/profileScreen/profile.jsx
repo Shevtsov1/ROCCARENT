@@ -519,11 +519,28 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                                                  color={theme.colors.text}
                                                                  size={30} /></TouchableOpacity>
                     </View>
-                    <Text numberOfLines={1} style={{
-                      fontFamily: "Roboto-Bold",
-                      fontSize: 18,
-                      color: theme.colors.text,
-                    }}>{nickname ? nickname : auth().currentUser.displayName}</Text>
+                    {nickname ?
+                      <View>
+                        <Text numberOfLines={1} style={{
+                          fontFamily: "Roboto-Bold",
+                          fontSize: 20,
+                          color: theme.colors.text,
+                          alignSelf: 'center',
+                        }}>{nickname}</Text>
+                        <Text numberOfLines={1} style={{
+                          fontFamily: "Roboto-Bold",
+                          fontSize: 16,
+                          color: theme.colors.grey1,
+                          alignSelf: 'center',
+                        }}>{auth().currentUser.displayName}</Text>
+                      </View>
+                    : <Text numberOfLines={1} style={{
+                        fontFamily: "Roboto-Bold",
+                        fontSize: 18,
+                        color: theme.colors.text,
+                        alignSelf: 'center',
+                      }}>{auth().currentUser.displayName}</Text>
+                    }
                   </View>
                 </>}
               </View>
