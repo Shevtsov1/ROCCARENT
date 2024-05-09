@@ -110,16 +110,6 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         // Регистрация завершена, отправляем письмо с подтверждением
         await auth().currentUser.sendEmailVerification().catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
         setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения");
-
-        // Ожидание подтверждения почты
-        await waitForEmailVerification()
-          .catch(() => setLoadingScreenText("Ошибка при подтверждении почты"));
-
-        setTimeout(() => {
-          setLoadingScreenText("Почта подтверждена");
-        }, 3000);
-        console.log("Почта подтверждена");
-        setLoadingScreenText(null);
       } catch (error) {
         if (error.code === "auth/unknown") {
           console.log("Пользователь с таким Email уже зарегистрирован");

@@ -41,7 +41,7 @@ const App = () => {
 
   async function preloadImages() {
     const uris = interfaceIcons.map(image => ({
-      uri: Image.resolveAssetSource(image).uri
+      uri: Image.resolveAssetSource(image).uri,
     }));
 
     await FastImage.preload(uris);
@@ -66,7 +66,7 @@ const App = () => {
       try {
         await preloadImages();
         console.log("Images loaded");
-        await loadTheme()
+        await loadTheme();
         console.log("Theme loaded");
         await auth().onAuthStateChanged(onAuthStateChanged);
         // await onGoogleButtonPress();
@@ -88,6 +88,7 @@ const App = () => {
             !currentUser.isAnonymous &&
             !currentUser.emailVerified
           ) {
+            setInitializing(false);
             await waitForEmailVerification().catch((error) =>
               setLoadingScreenText("Ошибка при подтверждении почты: " + error),
             );
@@ -101,7 +102,6 @@ const App = () => {
 
     init().then();
     setTimeout(async () => {
-      setInitializing(false);
     }, 2500);
   }, []);
 
@@ -155,17 +155,14 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
-      {auth().currentUser && !auth().currentUser.isAnonymous && !auth().currentUser.emailVerified ? (
-        <AppLoadingScreen theme={theme} text={"Письмо с подтверждением отправлено на Email\nОжидание подтверждения"}
-                          resendEmailVerify />
-      ) : (
+      {
         initializing ? (
           <AppLoadingScreen theme={theme} text={loadingScreenText} />
         ) : (
           <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
                         setLoadingScreenText={setLoadingScreenText} />
         )
-      )}
+      }
     </SafeAreaProvider>
   );
 };
