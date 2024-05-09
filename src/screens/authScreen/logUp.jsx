@@ -108,7 +108,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         });
 
         // Регистрация завершена, отправляем письмо с подтверждением
-        await auth().currentUser.sendEmailVerification().catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
+        await auth().currentUser.sendEmailVerification({handleCodeInApp: true}).catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
         setLoadingScreenText("Письмо с подтверждением отправлено на Email\nОжидание подтверждения");
       } catch (error) {
         if (error.code === "auth/unknown") {
