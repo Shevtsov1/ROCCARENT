@@ -52,20 +52,6 @@ const App = () => {
     await FastImage.preload(uris);
   }
 
-
-  async function onAuthStateChanged(user) {
-    if (!user) {
-      const currentUser = auth().currentUser;
-      if (!currentUser || (currentUser && currentUser.isAnonymous)) {
-        auth()
-          .signInAnonymously()
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-    }
-  }
-
   const loadUserdata = async () => {
     const nickname = await getNickname();
     const passportData = await getPassportData();
@@ -81,12 +67,16 @@ const App = () => {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        const currentUser = auth().currentUser;
+        if (!currentUser || currentUser.isAnonymous) {
+          await auth().signInAnonymously();
+        }
+
         if (!auth().currentUser.isAnonymous) {
           await loadUserdata();
         }
         await preloadImages();
         await loadTheme();
-        await auth().onAuthStateChanged(user => onAuthStateChanged(user));
         await onGoogleButtonPress();
       } catch (error) {
         console.log(error);
