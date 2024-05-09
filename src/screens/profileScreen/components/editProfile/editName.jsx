@@ -6,6 +6,7 @@ import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import firestore from "@react-native-firebase/firestore";
+import LoadingScreen from "../../../../components/loadingScreen";
 
 const EditName = ({ theme, navigation }) => {
 
@@ -169,9 +170,7 @@ const EditName = ({ theme, navigation }) => {
 
   if(isLoading) {
     return (
-      <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background}}>
-        <ActivityIndicator color={theme.colors.accent} size={72}/>
-      </SafeAreaView>
+      <LoadingScreen theme={theme} />
     );
   }
 
