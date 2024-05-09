@@ -128,7 +128,7 @@ const EditName = ({ theme, navigation }) => {
       borderBottomStartRadius: 15,
       borderBottomEndRadius: 15,
     }, header: {
-      height: 36,
+      height: 60,
       paddingHorizontal: 12,
       backgroundColor: theme.colors.accent,
       flexDirection: "row",
@@ -182,7 +182,7 @@ const EditName = ({ theme, navigation }) => {
             <View style={styles.header}>
               <Text
                 style={{
-                  fontFamily: "Roboto-Medium",
+                  fontFamily: "Roboto-Bold",
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
@@ -247,7 +247,7 @@ const EditName = ({ theme, navigation }) => {
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
                     titleStyle={{ color: theme.colors.grey1 }} loadingStyle={styles.submitBtn} disabled={!updates}
                     loading={isSubmitBtnLoading} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: !updates ? theme.colors.greyOutline : theme.colors.accentText }}>Сохранить
+              style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: !updates ? theme.colors.greyOutline : theme.colors.accentText }}>Сохранить
               изменения</Text></Button>
           </View>
         </View>
