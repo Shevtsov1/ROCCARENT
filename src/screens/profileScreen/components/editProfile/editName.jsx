@@ -68,7 +68,7 @@ const EditName = ({ theme, navigation }) => {
         isSurnameValid = true;
       }
 
-      return isNicknameValid && isNameValid && isSurnameValid;
+      return (newNickname || newName || newSurname) && isNicknameValid && isNameValid && isSurnameValid;
     };
 
     const areDataValid = validateData();
@@ -247,7 +247,7 @@ const EditName = ({ theme, navigation }) => {
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
                     titleStyle={{ color: theme.colors.grey1 }} loadingStyle={styles.submitBtn} disabled={!updates}
                     loading={isSubmitBtnLoading} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>Сохранить
+              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: !updates ? theme.colors.greyOutline : theme.colors.accentText }}>Сохранить
               изменения</Text></Button>
           </View>
         </View>
