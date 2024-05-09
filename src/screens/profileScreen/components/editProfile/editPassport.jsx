@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -10,8 +10,11 @@ import { launchImageLibrary } from "react-native-image-picker";
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { AppContext } from "../../../../../App";
 
 const EditPassport = ({ theme, navigation, route }) => {
+
+  const { loadUserdata } = useContext(AppContext);
 
   const { passportData } = route.params;
   const [isCameraActive, setCameraActive] = useState(false);
@@ -97,6 +100,7 @@ const EditPassport = ({ theme, navigation, route }) => {
     if (newPassportData) {
       await uploadPassportImage(passportImageUri, newPassportData);
       ToastAndroid.show("Паспорт успешно подтвержден", 7000);
+      loadUserdata();
       navigation.navigate("Profile");
     } else {
       setPassportPhoto("");
