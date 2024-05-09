@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
@@ -9,6 +9,7 @@ import FastImage from "react-native-fast-image";
 
 const EditPassport = ({ theme, navigation }) => {
 
+  const [isCameraActive, setCameraActive] = useState(true);
   const device = useCameraDevice("back");
   const { hasPermission, requestPermission } = useCameraPermission();
   const camera = useRef(null);
@@ -25,9 +26,20 @@ const EditPassport = ({ theme, navigation }) => {
     }
   }, []);
 
+  const handleTakePhotoBtn = async () => {
+    setLoadingPhoto(true);
+    const photo = await camera.current.takePhoto({
+      flash: "auto",
+      enableShutterSound: "false",
+      enableAutoRedEyeReduction: true,
+    });
+    setPassportPhoto("file://" + photo.path);
+    setCameraActive(false); // Останавливаем камеру
+    setLoadingPhoto(false);
+  };
 
-  const verifyPassport = async (passportImage) => {
-    const result = await TextRecognition.recognize(passportImage.assets[0].uri);
+  const verifyPassport = async (passportImageUri) => {
+    const result = await TextRecognition.recognize(passportImageUri);
     const textArr = result.text.split("\n");
     const finalArray = [];
     for (let i = 0; i < textArr.length; i++) {
@@ -39,10 +51,19 @@ const EditPassport = ({ theme, navigation }) => {
       if (passportRegexPattern.test(element)) {
         setPassportData(element);
         setPassportVerified(true);
-        console.log("Passport data found:", element);
       }
     }
-    if (!passportVerified) console.log("Не удалось просканировать пасспорт, повторите попытку");
+    if (!passportVerified) {
+      setPassportVerified(false);
+      setPassportPhoto('');
+      setCameraActive(true);
+      ToastAndroid.show('Не удалось просканировать пасспорт, повторите попытку', 7000);
+    } else {
+      setPassportVerified(true)
+      setLoadingPhoto('');
+      ToastAndroid.show('Паспорт успешно подтвержден', 7000);
+      navigation.navigate('Profile');
+    }
   };
 
   const handleVerifyPassport = async () => {
@@ -50,17 +71,6 @@ const EditPassport = ({ theme, navigation }) => {
     await verifyPassport(passportPhoto);
     setLoadingPhoto(false);
   }
-
-  const handleTakePhotoBtn = async () => {
-    setLoadingPhoto(true);
-    const photo = await camera.current.takePhoto({
-      flash: "auto",
-      enableShutterSound: "false",
-      enableAutoRedEyeReduction: true,
-    });
-    setPassportPhoto(photo.path);
-    setLoadingPhoto(false);
-  };
 
   const handleSubmitBtn = () => {
   };
@@ -154,8 +164,8 @@ const EditPassport = ({ theme, navigation }) => {
               }}>
                 {passportPhoto ? (
                   <FastImage style={{ width: "100%", height: "100%" }} resizeMode={FastImage.resizeMode.cover}
-                             source={{ uri: "file://" + passportPhoto }} />) : (
-                  <Camera style={{ width: "100%", height: "100%" }} device={device} isActive={true} photo={true}
+                             source={{ uri: passportPhoto }} />) : (
+                  <Camera style={{ width: "100%", height: "100%" }} device={device} isActive={isCameraActive} photo={true}
                           ref={camera} />)}
               </View>}
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
