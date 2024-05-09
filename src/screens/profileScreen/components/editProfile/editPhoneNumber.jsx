@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
+import { AppContext } from "../../../../../App";
 
 const EditPhoneNumber = ({ theme, navigation, route }) => {
+
+  const { loadUserdata } = useContext(AppContext);
 
   const phoneNumber = route.params;
   const [newPhoneNumber, setNewPhoneNumber] = useState('');
@@ -39,7 +42,8 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
         verificationCode
       );
       await auth().currentUser.updatePhoneNumber(credential);
-      console.log('Phone number verified');
+      loadUserdata();
+      navigation.navigate('Profile');
     } catch (error) {
       console.error(error);
     }
