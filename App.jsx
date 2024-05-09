@@ -93,6 +93,7 @@ const App = () => {
               setLoadingScreenText("Ошибка при подтверждении почты: " + error),
             );
           }
+          setInitializing(false);
         } catch (error) {
           // Обработка ошибки при предварительной загрузке иконок
           console.error("Ошибка при предварительной загрузке иконок:", error);
