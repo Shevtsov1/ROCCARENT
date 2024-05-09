@@ -31,7 +31,7 @@ const EditEmail = ({ theme, navigation }) => {
       borderBottomStartRadius: 15,
       borderBottomEndRadius: 15,
     }, header: {
-      height: 36,
+      height: 60,
       paddingHorizontal: 12,
       backgroundColor: theme.colors.accent,
       flexDirection: "row",
@@ -80,7 +80,7 @@ const EditEmail = ({ theme, navigation }) => {
             <View style={styles.header}>
               <Text
                 style={{
-                  fontFamily: "Roboto-Medium",
+                  fontFamily: "Roboto-Bold",
                   fontSize: 18,
                   color: theme.colors.accentText,
                   alignSelf: "center",
@@ -111,7 +111,7 @@ const EditEmail = ({ theme, navigation }) => {
                     onPress={handleSubmitBtn} loading={btnIsLoading} loadingStyle={styles.submitBtn}><Text
               style={{
                 fontFamily: "Roboto-Medium",
-                fontSize: 18,
+                fontSize: 16,
                 color: auth().currentUser.emailVerified ? theme.colors.greyOutline : theme.colors.accentText,
               }}>{auth().currentUser.emailVerified ? ('Почта подтверждена') : ('Отправить письмо')}</Text></Button>
           </View>
