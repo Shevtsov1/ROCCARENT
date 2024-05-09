@@ -5,12 +5,16 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
-import AppLoadingScreen from "../../../../components/appLoadingScreen";
 
 const EditEmail = ({ theme, navigation }) => {
 
-  const handleSubmitBtn = () => {
-    console.log('submit');
+  const [btnIsLoading, setBtnIsLoading] = useState(false);
+
+  const handleSubmitBtn = async () => {
+    setBtnIsLoading(true);
+    await auth().currentUser.sendEmailVerification({handleCodeInApp: true});
+    setBtnIsLoading(false);
+    navigation.navigate('Profile');
   }
 
   const styles = StyleSheet.create({
@@ -87,7 +91,7 @@ const EditEmail = ({ theme, navigation }) => {
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
                 На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждени адреса электронной
-                почты:
+                почты.{"\n\n"}Ссылка для потдверждения будет активна на протяжении 30 минут:
               </Text>
             </View>
             <Input
@@ -102,7 +106,7 @@ const EditEmail = ({ theme, navigation }) => {
             />
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
                     titleStyle={{ color: theme.colors.grey1 }} disabled={auth().currentUser.emailVerified}
-                    onPress={handleSubmitBtn}><Text
+                    onPress={handleSubmitBtn} loading={btnIsLoading} loadingStyle={styles.submitBtn}><Text
               style={{
                 fontFamily: "Roboto-Medium",
                 fontSize: 18,
