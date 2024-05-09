@@ -445,8 +445,9 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing, passportData 
                           ) : null}
                           <FastImage
                             style={{ width: '100%', height: '100%', borderRadius: 78 / 2 }}
-                            source={{ uri: auth().currentUser.photoURL }}
+                            source={auth().currentUser.photoURL ? { uri: auth().currentUser.photoURL } : require('../../assets/images/user.png')}
                             onLoad={() => setIsAvatarLoading(false)}
+                            resizeMode={FastImage.resizeMode.cover}
                           />
                         </View>
                       <TouchableOpacity style={{
