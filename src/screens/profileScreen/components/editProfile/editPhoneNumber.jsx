@@ -12,20 +12,23 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
   const { loadUserdata } = useContext(AppContext);
 
   const phoneNumber = route.params;
-  const [newPhoneNumber, setNewPhoneNumber] = useState('');
+  const [newPhoneNumber, setNewPhoneNumber] = useState("");
   const [verificationSent, setVerificationSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [confirmationResult, setConfirmationResult] = useState('');
+  const [verificationCode, setVerificationCode] = useState("");
+  const [confirmationResult, setConfirmationResult] = useState("");
+  const [codeSending, setCodeSending] = useState(false);
+  const [codeVerifying, setCodeVerifying] = useState(false);
 
   const handleChangePhoneNumber = (value) => {
     setNewPhoneNumber(value);
   };
 
   const handleChangeVerificationCode = (value) => {
-    setVerificationCode(value)
+    setVerificationCode(value);
   };
 
   const handleSendVerification = async () => {
+    setCodeSending(true);
     try {
       const confirmationResult = await auth().verifyPhoneNumber(newPhoneNumber);
       setVerificationSent(true);
@@ -33,18 +36,24 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
     } catch (error) {
       console.error(error);
     }
+    setCodeSending(false);
   };
 
   const handleVerifyPhoneNumber = async () => {
+    setCodeVerifying(true);
     try {
       const credential = auth.PhoneAuthProvider.credential(
         confirmationResult.verificationId,
-        verificationCode
+        verificationCode,
       );
       await auth().currentUser.updatePhoneNumber(credential);
       loadUserdata();
-      navigation.navigate('Profile');
+      setCodeVerifying(false);
+      navigation.navigate("Profile");
     } catch (error) {
+      setNewPhoneNumber("");
+      setVerificationCode("");
+      setVerificationSent(false);
       console.error(error);
     }
   };
@@ -120,7 +129,8 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
             </View>
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
-                На указанный Вами номер телефона будет отправлено сообщение с кодом для подтверждения номера телефона :{"\n"}
+                На указанный Вами номер телефона будет отправлено сообщение с кодом для подтверждения номера телефона
+                :{"\n"}
               </Text>
               <Text style={styles.infoText}>
                 Вы можете указать новый номер мобильного телефона ниже:
@@ -136,9 +146,8 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
               onChangeText={handleChangePhoneNumber}
               value={newPhoneNumber}
             />
-
             {verificationSent && <>
-              <Text style={[styles.infoText, {marginStart: 12, marginBottom: 12}]}>
+              <Text style={[styles.infoText, { marginStart: 12, marginBottom: 12 }]}>
                 Код отправлен на номер: {newPhoneNumber}
               </Text>
               <Input
@@ -153,8 +162,14 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
               />
             </>}
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                    titleStyle={{ color: theme.colors.grey1 }} onPress={verificationSent ? handleVerifyPhoneNumber : handleSendVerification}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.accentText }}>{verificationSent ? 'Подтвердить номер' : 'Получить код'}</Text></Button>
+                    titleStyle={{ color: theme.colors.grey1 }}
+                    onPress={verificationSent ? handleVerifyPhoneNumber : handleSendVerification}
+                    loading={codeSending || codeVerifying} loadingStyle={styles.submitBtn}><Text
+              style={{
+                fontFamily: "Roboto-Medium",
+                fontSize: 18,
+                color: theme.colors.accentText,
+              }}>{verificationSent ? "Подтвердить номер" : "Получить код"}</Text></Button>
           </View>
         </View>
       </ScrollView>
