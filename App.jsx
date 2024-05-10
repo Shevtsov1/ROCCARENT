@@ -76,10 +76,14 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!auth().currentUser.isAnonymous && !userdata) {
+    if (!auth().currentUser || auth().currentUser.isAnonymous) {
+      return;
+    }
+
+    if (!userdata) {
       loadUserdata().then();
     }
-  }, [auth().currentUser]);
+  }, [auth().currentUser, userdata]);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
