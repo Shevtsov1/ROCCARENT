@@ -31,6 +31,13 @@ const App = () => {
 
   changeNavigationBarColor(theme.colors.background, theme.mode !== "dark", false);
 
+  useEffect(() => {
+    if (!auth().currentUser.isAnonymous && !userdata) {
+      loadUserdata().then();
+    }
+  }, [auth().currentUser]);
+
+
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
     try {
@@ -70,10 +77,6 @@ const App = () => {
         const currentUser = auth().currentUser;
         if (!currentUser || currentUser.isAnonymous) {
           await auth().signInAnonymously();
-        }
-
-        if (!auth().currentUser.isAnonymous) {
-          await loadUserdata();
         }
         await preloadImages();
         await loadTheme();

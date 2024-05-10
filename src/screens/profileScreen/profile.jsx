@@ -68,6 +68,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
     if (currentUser) {
       await auth().signOut().then(GoogleSignin.signOut());
     }
+    await auth().signInAnonymously();
     setInitializing(false);
   };
 
