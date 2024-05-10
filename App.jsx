@@ -37,6 +37,48 @@ const App = () => {
     }
   }, [auth().currentUser]);
 
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        const currentUser = auth().currentUser;
+        if (!currentUser || currentUser.isAnonymous) {
+          await auth().signInAnonymously();
+          await onGoogleButtonPress();
+        }
+        await preloadImages();
+        await loadTheme();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const init = async () => {
+      const isConnected = await checkInternetConnectivity();
+      setIsInternetConnected(isConnected);
+
+      if (isConnected) {
+        try {
+          await initializeApp();
+          const currentUser = auth().currentUser;
+          if (
+            currentUser &&
+            !currentUser.isAnonymous &&
+            !currentUser.emailVerified
+          ) {
+            setInitializing(false);
+            await waitForEmailVerification().catch((error) =>
+              setLoadingScreenText("Ошибка при подтверждении почты: " + error),
+            );
+          }
+          setInitializing(false);
+        } catch (error) {
+          // Обработка ошибки при предварительной загрузке иконок
+          console.error("Ошибка при предварительной загрузке иконок:", error);
+        }
+      }
+    };
+    init().then();
+  }, []);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
@@ -70,49 +112,6 @@ const App = () => {
     };
     setUserdata(updatedUserdata);
   }
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        const currentUser = auth().currentUser;
-        if (!currentUser || currentUser.isAnonymous) {
-          await auth().signInAnonymously();
-        }
-        await preloadImages();
-        await loadTheme();
-        await onGoogleButtonPress();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const init = async () => {
-      const isConnected = await checkInternetConnectivity();
-      setIsInternetConnected(isConnected);
-
-      if (isConnected) {
-        try {
-          await initializeApp();
-          const currentUser = auth().currentUser;
-          if (
-            currentUser &&
-            !currentUser.isAnonymous &&
-            !currentUser.emailVerified
-          ) {
-            setInitializing(false);
-            await waitForEmailVerification().catch((error) =>
-              setLoadingScreenText("Ошибка при подтверждении почты: " + error),
-            );
-          }
-          setInitializing(false);
-        } catch (error) {
-          // Обработка ошибки при предварительной загрузке иконок
-          console.error("Ошибка при предварительной загрузке иконок:", error);
-        }
-      }
-    };
-    init().then();
-  }, []);
 
   const checkInternetConnectivity = async () => {
     const state = await NetInfo.fetch();
