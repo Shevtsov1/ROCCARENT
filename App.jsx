@@ -12,6 +12,7 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
 import { getNickname, getPassportData, getPhoneNumber } from "./src/components/preloadUserdata";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const AppContext = createContext();
 
@@ -30,12 +31,6 @@ const App = () => {
   StatusBar.setBarStyle("light-content", true);
 
   changeNavigationBarColor(theme.colors.background, theme.mode !== "dark", false);
-
-  useEffect(() => {
-    if (!auth().currentUser.isAnonymous && !userdata) {
-      loadUserdata().then();
-    }
-  }, [auth().currentUser]);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -80,6 +75,12 @@ const App = () => {
     init().then();
   }, []);
 
+  useEffect(() => {
+    if (!auth().currentUser.isAnonymous && !userdata) {
+      loadUserdata().then();
+    }
+  }, [auth().currentUser]);
+
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
     try {
@@ -111,7 +112,7 @@ const App = () => {
       phoneNumber,
     };
     setUserdata(updatedUserdata);
-  }
+  };
 
   const checkInternetConnectivity = async () => {
     const state = await NetInfo.fetch();
@@ -162,18 +163,22 @@ const App = () => {
   }
 
   return (
-    <SafeAreaProvider>
-      {
-        initializing ? (
-          <AppLoadingScreen theme={theme} text={loadingScreenText} />
-        ) : (
-          <AppContext.Provider value={{userdata, loadUserdata}}>
-            <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
-                          setLoadingScreenText={setLoadingScreenText} />
-          </AppContext.Provider>
-        )
-      }
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        {
+          initializing ? (
+            <AppLoadingScreen theme={theme} text={loadingScreenText} />
+          ) : (
+
+            <AppContext.Provider value={{ userdata, loadUserdata }}>
+              <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
+                            setLoadingScreenText={setLoadingScreenText} />
+            </AppContext.Provider>
+          )
+        }
+
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 
