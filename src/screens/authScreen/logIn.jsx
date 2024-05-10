@@ -148,7 +148,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
     backButton: {
       position: "absolute",
       top: hp(2),
-      left: wp(4),
+      right: wp(4),
     }, underButtonsContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
