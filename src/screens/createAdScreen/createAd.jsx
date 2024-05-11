@@ -8,17 +8,6 @@ import { launchImageLibrary } from "react-native-image-picker";
 
 const CreateAd = ({ theme }) => {
 
-  // const items = [
-  //   { title: "Item 1", description: "Description 1", price: 1, ratings: 1, mark: 1, owner: 'Mark'},
-  //   { title: "Пила циркулярная Makitta", description: "Description 2", price: 2, ratings: 2, mark: 1.5, owner: 'Maks' },
-  //   { title: "Item 3", description: "Description 3", price: 3, ratings: 3, mark: 2, owner: 'John' },
-  //   { title: "Item 4", description: "Description 4", price: 4, ratings: 4, mark: 2.5, owner: 'Yuri' },
-  //   { title: "Item 5", description: "Description 5", price: 5, ratings: 5, mark: 3, owner: 'Ivan' },
-  //   { title: "Item 6", description: "Description 6", price: 6, ratings: 6, mark: 3.5, owner: 'Ilya' },
-  //   { title: "Item 7", description: "Description 7", price: 7, ratings: 7, mark: 4, owner: 'Den' },
-  //   { title: "Item 8", description: "Description 8", price: 15, ratings: 15, mark: 4.5, owner: 'Nikolay'},
-  // ];
-
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
@@ -120,7 +109,7 @@ const CreateAd = ({ theme }) => {
   };
 
   const handleCategoryModal = (mode) => {
-    setSelectedCategory('');
+    setSelectedCategory("");
     setModalVisible(mode);
   };
 
@@ -128,12 +117,12 @@ const CreateAd = ({ theme }) => {
     if (selectedCategory !== category) {
       setSelectedCategory(category);
     } else {
-      setSelectedCategory('');
+      setSelectedCategory("");
     }
   };
 
   const handleSubcategoryPress = (subcategory) => {
-    console.log(subcategory);
+    setSelectedSubcategory(subcategory);
     handleCategoryModal(false);
   };
 
@@ -197,7 +186,48 @@ const CreateAd = ({ theme }) => {
     }, imagesFooterContainer: {
       flex: 1,
     },
-
+    categoriesModalBtnContainer: {
+      marginHorizontal: 12,
+      padding: 6,
+      borderRadius: 5,
+      borderBottomWidth: 1,
+      borderColor: theme.colors.grey3,
+    }, categoriesModalBtn: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    }, categoriesModalBtnText: {
+      fontFamily: "Roboto-Regular",
+      fontSize: 16,
+      color: theme.colors.text,
+    }, categoriesModal: {
+      backgroundColor: theme.colors.background,
+    }, categoriesModalHeader: {
+      height: 60,
+      paddingHorizontal: 12,
+      alignItems: "center",
+      backgroundColor: theme.colors.accent,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    }, categoriesModalHeaderMainText: {
+      fontFamily: "Roboto-Bold",
+      fontSize: 18,
+      color: theme.colors.accentText,
+      alignSelf: "center",
+    }, categoriesModalHeaderBackBtnText: {
+      fontFamily: "Roboto-Regular",
+      fontSize: 16,
+      color: theme.colors.accentText,
+      alignSelf: "center",
+    }, categoriesModalCategoryName: {
+      fontFamily: "Roboto-Medium",
+      fontSize: 16,
+      color: theme.colors.text,
+    }, categoriesModalSubcategoryName: {
+      marginStart: 12,
+      fontFamily: "Roboto-Regular",
+      fontSize: 14,
+      color: theme.colors.text,
+    },
     /* BODY END */
   });
 
@@ -241,39 +271,43 @@ const CreateAd = ({ theme }) => {
               на обложку</Text>
           </View>
         </View>
-        <View>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Text>Выберите категорию</Text>
-            <Text>{selectedCategory?.name}</Text>
-            <Text>{selectedSubcategory}</Text>
-          </TouchableOpacity>
-
+        <View style={styles.categoriesModal}>
+          <View style={styles.categoriesModalBtnContainer}>
+            <TouchableOpacity onPress={() => handleCategoryModal(true)} style={styles.categoriesModalBtn}>
+              {selectedSubcategory ? (<Text style={styles.categoriesModalBtnText}>{selectedSubcategory}</Text>) : (
+                <Text style={styles.categoriesModalBtnText}>Выберите категорию</Text>)}
+              <Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />
+            </TouchableOpacity>
+          </View>
           <Modal visible={isModalVisible}>
-            <ScrollView>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}><Text>
+            <ScrollView style={styles.categoriesModal}>
+              <View style={styles.categoriesModalHeader}><Text style={styles.categoriesModalHeaderMainText}>
                 Выберите категорию
               </Text><TouchableOpacity onPress={handleCategoryModal}>
-                <Text>Отмена</Text>
+                <Text style={styles.categoriesModalHeaderBackBtnText}>Отмена</Text>
               </TouchableOpacity></View>
               {categories.map((category) => (
                 <ListItem.Accordion
+                  containerStyle={{ backgroundColor: theme.colors.background }}
                   key={category.name}
                   content={
                     <ListItem.Content>
-                      <ListItem.Title>{category.name}</ListItem.Title>
+                      <ListItem.Title style={styles.categoriesModalCategoryName}>{category.name}</ListItem.Title>
                     </ListItem.Content>
                   }
+                  icon={<Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />}
                   isExpanded={selectedCategory === category.name}
                   onPress={() => handleCategoryPress(category.name)}
                 >
                   {selectedCategory === category.name &&
                     category.subCategories.map((subCategory, id) => {
-                      return ( <ListItem key={id} bottomDivider onPress={() => handleSubcategoryPress(subCategory)}>
-                        <ListItem.Content>
-                          <ListItem.Title>{subCategory}</ListItem.Title>
-                        </ListItem.Content>
-                        <ListItem.Chevron />
-                      </ListItem>
+                      return (
+                        <ListItem key={id}containerStyle={{ backgroundColor: theme.colors.background}}
+                                  onPress={() => handleSubcategoryPress(subCategory)}>
+                          <ListItem.Content>
+                            <ListItem.Title style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
+                          </ListItem.Content>
+                        </ListItem>
                       );
                     })
                   }
