@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TextInput } from "react-native";
 import CarsAndTrucksFields from "./fields/Vehicles/carsAndTrucksFields";
 import MotorcyclesFields from "./fields/Vehicles/motorcyclesFields";
 import BicyclesFields from "./fields/Vehicles/bicyclesFields";
@@ -48,7 +48,7 @@ const CategoryFields = ({ theme, category, subcategory }) => {
       color: theme.colors.grey3,
     },
     listingTitleInputContainer: {
-      height: 36,
+      height: 42,
       paddingHorizontal: 0,
     },
     listingTitleInputInputContainer: {
@@ -61,14 +61,23 @@ const CategoryFields = ({ theme, category, subcategory }) => {
       marginHorizontal: 0,
       paddingHorizontal: 0,
       borderRadius: 5,
-      fontFamily: "Roboto-Medium",
+      fontFamily: "Roboto-Regular",
       fontSize: 16,
       color: theme.colors.text,
     },
 
 
-    listingDescriptionContainer: {},
-    listingDescriptionText: {},
+    listingDescriptionContainer: {
+      borderWidth: 1,
+      borderRadius: 5,
+      backgroundColor: `${theme.colors.grey3}5A`,
+      height: 120,
+    },
+    listingDescriptionText: {
+      fontFamily: "Roboto-Regular",
+      fontSize: 16,
+      color: theme.colors.text,
+    },
 
     listingPriceContainer: {},
 
@@ -102,14 +111,23 @@ const CategoryFields = ({ theme, category, subcategory }) => {
         <View style={styles.listingTitleContainer}>
           <Input containerStyle={styles.listingTitleInputContainer}
                  inputContainerStyle={styles.listingTitleInputInputContainer} inputStyle={styles.listingTitleInput}
-                 placeholder={"Название товара"}/>
+                 placeholder={"Название товара"}
+                 placeholderTextColor={theme.colors.grey3}
+                 maxLength={50} />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
             <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
           </View>
         </View>
-        <View style={styles.listingDescriptionContainer}>
-          <Input label={"Описание"} />
+        <View style={{marginHorizontal: 12,  marginBottom: 12,}}>
+          <View style={styles.listingDescriptionContainer}>
+            <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
+                       style={styles.listingDescriptionText} maxLength={1000} multiline/>
+          </View>
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+            <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+          </View>
         </View>
       </View>
     );
