@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import AppNavigator from "./src/navigation/navigator";
 import { useCustomTheme } from "./src/assets/theme/theme";
-import { StatusBar, Image } from "react-native";
+import { Image, StatusBar } from "react-native";
 import changeNavigationBarColor from "react-native-navigation-bar-color";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppLoadingScreen from "./src/components/appLoadingScreen";
@@ -33,6 +33,28 @@ const App = () => {
   changeNavigationBarColor(theme.colors.background, theme.mode !== "dark", false);
 
   useEffect(() => {
+    const checkInternetConnectivity = async () => {
+      const state = await NetInfo.fetch();
+      setIsInternetConnected(state.isConnected && state.isInternetReachable);
+    };
+
+    const handleConnectivityChange = (state) => {
+      setIsInternetConnected(state.isConnected && state.isInternetReachable);
+    };
+
+    // Проверка подключения при запуске приложения
+    checkInternetConnectivity().then();
+
+    // Подписка на изменения состояния подключения
+    const unsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+
+    return () => {
+      // Отписка от изменений состояния подключения при размонтировании компонента
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     const initializeApp = async () => {
       try {
         const currentUser = auth().currentUser;
@@ -48,10 +70,7 @@ const App = () => {
     };
 
     const init = async () => {
-      const isConnected = await checkInternetConnectivity();
-      setIsInternetConnected(isConnected);
-
-      if (isConnected) {
+      if (isInternetConnected) {
         try {
           await initializeApp();
           const currentUser = auth().currentUser;
@@ -116,11 +135,6 @@ const App = () => {
       phoneNumber,
     };
     setUserdata(updatedUserdata);
-  };
-
-  const checkInternetConnectivity = async () => {
-    const state = await NetInfo.fetch();
-    return state.isConnected && state.isInternetReachable;
   };
 
   const waitForEmailVerification = async () => {
