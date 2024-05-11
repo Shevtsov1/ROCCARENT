@@ -253,9 +253,7 @@ const CreateAd = ({ theme }) => {
             <View style={{ flexDirection: "row", paddingVertical: 12 }}>
               <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
                       onPress={handleAddImageBtn}>
-                <View style={{ backgroundColor: `${theme.colors.grey1}5A`, borderRadius: 100 }}>
                   <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
-                </View>
               </Button>
               <DraggableFlatList
                 horizontal={true}
