@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Input } from "@rneui/themed";
+import { Input, Overlay } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 import firestore from "@react-native-firebase/firestore";
@@ -17,9 +17,9 @@ const EditName = ({ theme, navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState(auth().currentUser.displayName.split(" ")[0]);
   const [surname, setSurname] = useState(auth().currentUser.displayName.split(" ")[1]);
-  const [newNickname, setNewNickname] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newSurname, setNewSurname] = useState('');
+  const [newNickname, setNewNickname] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newSurname, setNewSurname] = useState("");
   const [updates, setUpdates] = useState(false);
   const [isSubmitBtnLoading, setIsSubmitBtnLoading] = useState(false);
 
@@ -107,11 +107,9 @@ const EditName = ({ theme, navigation, route }) => {
   };
 
 
-
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
+      flex: 1, width: wp(100), height: hp(100), backgroundColor: theme.colors.background, padding: 0,
     }, editNameContainer: {
       width: "100%",
       height: "auto",
@@ -160,14 +158,14 @@ const EditName = ({ theme, navigation, route }) => {
     },
   });
 
-  if(isLoading) {
+  if (isLoading) {
     return (
       <LoadingScreen theme={theme} />
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Overlay overlayStyle={styles.container}>
       <ScrollView>
         <View style={{ paddingBottom: hp(1) }}>
           <View style={styles.editNameContainer}>
@@ -207,7 +205,7 @@ const EditName = ({ theme, navigation, route }) => {
               onChangeText={handleChangeNickname}
               onSubmitEditing={() => {
                 // Переход к следующему инпуту (в данном случае, к инпуту password)
-               nameRef.current.focus();
+                nameRef.current.focus();
               }}
             />
             <Input
@@ -239,12 +237,16 @@ const EditName = ({ theme, navigation, route }) => {
             <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
                     titleStyle={{ color: theme.colors.grey1 }} loadingStyle={styles.submitBtn} disabled={!updates}
                     loading={isSubmitBtnLoading} onPress={handleSubmitBtn}><Text
-              style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: !updates ? theme.colors.greyOutline : theme.colors.accentText }}>Сохранить
+              style={{
+                fontFamily: "Roboto-Medium",
+                fontSize: 16,
+                color: !updates ? theme.colors.greyOutline : theme.colors.accentText,
+              }}>Сохранить
               изменения</Text></Button>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </Overlay>
   );
 };
 

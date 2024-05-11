@@ -171,7 +171,7 @@ const TabButton = React.memo((props) => {
 
 // Компонент нижней навигации по вкладкам
 const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, setLoadingScreenText }) => {
-  const routeNamesToCheck = ["LogIn", "LogUp", "Settings", "DealArchive", "EditProfileStackNavigator", "SupportStackNavigator"];
+  const routeNamesToCheck = ["LogIn", "LogUp", "Settings", "DealArchive", "SupportStackNavigator"];
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
