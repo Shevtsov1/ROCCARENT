@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Icon } from "@rneui/themed";
-import DraggableFlatList, {ScaleDecorator} from "react-native-draggable-flatlist";
+import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
+import { launchImageLibrary } from "react-native-image-picker";
 
 const CreateAd = ({ theme }) => {
 
@@ -18,12 +19,7 @@ const CreateAd = ({ theme }) => {
   //   { title: "Item 8", description: "Description 8", price: 15, ratings: 15, mark: 4.5, owner: 'Nikolay'},
   // ];
 
-  const NUM_ITEMS = 10;
-  function getColor(i: number) {
-    const multiplier = 255 / (NUM_ITEMS - 1);
-    const colorVal = i * multiplier;
-    return `rgb(${colorVal}, ${Math.abs(128 - colorVal)}, ${255 - colorVal})`;
-  }
+  const NUM_ITEMS = 20;
 
   type Item = {
     key: string;
@@ -34,7 +30,7 @@ const CreateAd = ({ theme }) => {
   };
 
   const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
-    const backgroundColor = getColor(index);
+    const backgroundColor = theme.colors.grey3;
     return {
       key: `item-${index}`,
       label: String(index) + "",
@@ -49,21 +45,41 @@ const CreateAd = ({ theme }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
     return (
       <ScaleDecorator activeScale={0.9}>
-        <View style={{width: 72, height: 72, justifyContent: 'center', alignItems: 'center', marginEnd: 6,}}>
+        <View style={{ width: 72, height: 72, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
           <TouchableOpacity
             onLongPress={drag}
             disabled={isActive}
-            style={[{width: 72, height: 72, borderRadius: 5,},
+            style={[{ width: 72, height: 72, borderRadius: 5 },
               { backgroundColor: isActive ? `${theme.colors.grey1}3A` : item.backgroundColor },
             ]}
           >
-            <Text style={styles.text}>{item.label}</Text>
           </TouchableOpacity>
         </View>
       </ScaleDecorator>
     );
   };
 
+  const handleAddImageBtn = async () => {
+    const options = {
+      title: "Выберите изображение",
+      cancelButtonTitle: "Отмена",
+      takePhotoButtonTitle: "Выбрать изображение",
+      quality: 1,
+      mediaType: "photo",
+      storageOptions: {
+        skipBackup: true,
+        path: "images",
+      },
+      selectionLimit: 20,
+    };
+    const selectedImage = await launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log("Пользователь отменил съемку фотографии");
+      } else if (response.error) {
+        console.log("Ошибка съемки фотографии:", response.error);
+      }
+    });
+  };
 
   const styles = StyleSheet.create({
 
@@ -96,7 +112,6 @@ const CreateAd = ({ theme }) => {
       backgroundColor: theme.colors.background,
       marginBottom: 12,
       paddingHorizontal: 12,
-      borderWidth: 1,
     }, imagesHeaderContainer: {
       flex: 1,
       flexDirection: "row",
@@ -113,11 +128,18 @@ const CreateAd = ({ theme }) => {
       alignSelf: "center",
     }, imagesPickerContainer: {
       flex: 2,
-      flexDirection: 'row',
+      flexDirection: "row",
+    }, imagesAddImageBtnContainer: {
+      borderRadius: 5,
+      marginEnd: 6,
+    }, imagesAddImageBtn: {
+      borderColor: theme.colors.accent,
       borderWidth: 1,
+      borderRadius: 5,
+      width: 72, height: 72,
+      backgroundColor: theme.colors.grey3,
     }, imagesFooterContainer: {
       flex: 1,
-      borderWidth: 1,
     },
 
     /* BODY END */
@@ -136,26 +158,31 @@ const CreateAd = ({ theme }) => {
           <View style={styles.imagesHeaderContainer}>
             <Text style={styles.imagesHeaderMainText}>Добавьте фотографии</Text>
             <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-              <Icon style={{marginEnd: 6}} type={"ionicon"} name={"image"} size={20} color={theme.colors.grey1} />
+              <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20} color={theme.colors.grey1} />
               <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
             </View>
           </View>
-          <View style={{flexDirection: 'row', paddingVertical: 12}}>
-            <Button containerStyle={{marginEnd: 6}} buttonStyle={{width: 72, height: 72, borderRadius: 5,}}>
+          <View style={{ flexDirection: "row", paddingVertical: 12 }}>
+            <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
+                    onPress={handleAddImageBtn}>
+              <View style={{ backgroundColor: `${theme.colors.grey1}5A`, borderRadius: 100 }}>
+                <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
+              </View>
             </Button>
             <DraggableFlatList
               horizontal={true}
               showsHorizontalScrollIndicator={false}
-              animationConfig={{clamp: 1}}
+              animationConfig={{ clamp: 1 }}
               data={data}
               onDragEnd={({ data }) => setData(data)}
               keyExtractor={(item) => item.key}
               renderItem={renderItem}
-              containerStyle={{flex: 1}}
+              containerStyle={{ flex: 1 }}
             />
           </View>
           <View style={styles.imagesFooterContainer}>
-            <Text style={styles.imagesHeaderInfoText}></Text>
+            <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет помещено
+              на обложку</Text>
           </View>
         </View>
       </ScrollView>
