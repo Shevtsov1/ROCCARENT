@@ -13,6 +13,12 @@ const CreateAd = ({ theme }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
+  const [title, setTitle] = useState("");
+
+  const handleValueChange = (value) => {
+    setTitle(value);
+  };
+
   const categories = [
     {
       name: "Автомобили и транспорт",
@@ -317,7 +323,13 @@ const CreateAd = ({ theme }) => {
             </Modal>
           </View>
           <View style={styles.categoryFields}>
-            <CategoryFields theme={theme} category={selectedCategory} subcategory={selectedSubcategory} />
+            <CategoryFields
+              theme={theme}
+              category={selectedCategory}
+              subcategory={selectedSubcategory}
+              title={title}
+              handleValueChange={handleValueChange}
+            />
           </View>
         </View>
       </ScrollView>

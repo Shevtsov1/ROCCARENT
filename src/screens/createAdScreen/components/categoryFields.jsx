@@ -31,9 +31,8 @@ import DecorFields from "./fields/Home and Garden/decorFields";
 import LawnsFields from "./fields/Home and Garden/lawnsFields";
 import { Button, Input } from "@rneui/base";
 
-const CategoryFields = ({ theme, category, subcategory }) => {
+const CategoryFields = ({ theme, category, subcategory, title, handleValueChange }) => {
 
-  const [fieldsData, setFieldsData] = useState([]);
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
 
   const styles = StyleSheet.create({
@@ -69,6 +68,7 @@ const CategoryFields = ({ theme, category, subcategory }) => {
 
     listingDescriptionContainer: {
       borderWidth: 1,
+      borderColor: theme.colors.grey3,
       borderRadius: 5,
       backgroundColor: `${theme.colors.grey3}5A`,
       height: 120,
@@ -78,6 +78,7 @@ const CategoryFields = ({ theme, category, subcategory }) => {
       fontSize: 16,
       color: theme.colors.text,
     },
+
 
     listingPriceContainer: {},
 
@@ -113,16 +114,21 @@ const CategoryFields = ({ theme, category, subcategory }) => {
                  inputContainerStyle={styles.listingTitleInputInputContainer} inputStyle={styles.listingTitleInput}
                  placeholder={"Название товара"}
                  placeholderTextColor={theme.colors.grey3}
-                 maxLength={50} />
+                 maxLength={50}
+                 value={title}
+                 onChangeText={handleValueChange}
+          />
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
             <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
           </View>
         </View>
-        <View style={{marginHorizontal: 12,  marginBottom: 12,}}>
+        <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
           <View style={styles.listingDescriptionContainer}>
-            <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
-                       style={styles.listingDescriptionText} maxLength={1000} multiline/>
+            {/*<TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}*/}
+            {/*           style={styles.listingDescriptionText} maxLength={1000} multiline*/}
+            {/*value={title}*/}
+            {/*onChangeText={handleTitleChange}/>*/}
           </View>
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
             <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
@@ -164,7 +170,7 @@ const CategoryFields = ({ theme, category, subcategory }) => {
       return (
         <>
           <TitleAndDescriptionFields />
-          <CarsAndTrucksFields theme={theme} />
+          <CarsAndTrucksFields theme={theme}/>
           <PriceDatesAndGeoFields />
           <SubmitBtn />
         </>
