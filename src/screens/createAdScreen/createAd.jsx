@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Icon } from "@rneui/themed";
+import { Button, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
@@ -18,6 +18,21 @@ const CreateAd = ({ theme }) => {
   //   { title: "Item 7", description: "Description 7", price: 7, ratings: 7, mark: 4, owner: 'Den' },
   //   { title: "Item 8", description: "Description 8", price: 15, ratings: 15, mark: 4.5, owner: 'Nikolay'},
   // ];
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+
+  const handleCategoryPress = (category) => {
+    console.log(category);
+    setSelectedCategory(category);
+    setModalVisible(true);
+  };
+
+  const handleSubcategoryPress = (subcategory) => {
+    setSelectedSubcategory(subcategory);
+    setModalVisible(false);
+  };
 
   const categories = [
     {
@@ -178,6 +193,11 @@ const CreateAd = ({ theme }) => {
     /* BODY END */
   });
 
+  useEffect(() => {
+    console.log(selectedCategory);
+  }, [selectedCategory]);
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
@@ -217,6 +237,40 @@ const CreateAd = ({ theme }) => {
             <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет помещено
               на обложку</Text>
           </View>
+        </View>
+        <View>
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <Text>Выберите категорию</Text>
+            <Text>{selectedCategory?.name}</Text>
+            <Text>{selectedSubcategory}</Text>
+          </TouchableOpacity>
+
+          <Modal visible={isModalVisible}>
+            <View>
+              {categories.map((category) => (
+                <ListItem.Accordion
+                  key={category.id}
+                  content={
+                    <ListItem.Content>
+                      <ListItem.Title>{category.name}</ListItem.Title>
+                    </ListItem.Content>
+                  }
+                  isExpanded={selectedCategory === category}
+                  onPress={() => setSelectedCategory(category === selectedCategory ? null : category)}
+                >
+                  {selectedCategory === category &&
+                    category.subCategories.map((subCategory, id) => (
+                      <ListItem key={id} bottomDivider>
+                        <ListItem.Content>
+                          <ListItem.Title>{subCategory}</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.Chevron />
+                      </ListItem>
+                    ))}
+                </ListItem.Accordion>
+              ))}
+            </View>
+          </Modal>
         </View>
       </ScrollView>
     </SafeAreaView>
