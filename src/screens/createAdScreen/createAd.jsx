@@ -227,9 +227,7 @@ const CreateAd = ({ theme }) => {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
       color: theme.colors.text,
-    }, categoryFields: {
-
-    },
+    }, categoryFields: {},
 
     /* BODY END */
   });
@@ -237,90 +235,93 @@ const CreateAd = ({ theme }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
-        <View style={styles.header}>
-          <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
-          <TouchableOpacity>
-            <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imagesContainer}>
-          <View style={styles.imagesHeaderContainer}>
-            <Text style={styles.imagesHeaderMainText}>Добавьте фотографии</Text>
-            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-              <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20} color={theme.colors.grey1} />
-              <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: "row", paddingVertical: 12 }}>
-            <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
-                    onPress={handleAddImageBtn}>
-              <View style={{ backgroundColor: `${theme.colors.grey1}5A`, borderRadius: 100 }}>
-                <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
-              </View>
-            </Button>
-            <DraggableFlatList
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              animationConfig={{ clamp: 1 }}
-              data={data}
-              onDragEnd={({ data }) => setData(data)}
-              keyExtractor={(item) => item.key}
-              renderItem={renderItem}
-              containerStyle={{ flex: 1 }}
-            />
-          </View>
-          <View style={styles.imagesFooterContainer}>
-            <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет помещено
-              на обложку</Text>
-          </View>
-        </View>
-        <View style={styles.categoriesModal}>
-          <View style={styles.categoriesModalBtnContainer}>
-            <TouchableOpacity onPress={() => handleCategoryModal(true)} style={styles.categoriesModalBtn}>
-              {selectedSubcategory ? (<Text style={styles.categoriesModalBtnText}>{selectedSubcategory}</Text>) : (
-                <Text style={styles.categoriesModalBtnText}>Выберите категорию</Text>)}
-              <Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />
+        <View style={{ marginBottom: 12 }}>
+          <View style={styles.header}>
+            <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
+            <TouchableOpacity>
+              <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
             </TouchableOpacity>
           </View>
-          <Modal visible={isModalVisible}>
-            <ScrollView style={styles.categoriesModal}>
-              <View style={styles.categoriesModalHeader}><Text style={styles.categoriesModalHeaderMainText}>
-                Выберите категорию
-              </Text><TouchableOpacity onPress={handleCategoryModal}>
-                <Text style={styles.categoriesModalHeaderBackBtnText}>Отмена</Text>
-              </TouchableOpacity></View>
-              {categories.map((category) => (
-                <ListItem.Accordion
-                  containerStyle={{ backgroundColor: theme.colors.background }}
-                  key={category.name}
-                  content={
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.categoriesModalCategoryName}>{category.name}</ListItem.Title>
-                    </ListItem.Content>
-                  }
-                  icon={<Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />}
-                  isExpanded={selectedCategory === category.name}
-                  onPress={() => handleCategoryPress(category.name)}
-                >
-                  {selectedCategory === category.name &&
-                    category.subCategories.map((subCategory, id) => {
-                      return (
-                        <ListItem key={id} containerStyle={{ backgroundColor: theme.colors.background}}
-                                  onPress={() => handleSubcategoryPress(subCategory)}>
-                          <ListItem.Content>
-                            <ListItem.Title style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
-                          </ListItem.Content>
-                        </ListItem>
-                      );
-                    })
-                  }
-                </ListItem.Accordion>
-              ))}
-            </ScrollView>
-          </Modal>
-        </View>
-        <View style={styles.categoryFields}>
-          <CategoryFields theme={theme} category={selectedCategory} subcategory={selectedSubcategory}/>
+          <View style={styles.imagesContainer}>
+            <View style={styles.imagesHeaderContainer}>
+              <Text style={styles.imagesHeaderMainText}>Добавьте фотографии</Text>
+              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20} color={theme.colors.grey1} />
+                <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: "row", paddingVertical: 12 }}>
+              <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
+                      onPress={handleAddImageBtn}>
+                <View style={{ backgroundColor: `${theme.colors.grey1}5A`, borderRadius: 100 }}>
+                  <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
+                </View>
+              </Button>
+              <DraggableFlatList
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                animationConfig={{ clamp: 1 }}
+                data={data}
+                onDragEnd={({ data }) => setData(data)}
+                keyExtractor={(item) => item.key}
+                renderItem={renderItem}
+                containerStyle={{ flex: 1 }}
+              />
+            </View>
+            <View style={styles.imagesFooterContainer}>
+              <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет помещено
+                на обложку</Text>
+            </View>
+          </View>
+          <View style={styles.categoriesModal}>
+            <View style={styles.categoriesModalBtnContainer}>
+              <TouchableOpacity onPress={() => handleCategoryModal(true)} style={styles.categoriesModalBtn}>
+                {selectedSubcategory ? (<Text style={styles.categoriesModalBtnText}>{selectedSubcategory}</Text>) : (
+                  <Text style={styles.categoriesModalBtnText}>Выберите категорию</Text>)}
+                <Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />
+              </TouchableOpacity>
+            </View>
+            <Modal visible={isModalVisible}>
+              <ScrollView style={styles.categoriesModal}>
+                <View style={styles.categoriesModalHeader}><Text style={styles.categoriesModalHeaderMainText}>
+                  Выберите категорию
+                </Text><TouchableOpacity onPress={handleCategoryModal}>
+                  <Text style={styles.categoriesModalHeaderBackBtnText}>Отмена</Text>
+                </TouchableOpacity></View>
+                {categories.map((category) => (
+                  <ListItem.Accordion
+                    containerStyle={{ backgroundColor: theme.colors.background }}
+                    key={category.name}
+                    content={
+                      <ListItem.Content>
+                        <ListItem.Title style={styles.categoriesModalCategoryName}>{category.name}</ListItem.Title>
+                      </ListItem.Content>
+                    }
+                    icon={<Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />}
+                    isExpanded={selectedCategory === category.name}
+                    onPress={() => handleCategoryPress(category.name)}
+                  >
+                    {selectedCategory === category.name &&
+                      category.subCategories.map((subCategory, id) => {
+                        return (
+                          <ListItem key={id} containerStyle={{ backgroundColor: theme.colors.background }}
+                                    onPress={() => handleSubcategoryPress(subCategory)}>
+                            <ListItem.Content>
+                              <ListItem.Title
+                                style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
+                            </ListItem.Content>
+                          </ListItem>
+                        );
+                      })
+                    }
+                  </ListItem.Accordion>
+                ))}
+              </ScrollView>
+            </Modal>
+          </View>
+          <View style={styles.categoryFields}>
+            <CategoryFields theme={theme} category={selectedCategory} subcategory={selectedSubcategory} />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
