@@ -23,18 +23,8 @@ const CreateAd = ({ theme }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
-  const handleCategoryPress = (category) => {
-    console.log(category);
-    setSelectedCategory(category);
-    setModalVisible(true);
-  };
-
-  const handleSubcategoryPress = (subcategory) => {
-    setSelectedSubcategory(subcategory);
-    setModalVisible(false);
-  };
-
   const categories = [
+
     {
       name: "Автомобили и транспорт",
       subCategories: ["Легковые автомобили", "Грузовики и коммерческий транспорт",
@@ -66,6 +56,28 @@ const CreateAd = ({ theme }) => {
         "Садовый инструмент и оборудование", "Декор и освещение", "Газоны и садовые участки"],
     },
   ];
+
+  const handleAddImageBtn = async () => {
+    const options = {
+      title: "Выберите изображение",
+      cancelButtonTitle: "Отмена",
+      takePhotoButtonTitle: "Выбрать изображение",
+      quality: 1,
+      mediaType: "photo",
+      storageOptions: {
+        skipBackup: true,
+        path: "images",
+      },
+      selectionLimit: 20,
+    };
+    const selectedImage = await launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log("Пользователь отменил съемку фотографии");
+      } else if (response.error) {
+        console.log("Ошибка съемки фотографии:", response.error);
+      }
+    });
+  };
 
   const NUM_ITEMS = 20;
 
@@ -107,26 +119,22 @@ const CreateAd = ({ theme }) => {
     );
   };
 
-  const handleAddImageBtn = async () => {
-    const options = {
-      title: "Выберите изображение",
-      cancelButtonTitle: "Отмена",
-      takePhotoButtonTitle: "Выбрать изображение",
-      quality: 1,
-      mediaType: "photo",
-      storageOptions: {
-        skipBackup: true,
-        path: "images",
-      },
-      selectionLimit: 20,
-    };
-    const selectedImage = await launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log("Пользователь отменил съемку фотографии");
-      } else if (response.error) {
-        console.log("Ошибка съемки фотографии:", response.error);
-      }
-    });
+  const handleCategoryModal = (mode) => {
+    setSelectedCategory('');
+    setModalVisible(mode);
+  };
+
+  const handleCategoryPress = (category) => {
+    if (selectedCategory !== category) {
+      setSelectedCategory(category);
+    } else {
+      setSelectedCategory('');
+    }
+  };
+
+  const handleSubcategoryPress = (subcategory) => {
+    console.log(subcategory);
+    handleCategoryModal(false);
   };
 
   const styles = StyleSheet.create({
@@ -193,11 +201,6 @@ const CreateAd = ({ theme }) => {
     /* BODY END */
   });
 
-  useEffect(() => {
-    console.log(selectedCategory);
-  }, [selectedCategory]);
-
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
@@ -246,30 +249,37 @@ const CreateAd = ({ theme }) => {
           </TouchableOpacity>
 
           <Modal visible={isModalVisible}>
-            <View>
+            <ScrollView>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}><Text>
+                Выберите категорию
+              </Text><TouchableOpacity onPress={handleCategoryModal}>
+                <Text>Отмена</Text>
+              </TouchableOpacity></View>
               {categories.map((category) => (
                 <ListItem.Accordion
-                  key={category.id}
+                  key={category.name}
                   content={
                     <ListItem.Content>
                       <ListItem.Title>{category.name}</ListItem.Title>
                     </ListItem.Content>
                   }
-                  isExpanded={selectedCategory === category}
-                  onPress={() => setSelectedCategory(category === selectedCategory ? null : category)}
+                  isExpanded={selectedCategory === category.name}
+                  onPress={() => handleCategoryPress(category.name)}
                 >
-                  {selectedCategory === category &&
-                    category.subCategories.map((subCategory, id) => (
-                      <ListItem key={id} bottomDivider>
+                  {selectedCategory === category.name &&
+                    category.subCategories.map((subCategory, id) => {
+                      return ( <ListItem key={id} bottomDivider onPress={() => handleSubcategoryPress(subCategory)}>
                         <ListItem.Content>
                           <ListItem.Title>{subCategory}</ListItem.Title>
                         </ListItem.Content>
                         <ListItem.Chevron />
                       </ListItem>
-                    ))}
+                      );
+                    })
+                  }
                 </ListItem.Accordion>
               ))}
-            </View>
+            </ScrollView>
           </Modal>
         </View>
       </ScrollView>
