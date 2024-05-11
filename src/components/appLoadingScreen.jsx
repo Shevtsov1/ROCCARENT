@@ -81,7 +81,7 @@ const AppLoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
           <Animated.View
             style={{
               opacity,
-              top: heightPercentageToDP(30),
+              top: heightPercentageToDP(35),
             }}
           >
             <Image
