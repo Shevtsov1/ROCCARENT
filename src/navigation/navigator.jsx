@@ -1,6 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native";
-import React, { useEffect, useRef } from "react";
+import {
+  createNavigationContainerRef,
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+} from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, Animated, View, Text } from "react-native";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
 import Main from "../screens/mainScreen/main";
@@ -75,6 +79,11 @@ const TabButton = React.memo((props) => {
 
   useEffect(() => {
     const animations = [
+      Animated.timing(opacityValue, {
+        toValue: focused ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
       Animated.timing(rotation, {
         toValue: focused ? 1 : 0,
         duration: 500,
@@ -86,11 +95,6 @@ const TabButton = React.memo((props) => {
       }),
       Animated.spring(translateYValue, {
         toValue: focused ? -1 : 0,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacityValue, {
-        toValue: focused ? 1 : 0,
-        duration: 200,
         useNativeDriver: true,
       }),
     ];
@@ -170,8 +174,9 @@ const TabButton = React.memo((props) => {
 });
 
 // Компонент нижней навигации по вкладкам
-const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, setLoadingScreenText }) => {
-  const routeNamesToCheck = ["LogIn", "LogUp", "Settings", "DealArchive", "SupportStackNavigator"];
+const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, routeName, setInitializing, setLoadingScreenText }) => {
+  const routeNamesToCheck = ["LogIn", "LogUp"];
+  const routeWithoutTabBar = routeNamesToCheck.includes(routeName);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
@@ -183,17 +188,7 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, se
           return (
             <Tab.Screen key={index} name={item.route}
                         options={({ route }) => ({
-                          tabBarStyle: ((route) => {
-                            const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-                            if (routeNamesToCheck.includes(routeName)) {
-                              return { display: "none" };
-                            } else {
-                              return {
-                                borderTopWidth: 0,
-                                height: 48,
-                              };
-                            }
-                          })(route),
+                          tabBarStyle: routeWithoutTabBar ? {display: 'none'} : {borderTopWidth: 0, height: 48},
                           tabBarShowLabel: false,
                           tabBarButton: (props) => (
                             <TabButton {...props} item={item} theme={theme} isDarkMode={isDarkMode} />
@@ -211,13 +206,26 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, setInitializing, se
   );
 };
 
+const ref = createNavigationContainerRef();
 // Компонент навигации приложения
-const AppNavigator = ({ setInitializing, theme, toggleMode, setLoadingScreenText }) => (
-  <NavigationContainer>
-    <BottomTabNavigator setInitializing={setInitializing} theme={theme} toggleMode={toggleMode}
-                        setLoadingScreenText={setLoadingScreenText} />
-  </NavigationContainer>
-);
+const AppNavigator = ({ setInitializing, theme, toggleMode, setLoadingScreenText }) => {
+  const [routeName, setRouteName] = useState();
+  return (
+    <NavigationContainer
+      ref={ref}
+      onReady={() => {
+        setRouteName(ref.getCurrentRoute().name);
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeName;
+        const currentRouteName = ref.getCurrentRoute().name;
+        setRouteName(currentRouteName);
+      }}>
+      <BottomTabNavigator routeName={routeName} setInitializing={setInitializing} theme={theme} toggleMode={toggleMode}
+                          setLoadingScreenText={setLoadingScreenText} />
+    </NavigationContainer>
+  );
+};
 
 export default AppNavigator;
 
