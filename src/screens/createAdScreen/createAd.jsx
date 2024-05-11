@@ -5,6 +5,7 @@ import { Button, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
+import CategoryFields from "./components/categoryFields";
 
 const CreateAd = ({ theme }) => {
 
@@ -13,7 +14,6 @@ const CreateAd = ({ theme }) => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
   const categories = [
-
     {
       name: "Автомобили и транспорт",
       subCategories: ["Легковые автомобили", "Грузовики и коммерческий транспорт",
@@ -109,13 +109,13 @@ const CreateAd = ({ theme }) => {
   };
 
   const handleCategoryModal = (mode) => {
-    setSelectedCategory("");
     setModalVisible(mode);
   };
 
   const handleCategoryPress = (category) => {
     if (selectedCategory !== category) {
       setSelectedCategory(category);
+      setSelectedSubcategory("");
     } else {
       setSelectedCategory("");
     }
@@ -227,7 +227,10 @@ const CreateAd = ({ theme }) => {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
       color: theme.colors.text,
+    }, categoryFields: {
+
     },
+
     /* BODY END */
   });
 
@@ -302,7 +305,7 @@ const CreateAd = ({ theme }) => {
                   {selectedCategory === category.name &&
                     category.subCategories.map((subCategory, id) => {
                       return (
-                        <ListItem key={id}containerStyle={{ backgroundColor: theme.colors.background}}
+                        <ListItem key={id} containerStyle={{ backgroundColor: theme.colors.background}}
                                   onPress={() => handleSubcategoryPress(subCategory)}>
                           <ListItem.Content>
                             <ListItem.Title style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
@@ -315,6 +318,9 @@ const CreateAd = ({ theme }) => {
               ))}
             </ScrollView>
           </Modal>
+        </View>
+        <View style={styles.categoryFields}>
+          <CategoryFields category={selectedCategory} subcategory={selectedSubcategory}/>
         </View>
       </ScrollView>
     </SafeAreaView>
