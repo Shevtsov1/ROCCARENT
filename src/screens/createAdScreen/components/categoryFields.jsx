@@ -1,5 +1,5 @@
-import React from "react";
-import { Text } from "react-native";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
 import CarsAndTrucksFields from "./fields/Vehicles/carsAndTrucksFields";
 import MotorcyclesFields from "./fields/Vehicles/motorcyclesFields";
 import BicyclesFields from "./fields/Vehicles/bicyclesFields";
@@ -29,34 +29,82 @@ import AppliancesFields from "./fields/Home and Garden/appliancesFields";
 import GardenToolsFields from "./fields/Home and Garden/gardenToolsFields";
 import DecorFields from "./fields/Home and Garden/decorFields";
 import LawnsFields from "./fields/Home and Garden/lawnsFields";
+import { Button } from "@rneui/base";
 
 const CategoryFields = ({ theme, category, subcategory }) => {
 
+  const [fieldsData, setFieldsData] = useState([]);
+
+  const DefaultFields = () => {
+    return (
+      <View>
+        <View>
+
+        </View>
+        <View>
+
+        </View>
+        <View>
+
+        </View>
+      </View>
+    );
+  }
+
+  const SubmitBtn = () => {
+    return (
+      <View>
+        <Button>
+          <Text>Создать</Text>
+        </Button>
+      </View>
+    );
+  }
 
   if (category === "Автомобили и транспорт") {
     if (subcategory === "Легковые автомобили" || subcategory === "Грузовики и коммерческий транспорт") {
       return (
-        <CarsAndTrucksFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CarsAndTrucksFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Мотоциклы и скутеры") {
       return (
-        <MotorcyclesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <MotorcyclesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Велосипеды") {
       return (
-        <BicyclesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <BicyclesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Яхты и лодки") {
       return (
-        <YachtsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <YachtsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Автодома и прицепы") {
       return (
-        <MotorhomesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <MotorhomesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
@@ -64,27 +112,47 @@ const CategoryFields = ({ theme, category, subcategory }) => {
   if (category === "Недвижимость") {
     if (subcategory === "Квартиры") {
       return (
-        <ApartmentsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <ApartmentsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Дома и коттеджи") {
       return (
-        <HousesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <HousesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Коммерческая недвижимость") {
       return (
-        <CommercialPropertiesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CommercialPropertiesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Отпускные дома и виллы") {
       return (
-        <VacationHomesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <VacationHomesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Земельные участки") {
       return (
-        <LandPlotsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <LandPlotsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
@@ -92,27 +160,47 @@ const CategoryFields = ({ theme, category, subcategory }) => {
   if (category === "Электроника") {
     if (subcategory === "Телефоны и планшеты") {
       return (
-        <PhonesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <PhonesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Компьютеры и ноутбуки") {
       return (
-        <ComputersFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <ComputersFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Телевизоры и аудио-видео техника") {
       return (
-        <TvsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <TvsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Фото- и видеокамеры") {
       return (
-        <CamerasFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CamerasFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Игровые приставки и аксессуары") {
       return (
-        <GamingConsolesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <GamingConsolesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
@@ -120,27 +208,47 @@ const CategoryFields = ({ theme, category, subcategory }) => {
   if (category === "Спорт и отдых") {
     if (subcategory === "Спортивные снаряды и инвентарь") {
       return (
-        <SportsEquipmentFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <SportsEquipmentFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Велосипеды и аксессуары") {
       return (
-        <BicyclesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <BicyclesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Палатки и снаряжение для кемпинга") {
       return (
-        <CampingGearFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CampingGearFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Горнолыжное и сноубордическое снаряжение") {
       return (
-        <SkiingAndSnowboardingGearFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <SkiingAndSnowboardingGearFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Рыболовные снасти") {
       return (
-        <FishingGearFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <FishingGearFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
@@ -148,27 +256,47 @@ const CategoryFields = ({ theme, category, subcategory }) => {
   if (category === "Мода и аксессуары") {
     if (subcategory === "Одежда и обувь") {
       return (
-        <ClothingFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <ClothingFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Сумки и аксессуары") {
       return (
-        <BagsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <BagsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Украшения и часы") {
       return (
-        <JewelryFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <JewelryFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Костюмы и наряды для особых случаев") {
       return (
-        <CostumesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CostumesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Косметика и парфюмерия") {
       return (
-        <CosmeticsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <CosmeticsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
@@ -176,27 +304,47 @@ const CategoryFields = ({ theme, category, subcategory }) => {
   if (category === "Дом и сад") {
     if (subcategory === "Мебель и интерьер") {
       return (
-        <FurnitureFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <FurnitureFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Бытовая техника") {
       return (
-        <AppliancesFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <AppliancesFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Садовый инструмент и оборудование") {
       return (
-        <GardenToolsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <GardenToolsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Декор и освещение") {
       return (
-        <DecorFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <DecorFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
     if (subcategory === "Газоны и садовые участки") {
       return (
-        <LawnsFields theme={theme}/>
+        <>
+          <DefaultFields/>
+          <LawnsFields theme={theme}/>
+          <SubmitBtn/>
+        </>
       )
     }
   }
