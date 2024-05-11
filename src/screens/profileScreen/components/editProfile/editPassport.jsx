@@ -11,7 +11,6 @@ import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { AppContext } from "../../../../../App";
-import { Overlay } from "@rneui/themed";
 
 const EditPassport = ({ theme, navigation, route }) => {
 
@@ -30,11 +29,13 @@ const EditPassport = ({ theme, navigation, route }) => {
   const [passportVerified, setPassportVerified] = useState(false);
   const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
-
-  const handleOpenCamera = async () => {
+  useEffect(() => {
     if (!hasPermission) {
       requestPermission().then();
     }
+  }, []);
+
+  const handleOpenCamera = async () => {
     setPassportPhoto("");
     setCameraActive(true);
   };
@@ -137,7 +138,7 @@ const EditPassport = ({ theme, navigation, route }) => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1, width: wp(100), height: hp(100), backgroundColor: theme.colors.background, padding: 0,
+      flex: 1, backgroundColor: theme.colors.background,
     }, editNameContainer: {
       width: "100%",
       height: "auto",
@@ -165,7 +166,7 @@ const EditPassport = ({ theme, navigation, route }) => {
     },
   });
 
-  return (<Overlay overlayStyle={styles.container}>
+  return (<SafeAreaView style={styles.container}>
     <ScrollView>
       <View style={{ paddingBottom: hp(1) }}>
         <View style={styles.editNameContainer}>
@@ -184,8 +185,7 @@ const EditPassport = ({ theme, navigation, route }) => {
               paddingHorizontal: 12,
               paddingVertical: 12,
             }}>
-              <Text numberOfLines={1}
-                    style={{ fontFamily: "Roboto-Black", fontSize: 18, color: theme.colors.text, alignSelf: "center" }}>
+              <Text numberOfLines={1} style={{ fontFamily: "Roboto-Black", fontSize: 18, color: theme.colors.text, alignSelf: 'center' }}>
                 Ваш Паспорт подтвержден
               </Text>
               <Text numberOfLines={1} style={{
@@ -263,7 +263,7 @@ const EditPassport = ({ theme, navigation, route }) => {
         </View>
       </View>
     </ScrollView>
-  </Overlay>);
+  </SafeAreaView>);
 };
 
 export default EditPassport;

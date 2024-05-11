@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Input, Overlay } from "@rneui/themed";
+import { Input } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import { Button } from "@rneui/base";
 
@@ -12,16 +12,17 @@ const EditEmail = ({ theme, navigation }) => {
 
   const handleSubmitBtn = async () => {
     setBtnIsLoading(true);
-    await auth().currentUser.sendEmailVerification({ handleCodeInApp: true }).then(() => {
-      ToastAndroid.show("Письмо с потдверждением отправлено", 5000);
+    await auth().currentUser.sendEmailVerification({handleCodeInApp: true}).then(() => {
+      ToastAndroid.show('Письмо с потдверждением отправлено', 5000);
     });
     setBtnIsLoading(false);
-    navigation.navigate("Profile");
-  };
+    navigation.navigate('Profile');
+  }
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1, width: wp(100), height: hp(100), backgroundColor: theme.colors.background, padding: 0,
+      flex: 1,
+      backgroundColor: theme.colors.background,
     }, editNameContainer: {
       width: "100%",
       height: "auto",
@@ -72,7 +73,7 @@ const EditEmail = ({ theme, navigation }) => {
   });
 
   return (
-    <Overlay overlayStyle={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={{ paddingBottom: hp(1) }}>
           <View style={styles.editNameContainer}>
@@ -91,8 +92,7 @@ const EditEmail = ({ theme, navigation }) => {
             </View>
             <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
               <Text style={styles.infoText}>
-                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждения адреса
-                электронной
+                На указанный Вами электронный адрес будет отправлено письмо с сылкой для подтверждения адреса электронной
                 почты.{"\n\n"}Ссылка для потдверждения будет активна на протяжении 30 минут:
               </Text>
             </View>
@@ -113,11 +113,11 @@ const EditEmail = ({ theme, navigation }) => {
                 fontFamily: "Roboto-Medium",
                 fontSize: 16,
                 color: auth().currentUser.emailVerified ? theme.colors.greyOutline : theme.colors.accentText,
-              }}>{auth().currentUser.emailVerified ? ("Почта подтверждена") : ("Отправить письмо")}</Text></Button>
+              }}>{auth().currentUser.emailVerified ? ('Почта подтверждена') : ('Отправить письмо')}</Text></Button>
           </View>
         </View>
       </ScrollView>
-    </Overlay>
+    </SafeAreaView>
   );
 };
 

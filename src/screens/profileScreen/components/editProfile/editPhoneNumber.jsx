@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Input, Overlay } from "@rneui/themed";
+import { Input } from "@rneui/themed";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../../../App";
@@ -60,7 +60,8 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1, width: wp(100), height: hp(100), backgroundColor: theme.colors.background, padding: 0,
+      flex: 1,
+      backgroundColor: theme.colors.background,
     }, editNameContainer: {
       width: "100%",
       height: "auto",
@@ -109,7 +110,7 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
     },
   });
   return (
-    <Overlay overlayStyle={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={{ paddingBottom: hp(1) }}>
           <View style={styles.editNameContainer}>
@@ -172,7 +173,7 @@ const EditPhoneNumber = ({ theme, navigation, route }) => {
           </View>
         </View>
       </ScrollView>
-    </Overlay>
+    </SafeAreaView>
   );
 };
 
