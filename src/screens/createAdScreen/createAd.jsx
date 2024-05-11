@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
-import CategoryFields from "./components/categoryFields";
+import { Input } from "@rneui/base";
 
 const CreateAd = ({ theme }) => {
+
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [fieldsData, setFieldsData] = useState({});
 
-  const [title, setTitle] = useState("");
-
-  const handleValueChange = (value) => {
-    setTitle(value);
+  const handleFieldsChange = (fieldName, value) => {
+    setFieldsData(prevData => ({
+      ...prevData,
+      [fieldName]: value
+    }));
   };
 
   const categories = [
@@ -133,6 +136,75 @@ const CreateAd = ({ theme }) => {
   };
 
   const styles = StyleSheet.create({
+
+    defaultFieldsContainer: {},
+    listingTitleContainer: {
+      marginVertical: 12,
+      paddingHorizontal: 12,
+    },
+    listingTitleFooterText: {
+      fontFamily: "Roboto-Regular",
+      fontSize: 14,
+      color: theme.colors.grey3,
+    },
+    listingTitleInputContainer: {
+      height: 42,
+      paddingHorizontal: 0,
+    },
+    listingTitleInputInputContainer: {
+      height: 36,
+      borderColor: theme.colors.grey3,
+      marginHorizontal: 0,
+      paddingHorizontal: 0,
+    },
+    listingTitleInput: {
+      marginHorizontal: 0,
+      paddingHorizontal: 0,
+      borderRadius: 5,
+      fontFamily: "Roboto-Regular",
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+
+
+    listingDescriptionContainer: {
+      borderWidth: 1,
+      borderColor: theme.colors.grey3,
+      borderRadius: 5,
+      backgroundColor: `${theme.colors.grey3}5A`,
+      height: 120,
+    },
+    listingDescriptionText: {
+      fontFamily: "Roboto-Regular",
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+
+
+    listingPriceContainer: {},
+
+
+    listingDatesContainer: {},
+
+
+    listingGeoContainer: {},
+
+
+    submitBtnViewContainer: {
+      marginHorizontal: 12,
+    },
+    submitBtnContainer: {
+      borderRadius: 5,
+    },
+    submitBtn: {
+      borderRadius: 5,
+      backgroundColor: theme.colors.accent,
+    },
+    submitBtnText: {
+      fontFamily: "Roboto-Bold",
+      fontSize: 16,
+      color: theme.colors.accentText,
+    },
 
     /* BODY BEGIN */
 
@@ -258,7 +330,7 @@ const CreateAd = ({ theme }) => {
             <View style={{ flexDirection: "row", paddingVertical: 12 }}>
               <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
                       onPress={handleAddImageBtn}>
-                  <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
+                <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
               </Button>
               <DraggableFlatList
                 horizontal={true}
@@ -322,15 +394,54 @@ const CreateAd = ({ theme }) => {
               </ScrollView>
             </Modal>
           </View>
-          <View style={styles.categoryFields}>
-            <CategoryFields
-              theme={theme}
-              category={selectedCategory}
-              subcategory={selectedSubcategory}
-              title={title}
-              handleValueChange={handleValueChange}
-            />
-          </View>
+          {selectedSubcategory &&
+            <View style={styles.categoryFields}>
+              <View style={styles.defaultFieldsContainer}>
+                <View style={styles.listingTitleContainer}>
+                  <Input containerStyle={styles.listingTitleInputContainer}
+                         inputContainerStyle={styles.listingTitleInputInputContainer}
+                         inputStyle={styles.listingTitleInput}
+                         placeholder={"Название товара"}
+                         placeholderTextColor={theme.colors.grey3}
+                         maxLength={50}
+                         value={fieldsData.title}
+                         onChangeText={value => handleFieldsChange('title', value)}
+                  />
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
+                  </View>
+                </View>
+                <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
+                  <View style={styles.listingDescriptionContainer}>
+                    <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
+                               style={styles.listingDescriptionText} maxLength={1000} multiline
+                               value={fieldsData.title}
+                               onChangeText={value => handleFieldsChange('title', value)} />
+                  </View>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+                  </View>
+                </View>
+              </View>
+              <View>
+                <View style={styles.listingPriceContainer}>
+                  <Input label={"Цена"} />
+                </View>
+                <View style={styles.listingDatesContainer}>
+                  <Text>Dates</Text>
+                </View>
+                <View style={styles.listingGeoContainer}>
+                  <Text>geo</Text>
+                </View>
+              </View>
+              <View style={styles.submitBtnViewContainer}>
+                <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
+                  <Text style={styles.submitBtnText}>Подать объявление</Text>
+                </Button>
+              </View>
+            </View>}
         </View>
       </ScrollView>
     </SafeAreaView>

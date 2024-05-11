@@ -30,140 +30,13 @@ import GardenToolsFields from "./fields/Home and Garden/gardenToolsFields";
 import DecorFields from "./fields/Home and Garden/decorFields";
 import LawnsFields from "./fields/Home and Garden/lawnsFields";
 import { Button, Input } from "@rneui/base";
+import { validate } from "@babel/core/lib/config/validation/options";
 
-const CategoryFields = ({ theme, category, subcategory, title, handleValueChange }) => {
+const CategoryFields = ({ theme, category, subcategory, title, handleTitleChange }) => {
 
   const [isSubmitBtnDisabled, setIsSubmitBtnDisabled] = useState(true);
 
-  const styles = StyleSheet.create({
-    defaultFieldsContainer: {},
-    listingTitleContainer: {
-      marginVertical: 12,
-      paddingHorizontal: 12,
-    },
-    listingTitleFooterText: {
-      fontFamily: "Roboto-Regular",
-      fontSize: 14,
-      color: theme.colors.grey3,
-    },
-    listingTitleInputContainer: {
-      height: 42,
-      paddingHorizontal: 0,
-    },
-    listingTitleInputInputContainer: {
-      height: 36,
-      borderColor: theme.colors.grey3,
-      marginHorizontal: 0,
-      paddingHorizontal: 0,
-    },
-    listingTitleInput: {
-      marginHorizontal: 0,
-      paddingHorizontal: 0,
-      borderRadius: 5,
-      fontFamily: "Roboto-Regular",
-      fontSize: 16,
-      color: theme.colors.text,
-    },
 
-
-    listingDescriptionContainer: {
-      borderWidth: 1,
-      borderColor: theme.colors.grey3,
-      borderRadius: 5,
-      backgroundColor: `${theme.colors.grey3}5A`,
-      height: 120,
-    },
-    listingDescriptionText: {
-      fontFamily: "Roboto-Regular",
-      fontSize: 16,
-      color: theme.colors.text,
-    },
-
-
-    listingPriceContainer: {},
-
-
-    listingDatesContainer: {},
-
-
-    listingGeoContainer: {},
-
-
-    submitBtnViewContainer: {
-      marginHorizontal: 12,
-    },
-    submitBtnContainer: {
-      borderRadius: 5,
-    },
-    submitBtn: {
-      borderRadius: 5,
-      backgroundColor: theme.colors.accent,
-    },
-    submitBtnText: {
-      fontFamily: "Roboto-Bold",
-      fontSize: 16,
-      color: theme.colors.accentText,
-    },
-  });
-
-  const TitleAndDescriptionFields = () => {
-    return (
-      <View style={styles.defaultFieldsContainer}>
-        <View style={styles.listingTitleContainer}>
-          <Input containerStyle={styles.listingTitleInputContainer}
-                 inputContainerStyle={styles.listingTitleInputInputContainer} inputStyle={styles.listingTitleInput}
-                 placeholder={"Название товара"}
-                 placeholderTextColor={theme.colors.grey3}
-                 maxLength={50}
-                 value={title}
-                 onChangeText={handleValueChange}
-          />
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-            <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
-          </View>
-        </View>
-        <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
-          <View style={styles.listingDescriptionContainer}>
-            {/*<TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}*/}
-            {/*           style={styles.listingDescriptionText} maxLength={1000} multiline*/}
-            {/*value={title}*/}
-            {/*onChangeText={handleTitleChange}/>*/}
-          </View>
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-            <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const PriceDatesAndGeoFields = () => {
-    return (
-      <View>
-        <View style={styles.listingPriceContainer}>
-          <Input label={"Цена"} />
-        </View>
-        <View style={styles.listingDatesContainer}>
-          <Text>Dates</Text>
-        </View>
-        <View style={styles.listingGeoContainer}>
-          <Text>geo</Text>
-        </View>
-      </View>
-    );
-  };
-
-  const SubmitBtn = () => {
-    return (
-      <View style={styles.submitBtnViewContainer}>
-        <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
-          <Text style={styles.submitBtnText}>Подать объявление</Text>
-        </Button>
-      </View>
-    );
-  };
 
   if (category === "Автомобили и транспорт") {
     if (subcategory === "Легковые автомобили" || subcategory === "Грузовики и коммерческий транспорт") {
@@ -485,4 +358,4 @@ const CategoryFields = ({ theme, category, subcategory, title, handleValueChange
 
 };
 
-export default CategoryFields;
+export default React.memo(CategoryFields);
