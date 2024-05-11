@@ -320,7 +320,7 @@ const CreateAd = ({ theme }) => {
           </Modal>
         </View>
         <View style={styles.categoryFields}>
-          <CategoryFields category={selectedCategory} subcategory={selectedSubcategory}/>
+          <CategoryFields theme={theme} category={selectedCategory} subcategory={selectedSubcategory}/>
         </View>
       </ScrollView>
     </SafeAreaView>

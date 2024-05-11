@@ -1,33 +1,62 @@
 import React from "react";
 import { Text } from "react-native";
+import CarsAndTrucksFields from "./fields/Vehicles/carsAndTrucksFields";
+import MotorcyclesFields from "./fields/Vehicles/motorcyclesFields";
+import BicyclesFields from "./fields/Vehicles/bicyclesFields";
+import YachtsFields from "./fields/Vehicles/yachtsFields";
+import MotorhomesFields from "./fields/Vehicles/motorhomesFields";
+import ApartmentsFields from "./fields/Real Estate/apartmentsFields";
+import HousesFields from "./fields/Real Estate/housesFields";
+import CommercialPropertiesFields from "./fields/Real Estate/commercialPropertiesFields";
+import VacationHomesFields from "./fields/Real Estate/vacationHomesFields";
+import LandPlotsFields from "./fields/Real Estate/landPlotsFields";
+import PhonesFields from "./fields/Electronics/phonesFields";
+import ComputersFields from "./fields/Electronics/computersFields";
+import TvsFields from "./fields/Electronics/tvsFields";
+import CamerasFields from "./fields/Electronics/camerasFields";
+import GamingConsolesFields from "./fields/Electronics/gamingConsolesFields";
+import SportsEquipmentFields from "./fields/Sports and Recreation/sportsEquipmentFields";
+import CampingGearFields from "./fields/Sports and Recreation/campingGearFields";
+import SkiingAndSnowboardingGearFields from "./fields/Sports and Recreation/skiingAndSnowboardingGearFields";
+import FishingGearFields from "./fields/Sports and Recreation/fishingGearFields";
+import ClothingFields from "./fields/Fashion and Accessories/clothingFields";
+import BagsFields from "./fields/Fashion and Accessories/bagsFields";
+import JewelryFields from "./fields/Fashion and Accessories/jewelryFields";
+import CostumesFields from "./fields/Fashion and Accessories/costumesFields";
+import CosmeticsFields from "./fields/Fashion and Accessories/cosmeticsFields";
+import FurnitureFields from "./fields/Home and Garden/furnitureFields";
+import AppliancesFields from "./fields/Home and Garden/appliancesFields";
+import GardenToolsFields from "./fields/Home and Garden/gardenToolsFields";
+import DecorFields from "./fields/Home and Garden/decorFields";
+import LawnsFields from "./fields/Home and Garden/lawnsFields";
 
-const CategoryFields = ({ category, subcategory }) => {
+const CategoryFields = ({ theme, category, subcategory }) => {
 
 
   if (category === "Автомобили и транспорт") {
     if (subcategory === "Легковые автомобили" || subcategory === "Грузовики и коммерческий транспорт") {
       return (
-        <Text>"Легковые автомобили"</Text>
+        <CarsAndTrucksFields theme={theme}/>
       )
     }
     if (subcategory === "Мотоциклы и скутеры") {
       return (
-        <Text>"Мотоциклы и скутеры"</Text>
+        <MotorcyclesFields theme={theme}/>
       )
     }
     if (subcategory === "Велосипеды") {
       return (
-        <Text>"Велосипеды"</Text>
+        <BicyclesFields theme={theme}/>
       )
     }
     if (subcategory === "Яхты и лодки") {
       return (
-        <Text>"Яхты и лодки"</Text>
+        <YachtsFields theme={theme}/>
       )
     }
     if (subcategory === "Автодома и прицепы") {
       return (
-        <Text>"Автодома и прицепы"</Text>
+        <MotorhomesFields theme={theme}/>
       )
     }
   }
@@ -35,27 +64,27 @@ const CategoryFields = ({ category, subcategory }) => {
   if (category === "Недвижимость") {
     if (subcategory === "Квартиры") {
       return (
-        <Text>"Квартиры"</Text>
+        <ApartmentsFields theme={theme}/>
       )
     }
     if (subcategory === "Дома и коттеджи") {
       return (
-        <Text>"Дома и коттеджи"</Text>
+        <HousesFields theme={theme}/>
       )
     }
     if (subcategory === "Коммерческая недвижимость") {
       return (
-        <Text>"Коммерческая недвижимость"</Text>
+        <CommercialPropertiesFields theme={theme}/>
       )
     }
     if (subcategory === "Отпускные дома и виллы") {
       return (
-        <Text>"Отпускные дома и виллы"</Text>
+        <VacationHomesFields theme={theme}/>
       )
     }
     if (subcategory === "Земельные участки") {
       return (
-        <Text>"Земельные участки"</Text>
+        <LandPlotsFields theme={theme}/>
       )
     }
   }
@@ -63,27 +92,27 @@ const CategoryFields = ({ category, subcategory }) => {
   if (category === "Электроника") {
     if (subcategory === "Телефоны и планшеты") {
       return (
-        <Text>"Телефоны и планшеты"</Text>
+        <PhonesFields theme={theme}/>
       )
     }
     if (subcategory === "Компьютеры и ноутбуки") {
       return (
-        <Text>"Компьютеры и ноутбуки"</Text>
+        <ComputersFields theme={theme}/>
       )
     }
     if (subcategory === "Телевизоры и аудио-видео техника") {
       return (
-        <Text>"Телевизоры и аудио-видео техника"</Text>
+        <TvsFields theme={theme}/>
       )
     }
     if (subcategory === "Фото- и видеокамеры") {
       return (
-        <Text>"Фото- и видеокамеры"</Text>
+        <CamerasFields theme={theme}/>
       )
     }
     if (subcategory === "Игровые приставки и аксессуары") {
       return (
-        <Text>"Игровые приставки и аксессуары"</Text>
+        <GamingConsolesFields theme={theme}/>
       )
     }
   }
@@ -91,27 +120,27 @@ const CategoryFields = ({ category, subcategory }) => {
   if (category === "Спорт и отдых") {
     if (subcategory === "Спортивные снаряды и инвентарь") {
       return (
-        <Text>"Спортивные снаряды и инвентарь"</Text>
+        <SportsEquipmentFields theme={theme}/>
       )
     }
     if (subcategory === "Велосипеды и аксессуары") {
       return (
-        <Text>"Велосипеды и аксессуары"</Text>
+        <BicyclesFields theme={theme}/>
       )
     }
     if (subcategory === "Палатки и снаряжение для кемпинга") {
       return (
-        <Text>"Палатки и снаряжение для кемпинга"</Text>
+        <CampingGearFields theme={theme}/>
       )
     }
     if (subcategory === "Горнолыжное и сноубордическое снаряжение") {
       return (
-        <Text>"Горнолыжное и сноубордическое снаряжение"</Text>
+        <SkiingAndSnowboardingGearFields theme={theme}/>
       )
     }
     if (subcategory === "Рыболовные снасти") {
       return (
-        <Text>"Рыболовные снасти"</Text>
+        <FishingGearFields theme={theme}/>
       )
     }
   }
@@ -119,27 +148,27 @@ const CategoryFields = ({ category, subcategory }) => {
   if (category === "Мода и аксессуары") {
     if (subcategory === "Одежда и обувь") {
       return (
-        <Text>"Одежда и обувь"</Text>
+        <ClothingFields theme={theme}/>
       )
     }
     if (subcategory === "Сумки и аксессуары") {
       return (
-        <Text>"Сумки и аксессуары"</Text>
+        <BagsFields theme={theme}/>
       )
     }
     if (subcategory === "Украшения и часы") {
       return (
-        <Text>"Украшения и часы"</Text>
+        <JewelryFields theme={theme}/>
       )
     }
     if (subcategory === "Костюмы и наряды для особых случаев") {
       return (
-        <Text>"Костюмы и наряды для особых случаев"</Text>
+        <CostumesFields theme={theme}/>
       )
     }
     if (subcategory === "Косметика и парфюмерия") {
       return (
-        <Text>"Косметика и парфюмерия"</Text>
+        <CosmeticsFields theme={theme}/>
       )
     }
   }
@@ -147,27 +176,27 @@ const CategoryFields = ({ category, subcategory }) => {
   if (category === "Дом и сад") {
     if (subcategory === "Мебель и интерьер") {
       return (
-        <Text>"Мебель и интерьер"</Text>
+        <FurnitureFields theme={theme}/>
       )
     }
     if (subcategory === "Бытовая техника") {
       return (
-        <Text>"Бытовая техника"</Text>
+        <AppliancesFields theme={theme}/>
       )
     }
     if (subcategory === "Садовый инструмент и оборудование") {
       return (
-        <Text>"Садовый инструмент и оборудование"</Text>
+        <GardenToolsFields theme={theme}/>
       )
     }
     if (subcategory === "Декор и освещение") {
       return (
-        <Text>"Декор и освещение"</Text>
+        <DecorFields theme={theme}/>
       )
     }
     if (subcategory === "Газоны и садовые участки") {
       return (
-        <Text>"Газоны и садовые участки"</Text>
+        <LawnsFields theme={theme}/>
       )
     }
   }
