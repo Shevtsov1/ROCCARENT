@@ -188,8 +188,7 @@ const CreateAd = ({ theme }) => {
     },
     categoriesModalBtnContainer: {
       marginHorizontal: 12,
-      padding: 6,
-      borderRadius: 5,
+      paddingVertical: 6,
       borderBottomWidth: 1,
       borderColor: theme.colors.grey3,
     }, categoriesModalBtn: {
