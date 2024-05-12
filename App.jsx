@@ -78,27 +78,21 @@ const App = React.memo(() => {
           !currentUser.isAnonymous &&
           !currentUser.emailVerified
         ) {
-          setInitializing(false);
           await waitForEmailVerification().catch((error) =>
             setLoadingScreenText("Ошибка при подтверждении почты: " + error),
           );
         }
-        setInitializing(false);
       } catch (error) {
         // Обработка ошибки при предварительной загрузке иконок
         console.error("Ошибка при предварительной загрузке иконок:", error);
       }
     };
-    init().then();
-  }, []);
 
-  useEffect(() => {
     setInitializing(true);
-    if (auth().currentUser && !auth().currentUser.isAnonymous) {
-      loadUserdata().then();
-    }
-    setInitializing(false);
-  }, [auth().currentUser, userdata]);
+    Promise.all([init(), auth().currentUser && !auth().currentUser.isAnonymous && loadUserdata()])
+      .then(() => setInitializing(false))
+      .catch((error) => console.error("Ошибка при инициализации приложения:", error));
+  }, []);
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
