@@ -23,7 +23,10 @@ const CreateAd = ({ theme }) => {
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
     longitude: 27.5615, // Долгота Минска
+    latitudeDelta: 0,
+    longitudeDelta: 0,
   });
+  const [markerCoordinates, setMarkerCoordinates] = useState(userCoordinates);
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const mapRef = useRef(null);
 
@@ -280,6 +283,21 @@ const CreateAd = ({ theme }) => {
         animated: true,
       });
     }
+  };
+
+  useEffect(() => {
+    console.log('User: ' + userCoordinates.latitude + " " + userCoordinates.longitude);
+    console.log('Marker: ' + markerCoordinates.latitude + " " + markerCoordinates.longitude);
+  }, [markerCoordinates]);
+
+
+  const handleMapPress = (event) => {
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setMarkerCoordinates({
+      ...markerCoordinates,
+      latitude: latitude,
+      longitude: longitude
+    });
   };
 
   const styles = StyleSheet.create({
@@ -651,16 +669,25 @@ const CreateAd = ({ theme }) => {
                             <MapView
                               ref={mapRef}
                               onMapReady={handleMapReady}
+                              onPress={handleMapPress}
                               initialRegion={{
                                 latitude: userCoordinates.latitude,
                                 longitude: userCoordinates.longitude,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
+                                latitudeDelta: 0,
+                                longitudeDelta: 0,
                               }}
+                              region={markerCoordinates}
+                              loadingEnabled
+                              showsUserLocation={true}
+                              showsMyLocationButton={true}
+                              followsUserLocation={true}
+                              showsIndoors={false}
+                              showsTraffic={false}
                               provider={PROVIDER_GOOGLE}
                               style={{ width: widthPercentageToDP(100), height: heightPercentageToDP(100) }}
                             >
-                              <Marker coordinate={userCoordinates} />
+                              <Marker title={"Ваше местоположение"}
+                                      draggable  coordinate={markerCoordinates} />
                             </MapView>
                           </Modal>
                         </View>
