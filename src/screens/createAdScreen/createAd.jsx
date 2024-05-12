@@ -677,7 +677,6 @@ const CreateAd = ({ theme }) => {
                                 longitudeDelta: 0,
                               }}
                               region={markerCoordinates}
-                              loadingEnabled
                               showsUserLocation={true}
                               showsMyLocationButton={true}
                               followsUserLocation={true}
