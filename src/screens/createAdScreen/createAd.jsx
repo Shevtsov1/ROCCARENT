@@ -18,7 +18,7 @@ const CreateAd = ({ theme }) => {
   const handleFieldsChange = (fieldName, value) => {
     setFieldsData(prevData => ({
       ...prevData,
-      [fieldName]: value
+      [fieldName]: value,
     }));
   };
 
@@ -132,6 +132,7 @@ const CreateAd = ({ theme }) => {
 
   const handleSubcategoryPress = (subcategory) => {
     setSelectedSubcategory(subcategory);
+    setFieldsData({});
     handleCategoryModal(false);
   };
 
@@ -140,7 +141,6 @@ const CreateAd = ({ theme }) => {
     defaultFieldsContainer: {},
     listingTitleContainer: {
       marginVertical: 12,
-      paddingHorizontal: 12,
     },
     listingTitleFooterText: {
       fontFamily: "Roboto-Regular",
@@ -304,10 +304,17 @@ const CreateAd = ({ theme }) => {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
       color: theme.colors.text,
-    }, categoryFields: {},
+    }, categoryFields: {
+      marginHorizontal: 12,
+    },
 
     /* BODY END */
   });
+
+  useEffect(() => {
+    console.log(fieldsData)
+  }, [fieldsData]);
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -395,53 +402,67 @@ const CreateAd = ({ theme }) => {
             </Modal>
           </View>
           {selectedSubcategory &&
-            <View style={styles.categoryFields}>
-              <View style={styles.defaultFieldsContainer}>
-                <View style={styles.listingTitleContainer}>
-                  <Input containerStyle={styles.listingTitleInputContainer}
-                         inputContainerStyle={styles.listingTitleInputInputContainer}
-                         inputStyle={styles.listingTitleInput}
-                         placeholder={"Название товара"}
-                         placeholderTextColor={theme.colors.grey3}
-                         maxLength={50}
-                         value={fieldsData.title}
-                         onChangeText={value => handleFieldsChange('title', value)}
-                  />
-                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
+            <>
+              <View style={styles.categoryFields}>
+                <View style={styles.defaultFieldsContainer}>
+                  <View style={styles.listingTitleContainer}>
+                    <Input containerStyle={styles.listingTitleInputContainer}
+                           inputContainerStyle={styles.listingTitleInputInputContainer}
+                           inputStyle={styles.listingTitleInput}
+                           placeholder={"Название товара"}
+                           placeholderTextColor={theme.colors.grey3}
+                           maxLength={50}
+                           value={fieldsData.title}
+                           onChangeText={value => handleFieldsChange("title", value)}
+                    />
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
+                    </View>
+                  </View>
+                  <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
+                    <View style={styles.listingDescriptionContainer}>
+                      <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
+                                 style={styles.listingDescriptionText} maxLength={1000} multiline
+                                 value={fieldsData.description}
+                                 onChangeText={value => handleFieldsChange("description", value)} />
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+                    </View>
                   </View>
                 </View>
-                <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
-                  <View style={styles.listingDescriptionContainer}>
-                    <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
-                               style={styles.listingDescriptionText} maxLength={1000} multiline
-                               value={fieldsData.title}
-                               onChangeText={value => handleFieldsChange('title', value)} />
+                <View>
+                  <View style={styles.listingPriceContainer}>
+                    <Input containerStyle={styles.listingTitleInputContainer}
+                           inputContainerStyle={styles.listingTitleInputInputContainer}
+                           inputStyle={styles.listingTitleInput}
+                           placeholder={"Цена"}
+                           placeholderTextColor={theme.colors.grey3}
+                           inputMode={"numeric"}
+                           maxLength={7}
+                           value={fieldsData.price}
+                           rightIcon={<Text style={styles.listingTitleInput}>р./сут.</Text>}
+                           onChangeText={value => handleFieldsChange("price", value)}
+                    />
                   </View>
-                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+                  <View style={styles.listingDatesContainer}>
+                    <Text>Dates</Text>
+                  </View>
+                  <View style={styles.listingGeoContainer}>
+                    <Text>geo</Text>
                   </View>
                 </View>
-              </View>
-              <View>
-                <View style={styles.listingPriceContainer}>
-                  <Input label={"Цена"} />
-                </View>
-                <View style={styles.listingDatesContainer}>
-                  <Text>Dates</Text>
-                </View>
-                <View style={styles.listingGeoContainer}>
-                  <Text>geo</Text>
+                <View style={styles.submitBtnViewContainer}>
+                  <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
+                    <Text style={styles.submitBtnText}>Подать объявление</Text>
+                  </Button>
                 </View>
               </View>
-              <View style={styles.submitBtnViewContainer}>
-                <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
-                  <Text style={styles.submitBtnText}>Подать объявление</Text>
-                </Button>
-              </View>
-            </View>}
+              {selectedSubcategory === "Мотоциклы и скутеры" && <View></View>}
+            </>
+          }
         </View>
       </ScrollView>
     </SafeAreaView>
