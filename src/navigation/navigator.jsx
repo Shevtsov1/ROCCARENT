@@ -3,18 +3,9 @@ import {
   createNavigationContainerRef,
   NavigationContainer,
 } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withSpring,
-  FadeOut,
-  FadeIn,
-  Easing,
-  runOnJS
-} from "react-native-reanimated";
+import React, { useEffect, useRef, useState } from "react";
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, Animated } from "react-native";
+import {FadeIn} from "react-native-reanimated";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
@@ -70,38 +61,36 @@ const TabArr = [
 const Tab = createBottomTabNavigator();
 
 // Компонент кнопки вкладки
-const TabButton = React.memo((props) => {
+const TabButton = (props) => {
   const { item, onPress, accessibilityState, theme } = props;
   const focused = accessibilityState.selected;
-  const rotation = useSharedValue(0);
-  const scaleValue = useSharedValue(1);
-  const translateYValue = useSharedValue(0);
   const activeTabBarIconColor = theme.colors.accent;
   const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : "";
-
-  const changeScaleAndTranslate = useAnimatedStyle(() => ({
-    transform: [{ scale: scaleValue.value }],
-  }));
-  const changeRotation = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value * 360}deg` }],
-  }));
-
-  const runParallelAnimations = () => {
-    scaleValue.value = withSpring(focused ? 1.2 : 1);
-    translateYValue.value = withSpring(focused ? -1 : 0);
-  };
-
-  useEffect(() => {
-    rotation.value = withTiming(focused ? 1 : 0, { easing: Easing.inOut(Easing.quad) });
-    runOnJS(runParallelAnimations)();
-  }, [focused, rotation]);
+  const rotation = useRef(new Animated.Value(0)).current;
 
   const handlePress = () => {
     if (!focused) {
       onPress();
     }
   };
+
+  const rotateInterpolation = rotation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  useEffect(() => {
+    const animations = [
+      Animated.timing(rotation, {
+        toValue: focused ? 1 : 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ];
+
+    Animated.parallel(animations).start();
+  }, [focused, rotation]);
 
   if (item.route === "CreateAd") {
     // Отдельные стили для кнопки "CreateAd"
@@ -126,7 +115,7 @@ const TabButton = React.memo((props) => {
               }
             }
           >
-            <Animated.View style={changeRotation}>
+            <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
               <Icon
                 type={item.type}
                 name={focused ? item.activeIcon : item.inActiveIcon}
@@ -149,15 +138,15 @@ const TabButton = React.memo((props) => {
                         }]}>
 
         <View style={styles.iconContainer}>
-          <Animated.View style={changeScaleAndTranslate}>
+          <View>
             <Icon
               type={item.type}
               name={focused ? item.activeIcon : item.inActiveIcon}
               color={focused ? activeTabBarIconColor : inActiveTabBarIconColor}
             />
-          </Animated.View>
+          </View>
           {focused && (
-            <Animated.View entering={FadeIn.duration(500)}>
+            <Animated.View entering={FadeIn.duration(200)}>
               <Text style={{ fontFamily: "Roboto-Bold", fontSize: 12, color: theme.colors.accent }}>{label}</Text>
             </Animated.View>
           )}
@@ -165,7 +154,7 @@ const TabButton = React.memo((props) => {
       </TouchableOpacity>
     );
   }
-});
+};
 
 // Компонент нижней навигации по вкладкам
 const BottomTabNavigator = React.memo(({ theme, toggleMode, isDarkMode, routeName, setInitializing, setLoadingScreenText }) => {
