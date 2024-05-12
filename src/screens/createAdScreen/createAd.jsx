@@ -688,7 +688,7 @@ const CreateAd = ({ theme }) => {
                               provider={PROVIDER_GOOGLE}
                               style={{ width: widthPercentageToDP(100), height: heightPercentageToDP(100) }}
                             >
-                              <Marker title={"Ваше местоположение"}
+                              <Marker title={"Выбранное место"} titleVisibility={true}
                                       draggable  coordinate={markerCoordinates} />
                             </MapView>
                           </Modal>
