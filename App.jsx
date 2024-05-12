@@ -87,12 +87,17 @@ const App = React.memo(() => {
         console.error("Ошибка при предварительной загрузке иконок:", error);
       }
     };
-
-    setInitializing(true);
-    Promise.all([init(), auth().currentUser && !auth().currentUser.isAnonymous && loadUserdata()])
+    Promise.all([init()])
       .then(() => setInitializing(false))
       .catch((error) => console.error("Ошибка при инициализации приложения:", error));
   }, []);
+
+  useEffect(() => {
+    if (auth().currentUser && !auth().currentUser.isAnonymous && !userdata) {
+      loadUserdata().then();
+    }
+  }, [auth().currentUser]);
+
 
   // Загрузка сохраненной темы при запуске приложения
   const loadTheme = async () => {
@@ -187,6 +192,6 @@ const App = React.memo(() => {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-})
+});
 
 export default App;

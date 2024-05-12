@@ -213,6 +213,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
     return (<LoadingScreen theme={theme} />);
   }
 
+  if (auth().currentUser && !auth().currentUser.isAnonymous && !userdata) {
+    return (<LoadingScreen theme={theme} />);
+  }
+
   return (<SafeAreaView style={{ flex: 1 }}>
     <ScrollView style={styles.body}>
       <View style={{
