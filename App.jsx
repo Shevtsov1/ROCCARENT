@@ -16,7 +16,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const AppContext = createContext();
 
-const App = () => {
+const App = React.memo(() => {
 
   const { theme, toggleMode, loadMode } = useCustomTheme();
 
@@ -70,38 +70,34 @@ const App = () => {
     };
 
     const init = async () => {
-      if (isInternetConnected) {
-        try {
-          await initializeApp();
-          const currentUser = auth().currentUser;
-          if (
-            currentUser &&
-            !currentUser.isAnonymous &&
-            !currentUser.emailVerified
-          ) {
-            setInitializing(false);
-            await waitForEmailVerification().catch((error) =>
-              setLoadingScreenText("Ошибка при подтверждении почты: " + error),
-            );
-          }
+      try {
+        await initializeApp();
+        const currentUser = auth().currentUser;
+        if (
+          currentUser &&
+          !currentUser.isAnonymous &&
+          !currentUser.emailVerified
+        ) {
           setInitializing(false);
-        } catch (error) {
-          // Обработка ошибки при предварительной загрузке иконок
-          console.error("Ошибка при предварительной загрузке иконок:", error);
+          await waitForEmailVerification().catch((error) =>
+            setLoadingScreenText("Ошибка при подтверждении почты: " + error),
+          );
         }
+        setInitializing(false);
+      } catch (error) {
+        // Обработка ошибки при предварительной загрузке иконок
+        console.error("Ошибка при предварительной загрузке иконок:", error);
       }
     };
     init().then();
   }, []);
 
   useEffect(() => {
-    if (!auth().currentUser || auth().currentUser.isAnonymous) {
-      return;
-    }
-
-    if (!userdata) {
+    setInitializing(true);
+    if (auth().currentUser && !auth().currentUser.isAnonymous) {
       loadUserdata().then();
     }
+    setInitializing(false);
   }, [auth().currentUser, userdata]);
 
   // Загрузка сохраненной темы при запуске приложения
@@ -121,7 +117,6 @@ const App = () => {
     const uris = interfaceIcons.map(image => ({
       uri: Image.resolveAssetSource(image).uri,
     }));
-
     await FastImage.preload(uris);
   }
 
@@ -198,6 +193,6 @@ const App = () => {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
-};
+})
 
 export default App;

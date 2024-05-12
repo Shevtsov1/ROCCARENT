@@ -168,7 +168,7 @@ const TabButton = React.memo((props) => {
 });
 
 // Компонент нижней навигации по вкладкам
-const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, routeName, setInitializing, setLoadingScreenText }) => {
+const BottomTabNavigator = React.memo(({ theme, toggleMode, isDarkMode, routeName, setInitializing, setLoadingScreenText }) => {
   const routeNamesToCheck = ["LogIn", "LogUp"];
   const routeWithoutTabBar = routeNamesToCheck.includes(routeName);
   return (
@@ -198,7 +198,7 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, routeName, setIniti
       </Tab.Navigator>
     </SafeAreaView>
   );
-};
+})
 
 const ref = createNavigationContainerRef();
 // Компонент навигации приложения

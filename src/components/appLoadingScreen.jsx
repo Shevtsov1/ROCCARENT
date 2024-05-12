@@ -6,7 +6,7 @@ import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { Easing, FadeIn } from "react-native-reanimated";
 
-const AppLoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
+const AppLoadingScreen = React.memo(({ theme, text, textColor, resendEmailVerify }) => {
 
   const [resendBtnLoading, setResendBtnLoading] = useState(false);
 
@@ -79,6 +79,6 @@ const AppLoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
       </View>
     </SafeAreaView>
   );
-};
+})
 
 export default AppLoadingScreen;
