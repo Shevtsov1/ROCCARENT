@@ -1,39 +1,15 @@
 import React, { useState } from "react";
-import { Animated, Easing, Image, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { heightPercentageToDP, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, { Easing, FadeIn } from "react-native-reanimated";
 
 const AppLoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
 
   const [resendBtnLoading, setResendBtnLoading] = useState(false);
 
-  const animation = new Animated.Value(0);
-
-  React.useEffect(() => {
-    const startAnimation = () => {
-      Animated.loop(
-        Animated.timing(animation, {
-          toValue: 1,
-          duration: 2500,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-      ).start();
-    };
-
-    startAnimation();
-
-    return () => {
-      animation.stopAnimation();
-    };
-  }, []);
-
-  const opacity = animation.interpolate({
-    inputRange: [0, 0.6, 1],
-    outputRange: [1, 0.6, 1],
-  });
 
   const waitForEmailVerification = async () => {
     return new Promise((resolve) => {
@@ -79,8 +55,9 @@ const AppLoadingScreen = ({ theme, text, textColor, resendEmailVerify }) => {
           alignItems: "center",
         }}>
           <Animated.View
+            entering={FadeIn.duration(250)}
+
             style={{
-              opacity,
               top: heightPercentageToDP(35),
             }}
           >
