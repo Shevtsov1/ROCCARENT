@@ -40,7 +40,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
         setIsSun(!isSun);
       },
       animationConfig: {
-        type: "circular",
+        type: "fade",
         duration: 900,
         startingPoint: {
           cxRatio: 1,

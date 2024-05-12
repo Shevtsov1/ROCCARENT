@@ -1,11 +1,19 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   createNavigationContainerRef,
-  getFocusedRouteNameFromRoute,
   NavigationContainer,
 } from "@react-navigation/native";
-import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity, Animated, View, Text } from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSpring,
+  FadeOut,
+  FadeIn,
+  Easing,
+} from "react-native-reanimated";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
@@ -64,43 +72,28 @@ const Tab = createBottomTabNavigator();
 const TabButton = React.memo((props) => {
   const { item, onPress, accessibilityState, theme } = props;
   const focused = accessibilityState.selected;
-  const rotation = useRef(new Animated.Value(0)).current;
-  const scaleValue = useRef(new Animated.Value(1)).current;
-  const translateYValue = useRef(new Animated.Value(0)).current;
-  const opacityValue = useRef(new Animated.Value(0)).current;
+  const rotation = useSharedValue(0);
+  const scaleValue = useSharedValue(1);
+  const translateYValue = useSharedValue(0);
   const activeTabBarIconColor = theme.colors.accent;
   const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : "";
 
-  const rotateInterpolation = rotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
+  console.log(FadeOut);
+
+  const changeScaleAndTranslate = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }],
+  }));
+  const changeRotation = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value * 360}deg` }],
+  }));
+
 
   useEffect(() => {
-    const animations = [
-      Animated.timing(opacityValue, {
-        toValue: focused ? 1 : 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(rotation, {
-        toValue: focused ? 1 : 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleValue, {
-        toValue: focused ? 1.2 : 1,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateYValue, {
-        toValue: focused ? -1 : 0,
-        useNativeDriver: true,
-      }),
-    ];
-
-    Animated.parallel(animations).start();
-  }, [focused, scaleValue, translateYValue, opacityValue]);
+    rotation.value = withTiming(focused ? 1 : 0, { duration: 400, easing: Easing.bezier(0.3, 0.5, 0.5, 1) });
+    scaleValue.value = withSpring(focused ? 1.2 : 1);
+    translateYValue.value = withSpring(focused ? -1 : 0);
+  }, [focused, rotation]);
 
   const handlePress = () => {
     if (!focused) {
@@ -131,7 +124,7 @@ const TabButton = React.memo((props) => {
               }
             }
           >
-            <Animated.View style={{ transform: [{ rotate: rotateInterpolation }] }}>
+            <Animated.View style={changeRotation}>
               <Icon
                 type={item.type}
                 name={focused ? item.activeIcon : item.inActiveIcon}
@@ -154,8 +147,7 @@ const TabButton = React.memo((props) => {
                         }]}>
 
         <View style={styles.iconContainer}>
-          <Animated.View
-            style={{ transform: [{ scale: scaleValue }, { translateY: translateYValue }] }}>
+          <Animated.View style={changeScaleAndTranslate}>
             <Icon
               type={item.type}
               name={focused ? item.activeIcon : item.inActiveIcon}
@@ -163,7 +155,7 @@ const TabButton = React.memo((props) => {
             />
           </Animated.View>
           {focused && (
-            <Animated.View style={{ opacity: opacityValue }}>
+            <Animated.View entering={FadeIn.duration(400)}>
               <Text style={{ fontFamily: "Roboto-Bold", fontSize: 12, color: theme.colors.accent }}>{label}</Text>
             </Animated.View>
           )}
@@ -188,7 +180,7 @@ const BottomTabNavigator = ({ theme, toggleMode, isDarkMode, routeName, setIniti
           return (
             <Tab.Screen key={index} name={item.route}
                         options={({ route }) => ({
-                          tabBarStyle: routeWithoutTabBar ? {display: 'none'} : {borderTopWidth: 0, height: 48},
+                          tabBarStyle: routeWithoutTabBar ? { display: "none" } : { borderTopWidth: 0, height: 48 },
                           tabBarShowLabel: false,
                           tabBarButton: (props) => (
                             <TabButton {...props} item={item} theme={theme} isDarkMode={isDarkMode} />
