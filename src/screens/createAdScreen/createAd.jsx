@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Icon, ListItem } from "@rneui/themed";
+import { Button, FAB, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
 import { Input } from "@rneui/base";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
+import Geolocation from "@react-native-community/geolocation";
+import { GeolocationResponse } from "@react-native-community/geolocation";
 
 const CreateAd = ({ theme }) => {
 
@@ -379,7 +381,7 @@ const CreateAd = ({ theme }) => {
     }, categoriesModalSubcategoryName: {
       marginStart: 12,
       fontFamily: "Roboto-Regular",
-      fontSize: 14,
+      fontSize: 16,
       color: theme.colors.text,
     }, categoryFields: {
       marginHorizontal: 12,
@@ -391,6 +393,52 @@ const CreateAd = ({ theme }) => {
   useEffect(() => {
     console.log(fieldsData);
   }, [fieldsData]);
+
+  const [gomelCoordinates, setGomelCoordinates] = useState({
+    latitude: 62.4345, // Широта Гомеля
+    longitude: 30.9754, // Долгота Гомеля
+  });
+
+  const [isMapOpen, setIsMapOpen] = useState(false);
+
+  useEffect(() => {
+    checkLocationPermission().then((hasPermission) => {
+      if (hasPermission) {
+        console.log('Location permission granted');
+        // Делайте что-то, когда разрешение предоставлено
+      } else {
+        console.log('Location permission denied');
+        // Делайте что-то, когда разрешение отклонено
+      }
+    });
+    Geolocation.getCurrentPosition((pos) => {
+      const crd = pos.coords;
+      setGomelCoordinates({
+        latitude: crd.latitude,
+        longitude: crd.longitude,
+      });
+    })
+  }, []);
+
+  const checkLocationPermission = () => {
+    return new Promise((resolve, reject) => {
+      Geolocation.requestAuthorization(
+        () => {
+          // Разрешение предоставлено
+          resolve(true);
+        },
+        (error) => {
+          // Ошибка при запросе разрешения
+          console.error('Error requesting location permission:', error);
+          resolve(false);
+        }
+      );
+    });
+  };
+
+  const openMap = async () => {
+    setIsMapOpen(true);
+  };
 
 
   return (
@@ -527,7 +575,8 @@ const CreateAd = ({ theme }) => {
                   </View>
                   <View style={styles.listingDatesContainer}>
                     <View>
-                      <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start", marginBottom: 6 }]}>Укажите промежуток дат доступных для аренды</Text>
+                      <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start", marginBottom: 6 }]}>Укажите
+                        промежуток дат доступных для аренды</Text>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
                       <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
@@ -553,12 +602,21 @@ const CreateAd = ({ theme }) => {
                   </View>
                   <View style={styles.listingGeoContainer}>
                     <View>
-                      <Modal visible={true}>
-                        <MapView
-                          provider={PROVIDER_GOOGLE}
-                          style={{width: widthPercentageToDP(100), height: heightPercentageToDP(100),}}
-                        />
-                      </Modal>
+                      <FAB onPress={openMap} />
+                        <Modal visible={isMapOpen}>
+                          <MapView
+                            initialRegion={{
+                              latitude: gomelCoordinates.latitude,
+                              longitude: gomelCoordinates.longitude,
+                              latitudeDelta: 0.0922,
+                              longitudeDelta: 0.0421,
+                            }}
+                            provider={PROVIDER_GOOGLE}
+                            style={{ width: widthPercentageToDP(100), height: heightPercentageToDP(100) }}
+                          >
+                            <Marker coordinate={gomelCoordinates} />
+                          </MapView>
+                        </Modal>
                     </View>
                     <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                   </View>
