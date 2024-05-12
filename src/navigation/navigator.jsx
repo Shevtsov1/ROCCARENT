@@ -79,8 +79,6 @@ const TabButton = React.memo((props) => {
   const inActiveTabBarIconColor = theme.colors.grey2;
   const label = focused ? item.label : "";
 
-  console.log(FadeOut);
-
   const changeScaleAndTranslate = useAnimatedStyle(() => ({
     transform: [{ scale: scaleValue.value }],
   }));
@@ -90,7 +88,7 @@ const TabButton = React.memo((props) => {
 
 
   useEffect(() => {
-    rotation.value = withTiming(focused ? 1 : 0, { duration: 400, easing: Easing.bezier(0.3, 0.5, 0.5, 1) });
+    rotation.value = withTiming(focused ? 1 : 0, { easing: Easing.inOut(Easing.quad), duration: 500 });
     scaleValue.value = withSpring(focused ? 1.2 : 1);
     translateYValue.value = withSpring(focused ? -1 : 0);
   }, [focused, rotation]);
