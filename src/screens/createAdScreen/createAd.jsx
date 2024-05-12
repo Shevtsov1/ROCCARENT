@@ -259,9 +259,12 @@ const CreateAd = ({ theme }) => {
     await Geolocation.getCurrentPosition((pos) => {
       const crd = pos.coords;
       setUserCoordinates({
+        ...userCoordinates,
         latitude: crd.latitude,
         longitude: crd.longitude,
       });
+      setMarkerCoordinates({...markerCoordinates, latitude: crd.latitude,
+        longitude: crd.longitude,})
     });
   };
 
