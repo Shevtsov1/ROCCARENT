@@ -394,7 +394,7 @@ const CreateAd = ({ theme }) => {
         <View style={{ marginBottom: 12 }}>
           <View style={styles.header}>
             <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setFieldsData({})}>
               <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
             </TouchableOpacity>
           </View>
