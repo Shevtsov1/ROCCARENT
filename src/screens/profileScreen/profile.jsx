@@ -401,7 +401,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           <Button
             containerStyle={[styles.profileAppDataBtnContainer, { borderTopStartRadius: 15, borderTopEndRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-            onPress={() => navigation.navigate("EditName", { params: { nickname: userdata.nickname } })}>
+            onPress={() => navigation.navigate("EditName", { nickname: userdata.nickname })}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
@@ -432,7 +432,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           <Button
             containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-            onPress={() => navigation.navigate("EditPassport", { params: { passportData: userdata.passportData } })}>
+            onPress={() => navigation.navigate("EditPassport", { passportData: userdata.passportData })}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
@@ -449,7 +449,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
             containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
             onPress={() => navigation.navigate(
-              "EditPhoneNumber", { params: { phoneNumber: userdata.phoneNumber } })}>
+              "EditPhoneNumber", { phoneNumber: userdata.phoneNumber })}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
