@@ -253,7 +253,9 @@ const CreateAd = ({ theme }) => {
       flexDirection: "row",
       justifyContent: "space-between",
     }, listingDatesBtn: {
-      width: "49%",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: "47%",
       borderBottomWidth: 1,
       borderColor: theme.colors.grey3,
     },
@@ -521,18 +523,22 @@ const CreateAd = ({ theme }) => {
                   </View>
                   <View style={styles.listingDatesContainer}>
                     <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
-                      {(fieldsData.dates && fieldsData.dates.startsDay) ?
-                        <Text>{fieldsData.dates.startsDay.getDate()}-
+                      <Text style={styles.listingTitleInput}>С</Text>
+                      {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                        <Text style={styles.listingTitleInput}>{fieldsData.dates.startsDay.getDate()}-
                           {fieldsData.dates.startsDay.getMonth()+1}-
-                          {fieldsData.dates.startsDay.getFullYear()}</Text> :
-                        <Text>С</Text>}
+                          {fieldsData.dates.startsDay.getFullYear()}</Text>}
+                      {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                      <TouchableOpacity><Icon type={'ionicon'} name={'close'} size={18} color={theme.colors.text}/></TouchableOpacity>}
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
-                      {(fieldsData.dates && fieldsData.dates.endsDay) ?
-                        <Text>{fieldsData.dates.endsDay.getDate()}-
+                      <Text style={styles.listingTitleInput}>По</Text>
+                      {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                        <Text style={styles.listingTitleInput}>{fieldsData.dates.endsDay.getDate()}-
                           {fieldsData.dates.endsDay.getMonth()+1}-
-                          {fieldsData.dates.endsDay.getFullYear()}</Text> :
-                        <Text>По</Text>}
+                          {fieldsData.dates.endsDay.getFullYear()}</Text>}
+                      {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                        <TouchableOpacity><Icon type={'ionicon'} name={'close'} size={18} color={theme.colors.text}/></TouchableOpacity>}
                     </TouchableOpacity>
                   </View>
                   <View style={styles.listingGeoContainer}>
