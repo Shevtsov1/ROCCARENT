@@ -144,10 +144,10 @@ const CreateAd = ({ theme }) => {
         const newDates = { ...prevDates, startsDay: new Date(value.nativeEvent.timestamp) };
         handleFieldsChange("dates", newDates);
       } else {
-        handleFieldsChange("dates", {startsDay: new Date(value.nativeEvent.timestamp)});
+        handleFieldsChange("dates", { startsDay: new Date(value.nativeEvent.timestamp) });
       }
     } else {
-      await DateTimePickerAndroid.dismiss('date');
+      await DateTimePickerAndroid.dismiss("date");
     }
   };
 
@@ -158,10 +158,10 @@ const CreateAd = ({ theme }) => {
         const newDates = { ...prevDates, endsDay: new Date(value.nativeEvent.timestamp) };
         handleFieldsChange("dates", newDates);
       } else {
-        handleFieldsChange("dates", {endsDay: new Date(value.nativeEvent.timestamp)});
+        handleFieldsChange("dates", { endsDay: new Date(value.nativeEvent.timestamp) });
       }
     } else {
-      await DateTimePickerAndroid.dismiss('date');
+      await DateTimePickerAndroid.dismiss("date");
     }
   };
 
@@ -171,11 +171,11 @@ const CreateAd = ({ theme }) => {
     const currentMonth = currentDate.getMonth();  // Получаем текущий год
     const currentDay = currentDate.getDate();  // Получаем текущий год
     const desiredYear = currentYear + 2;  // Например, добавляем 1 год
-    const maximumDate = new Date(desiredYear, currentMonth, currentDay-1);  // 1 января желаемого года
-    DateTimePickerAndroid.open( {
+    const maximumDate = new Date(desiredYear, currentMonth, currentDay - 1);  // 1 января желаемого года
+    DateTimePickerAndroid.open({
       value: new Date(),
       mode: "date",
-      display: 'spinner',
+      display: "spinner",
       onChange: handleStartsDayChoose,
       maximumDate: fieldsData.dates ? fieldsData.dates.endsDay && fieldsData.dates.endsDay : maximumDate,
       minimumDate: new Date(),
@@ -192,7 +192,7 @@ const CreateAd = ({ theme }) => {
     DateTimePickerAndroid.open({
       value: new Date(),
       mode: "date",
-      display: 'spinner',
+      display: "spinner",
       onChange: handleEndsDayChoose,
       minimumDate: fieldsData.dates ? fieldsData.dates.startsDay && fieldsData.dates.startsDay : new Date(),
       maximumDate: maximumDate,
@@ -247,7 +247,16 @@ const CreateAd = ({ theme }) => {
     listingPriceContainer: {},
 
 
-    listingDatesContainer: {},
+    listingDatesContainer: {
+      marginTop: 12,
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-between",
+    }, listingDatesBtn: {
+      width: "49%",
+      borderBottomWidth: 1,
+      borderColor: theme.colors.grey3,
+    },
 
 
     listingGeoContainer: {},
@@ -511,11 +520,19 @@ const CreateAd = ({ theme }) => {
                     />
                   </View>
                   <View style={styles.listingDatesContainer}>
-                    <TouchableOpacity onPress={handleStartsDayModalOpen}>
-                      <Text>с</Text>
+                    <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
+                      {(fieldsData.dates && fieldsData.dates.startsDay) ?
+                        <Text>{fieldsData.dates.startsDay.getDate()}-
+                          {fieldsData.dates.startsDay.getMonth()+1}-
+                          {fieldsData.dates.startsDay.getFullYear()}</Text> :
+                        <Text>С</Text>}
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleEndsDayModalOpen}>
-                      <Text>по</Text>
+                    <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
+                      {(fieldsData.dates && fieldsData.dates.endsDay) ?
+                        <Text>{fieldsData.dates.endsDay.getDate()}-
+                          {fieldsData.dates.endsDay.getMonth()+1}-
+                          {fieldsData.dates.endsDay.getFullYear()}</Text> :
+                        <Text>По</Text>}
                     </TouchableOpacity>
                   </View>
                   <View style={styles.listingGeoContainer}>
