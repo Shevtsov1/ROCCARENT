@@ -7,6 +7,8 @@ import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
 import { Input } from "@rneui/base";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import MapView, {PROVIDER_GOOGLE} from "react-native-maps";
+import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
 
 const CreateAd = ({ theme }) => {
 
@@ -551,7 +553,12 @@ const CreateAd = ({ theme }) => {
                   </View>
                   <View style={styles.listingGeoContainer}>
                     <View>
-
+                      <Modal visible={true}>
+                        <MapView
+                          provider={PROVIDER_GOOGLE}
+                          style={{width: widthPercentageToDP(100), height: heightPercentageToDP(100),}}
+                        />
+                      </Modal>
                     </View>
                     <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                   </View>
