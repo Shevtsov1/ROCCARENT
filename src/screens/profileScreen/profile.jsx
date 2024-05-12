@@ -41,7 +41,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
       },
       animationConfig: {
         type: "fade",
-        duration: 900,
+        duration: 350,
         startingPoint: {
           cxRatio: 1,
           cyRatio: -1,
