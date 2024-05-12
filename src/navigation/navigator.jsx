@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, Animated } from "react-native";
-import {FadeIn} from "react-native-reanimated";
+import Reanimated, {FadeIn} from "react-native-reanimated";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
@@ -146,9 +146,9 @@ const TabButton = (props) => {
             />
           </View>
           {focused && (
-            <Animated.View entering={FadeIn.duration(200)}>
+            <Reanimated.View entering={FadeIn.duration(200)}>
               <Text style={{ fontFamily: "Roboto-Bold", fontSize: 12, color: theme.colors.accent }}>{label}</Text>
-            </Animated.View>
+            </Reanimated.View>
           )}
         </View>
       </TouchableOpacity>

@@ -77,30 +77,6 @@ export const ProfileStackNavigator = ({
       <Stack.Screen name="DealArchive" options={{ headerShown: false }}>{(props) =>
         <DealArchive {...props} theme={theme} setInitializing={setInitializing}
                   setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
-      <Stack.Screen name="EditProfileStackNavigator" options={{ headerShown: false }}>{(props) =>
-        <EditProfileStackNavigator {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="SupportStackNavigator" options={{ headerShown: false }}>{(props) =>
-        <SupportStackNavigator {...props} theme={theme}/>}</Stack.Screen>
-    </Stack.Navigator>
-  );
-};
-
-export const EditProfileStackNavigator = ({
-                                        theme,
-                                      }) => {
-
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        headerTitleStyle: {
-          color: theme.colors.text,
-        },
-        headerTitleAlign: "center",
-        headerTintColor: theme.colors.text,
-      }}>
       <Stack.Screen name="EditName" options={{headerShown: false }}>{(props) =>
         <EditName {...props} theme={theme}/>}</Stack.Screen>
       <Stack.Screen name="EditEmail" options={{headerShown: false }}>{(props) =>
@@ -109,27 +85,6 @@ export const EditProfileStackNavigator = ({
         <EditPassport {...props} theme={theme}/>}</Stack.Screen>
       <Stack.Screen name="EditPhoneNumber" options={{headerShown: false }}>{(props) =>
         <EditPhoneNumber {...props} theme={theme}/>}</Stack.Screen>
-    </Stack.Navigator>
-  );
-};
-
-export const SupportStackNavigator = ({
-                                            theme,
-                                          }) => {
-
-  return (
-    <Stack.Navigator
-      initialRouteName={"Support"}
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        headerTitleStyle: {
-          color: theme.colors.text,
-        },
-        headerTitleAlign: "center",
-        headerTintColor: theme.colors.text,
-      }}>
       <Stack.Screen name="Support" options={{headerShown: false }}>{(props) =>
         <Support {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
