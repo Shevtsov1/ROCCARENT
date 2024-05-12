@@ -137,6 +137,68 @@ const CreateAd = ({ theme }) => {
     handleCategoryModal(false);
   };
 
+  const handleStartsDayChoose = async (value) => {
+    if (value.type === "set") {
+      if (fieldsData.dates) {
+        const prevDates = fieldsData.dates;
+        const newDates = { ...prevDates, startsDay: new Date(value.nativeEvent.timestamp) };
+        handleFieldsChange("dates", newDates);
+      } else {
+        handleFieldsChange("dates", {startsDay: new Date(value.nativeEvent.timestamp)});
+      }
+    } else {
+      await DateTimePickerAndroid.dismiss('date');
+    }
+  };
+
+  const handleEndsDayChoose = async (value) => {
+    if (value.type === "set") {
+      if (fieldsData.dates) {
+        const prevDates = fieldsData.dates;
+        const newDates = { ...prevDates, endsDay: new Date(value.nativeEvent.timestamp) };
+        handleFieldsChange("dates", newDates);
+      } else {
+        handleFieldsChange("dates", {endsDay: new Date(value.nativeEvent.timestamp)});
+      }
+    } else {
+      await DateTimePickerAndroid.dismiss('date');
+    }
+  };
+
+  const handleStartsDayModalOpen = () => {
+    const currentDate = new Date();  // Получаем текущую дату
+    const currentYear = currentDate.getFullYear();  // Получаем текущий год
+    const currentMonth = currentDate.getMonth();  // Получаем текущий год
+    const currentDay = currentDate.getDate();  // Получаем текущий год
+    const desiredYear = currentYear + 2;  // Например, добавляем 1 год
+    const maximumDate = new Date(desiredYear, currentMonth, currentDay-1);  // 1 января желаемого года
+    DateTimePickerAndroid.open( {
+      value: new Date(),
+      mode: "date",
+      display: 'spinner',
+      onChange: handleStartsDayChoose,
+      maximumDate: fieldsData.dates ? fieldsData.dates.endsDay && fieldsData.dates.endsDay : maximumDate,
+      minimumDate: new Date(),
+    });
+  };
+
+  const handleEndsDayModalOpen = () => {
+    const currentDate = new Date();  // Получаем текущую дату
+    const currentYear = currentDate.getFullYear();  // Получаем текущий год
+    const currentMonth = currentDate.getMonth();  // Получаем текущий год
+    const currentDay = currentDate.getDate();  // Получаем текущий год
+    const desiredYear = currentYear + 2;  // Например, добавляем 1 год
+    const maximumDate = new Date(desiredYear, currentMonth, currentDay);  // 1 января желаемого года
+    DateTimePickerAndroid.open({
+      value: new Date(),
+      mode: "date",
+      display: 'spinner',
+      onChange: handleEndsDayChoose,
+      minimumDate: fieldsData.dates ? fieldsData.dates.startsDay && fieldsData.dates.startsDay : new Date(),
+      maximumDate: maximumDate,
+    });
+  };
+
   const styles = StyleSheet.create({
 
     defaultFieldsContainer: {},
@@ -315,68 +377,6 @@ const CreateAd = ({ theme }) => {
   useEffect(() => {
     console.log(fieldsData);
   }, [fieldsData]);
-
-  const handleStartsDayChoose = async (value) => {
-    if (value.type === "set") {
-      if (fieldsData.dates) {
-        const prevDates = fieldsData.dates;
-        const newDates = { ...prevDates, startsDay: new Date(value.nativeEvent.timestamp) };
-        handleFieldsChange("dates", newDates);
-      } else {
-        handleFieldsChange("dates", {startsDay: new Date(value.nativeEvent.timestamp)});
-      }
-    } else {
-      await DateTimePickerAndroid.dismiss('date');
-    }
-  };
-
-  const handleEndsDayChoose = async (value) => {
-    if (value.type === "set") {
-      if (fieldsData.dates) {
-        const prevDates = fieldsData.dates;
-        const newDates = { ...prevDates, endsDay: new Date(value.nativeEvent.timestamp) };
-        handleFieldsChange("dates", newDates);
-      } else {
-        handleFieldsChange("dates", {endsDay: new Date(value.nativeEvent.timestamp)});
-      }
-    } else {
-      await DateTimePickerAndroid.dismiss('date');
-    }
-  };
-
-  const handleStartsDayModalOpen = () => {
-    const currentDate = new Date();  // Получаем текущую дату
-    const currentYear = currentDate.getFullYear();  // Получаем текущий год
-    const currentMonth = currentDate.getMonth();  // Получаем текущий год
-    const currentDay = currentDate.getDate();  // Получаем текущий год
-    const desiredYear = currentYear + 2;  // Например, добавляем 1 год
-    const maximumDate = new Date(desiredYear, currentMonth, currentDay-1);  // 1 января желаемого года
-    DateTimePickerAndroid.open( {
-      value: new Date(),
-      mode: "date",
-      display: 'spinner',
-      onChange: handleStartsDayChoose,
-      maximumDate: fieldsData.dates ? fieldsData.dates.endsDay && fieldsData.dates.endsDay : maximumDate,
-      minimumDate: new Date(),
-    });
-  };
-
-  const handleEndsDayModalOpen = () => {
-    const currentDate = new Date();  // Получаем текущую дату
-    const currentYear = currentDate.getFullYear();  // Получаем текущий год
-    const currentMonth = currentDate.getMonth();  // Получаем текущий год
-    const currentDay = currentDate.getDate();  // Получаем текущий год
-    const desiredYear = currentYear + 2;  // Например, добавляем 1 год
-    const maximumDate = new Date(desiredYear, currentMonth, currentDay);  // 1 января желаемого года
-    DateTimePickerAndroid.open({
-      value: new Date(),
-      mode: "date",
-      display: 'spinner',
-      onChange: handleEndsDayChoose,
-      minimumDate: fieldsData.dates ? fieldsData.dates.startsDay && fieldsData.dates.startsDay : new Date(),
-      maximumDate: maximumDate,
-    });
-  };
 
 
   return (
