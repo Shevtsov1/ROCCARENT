@@ -236,6 +236,7 @@ const CreateAd = ({ theme }) => {
       borderRadius: 5,
       backgroundColor: `${theme.colors.grey3}5A`,
       height: 120,
+      marginBottom: 6,
     },
     listingDescriptionText: {
       fontFamily: "Roboto-Regular",
@@ -250,18 +251,18 @@ const CreateAd = ({ theme }) => {
     listingDatesContainer: {
       marginTop: 12,
       width: "100%",
+    }, listingDatesBtn: {
       flexDirection: "row",
       justifyContent: "space-between",
-    }, listingDatesBtn: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
       width: "47%",
       borderBottomWidth: 1,
       borderColor: theme.colors.grey3,
     },
 
 
-    listingGeoContainer: {},
+    listingGeoContainer: {
+      marginVertical: 12,
+    },
 
 
     submitBtnViewContainer: {
@@ -321,7 +322,7 @@ const CreateAd = ({ theme }) => {
     }, imagesHeaderInfoText: {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
-      color: theme.colors.grey1,
+      color: theme.colors.grey3,
       alignSelf: "center",
     }, imagesPickerContainer: {
       flex: 2,
@@ -494,7 +495,7 @@ const CreateAd = ({ theme }) => {
                       <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
                     </View>
                   </View>
-                  <View style={{ marginHorizontal: 12, marginBottom: 12 }}>
+                  <View style={{ marginBottom: 12 }}>
                     <View style={styles.listingDescriptionContainer}>
                       <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
                                  style={styles.listingDescriptionText} maxLength={1000} multiline
@@ -520,29 +521,39 @@ const CreateAd = ({ theme }) => {
                            rightIcon={<Text style={styles.listingTitleInput}>р./сут.</Text>}
                            onChangeText={value => handleFieldsChange("price", value)}
                     />
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                   </View>
                   <View style={styles.listingDatesContainer}>
-                    <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
-                      <Text style={styles.listingTitleInput}>С</Text>
-                      {(fieldsData.dates && fieldsData.dates.startsDay) &&
-                        <Text style={styles.listingTitleInput}>{fieldsData.dates.startsDay.getDate()}-
-                          {fieldsData.dates.startsDay.getMonth()+1}-
-                          {fieldsData.dates.startsDay.getFullYear()}</Text>}
-                      {(fieldsData.dates && fieldsData.dates.startsDay) &&
-                      <TouchableOpacity><Icon type={'ionicon'} name={'close'} size={18} color={theme.colors.text}/></TouchableOpacity>}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
-                      <Text style={styles.listingTitleInput}>По</Text>
-                      {(fieldsData.dates && fieldsData.dates.endsDay) &&
-                        <Text style={styles.listingTitleInput}>{fieldsData.dates.endsDay.getDate()}-
-                          {fieldsData.dates.endsDay.getMonth()+1}-
-                          {fieldsData.dates.endsDay.getFullYear()}</Text>}
-                      {(fieldsData.dates && fieldsData.dates.endsDay) &&
-                        <TouchableOpacity><Icon type={'ionicon'} name={'close'} size={18} color={theme.colors.text}/></TouchableOpacity>}
-                    </TouchableOpacity>
+                    <View>
+                      <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start", marginBottom: 6 }]}>Укажите промежуток дат доступных для аренды</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                      <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
+                        <Text style={styles.listingTitleInput}>С</Text>
+                        {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                          <Text style={styles.listingTitleInput}>{fieldsData.dates.startsDay.getDate()}-
+                            {fieldsData.dates.startsDay.getMonth() + 1}-
+                            {fieldsData.dates.startsDay.getFullYear()}</Text>}
+                        {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                          <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18} color={theme.colors.text} /></TouchableOpacity>}
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
+                        <Text style={styles.listingTitleInput}>По</Text>
+                        {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                          <Text style={styles.listingTitleInput}>{fieldsData.dates.endsDay.getDate()}-
+                            {fieldsData.dates.endsDay.getMonth() + 1}-
+                            {fieldsData.dates.endsDay.getFullYear()}</Text>}
+                        {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                          <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18} color={theme.colors.text} /></TouchableOpacity>}
+                      </TouchableOpacity>
+                    </View>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                   </View>
                   <View style={styles.listingGeoContainer}>
-                    <Text>geo</Text>
+                    <View>
+
+                    </View>
+                    <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                   </View>
                 </View>
                 <View style={styles.submitBtnViewContainer}>
