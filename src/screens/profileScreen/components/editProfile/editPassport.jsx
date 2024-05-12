@@ -29,13 +29,10 @@ const EditPassport = ({ theme, navigation, route }) => {
   const [passportVerified, setPassportVerified] = useState(false);
   const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
-  useEffect(() => {
+  const handleOpenCamera = async () => {
     if (!hasPermission) {
       requestPermission().then();
     }
-  }, []);
-
-  const handleOpenCamera = async () => {
     setPassportPhoto("");
     setCameraActive(true);
   };
