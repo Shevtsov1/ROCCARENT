@@ -13,6 +13,7 @@ import Animated, {
   FadeOut,
   FadeIn,
   Easing,
+  runOnJS
 } from "react-native-reanimated";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
 import Main from "../screens/mainScreen/main";
@@ -86,11 +87,14 @@ const TabButton = React.memo((props) => {
     transform: [{ rotate: `${rotation.value * 360}deg` }],
   }));
 
-
-  useEffect(() => {
-    rotation.value = withTiming(focused ? 1 : 0, { easing: Easing.inOut(Easing.quad), duration: 500 });
+  const runParallelAnimations = () => {
     scaleValue.value = withSpring(focused ? 1.2 : 1);
     translateYValue.value = withSpring(focused ? -1 : 0);
+  };
+
+  useEffect(() => {
+    rotation.value = withTiming(focused ? 1 : 0, { easing: Easing.inOut(Easing.quad) });
+    runOnJS(runParallelAnimations)();
   }, [focused, rotation]);
 
   const handlePress = () => {
@@ -153,7 +157,7 @@ const TabButton = React.memo((props) => {
             />
           </Animated.View>
           {focused && (
-            <Animated.View entering={FadeIn.duration(400)}>
+            <Animated.View entering={FadeIn.duration(500)}>
               <Text style={{ fontFamily: "Roboto-Bold", fontSize: 12, color: theme.colors.accent }}>{label}</Text>
             </Animated.View>
           )}
