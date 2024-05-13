@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, FAB, Icon, ListItem } from "@rneui/themed";
@@ -12,8 +12,13 @@ import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsi
 import Geolocation from "@react-native-community/geolocation";
 import { isLocationEnabled, promptForEnableLocationIfNeeded } from "react-native-android-location-enabler";
 import LoadingScreen from "../../components/loadingScreen";
+import auth from "@react-native-firebase/auth";
+import { AppContext } from "../../../App";
+import ionicons from "react-native-vector-icons/Ionicons";
 
-const CreateAd = ({ theme }) => {
+const CreateAd = ({ theme, navigation }) => {
+
+  const { userdata } = useContext(AppContext);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -84,9 +89,10 @@ const CreateAd = ({ theme }) => {
         skipBackup: true,
         path: "images",
       },
-      selectionLimit: 20,
+      selectionLimit: 1,
     };
     const selectedImage = await launchImageLibrary(options, (response) => {
+      console.log(selectedImage);
       if (response.didCancel) {
         console.log("Пользователь отменил съемку фотографии");
       } else if (response.error) {
@@ -508,224 +514,257 @@ const CreateAd = ({ theme }) => {
         <View style={{ marginBottom: 12 }}>
           <View style={styles.header}>
             <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
-            <TouchableOpacity onPress={() => setFieldsData({})}>
-              <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
-            </TouchableOpacity>
+            {auth().currentUser && !auth().currentUser.isAnonymous && userdata.passportData && auth().currentUser.emailVerified &&
+              <TouchableOpacity onPress={() => setFieldsData({})}>
+                <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
+              </TouchableOpacity>}
           </View>
-          <>
-            <View style={styles.imagesContainer}>
-              <View style={styles.imagesHeaderContainer}>
-                <Text style={styles.imagesHeaderMainText}>Добавьте фотографии</Text>
-                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                  <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20}
-                        color={theme.colors.grey1} />
-                  <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
+          {auth().currentUser && auth().currentUser.isAnonymous ?
+            <View>
+              <Button buttonStyle={{
+                width: "auto",
+                marginHorizontal: 12,
+                paddingHorizontal: 6,
+                borderRadius: 5,
+                backgroundColor: theme.colors.error,
+              }} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate('LogIn')}>
+                <View style={{ marginStart: 12 }}>
+                  <Text style={{
+                    fontFamily: "Roboto-Medium",
+                    fontSize: 16,
+                    color: theme.colors.accentText,
+                    alignSelf: "flex-start",
+                  }}>Вход/регистрация</Text>
+                  <Text style={{
+                    fontFamily: "Roboto-Regular",
+                    fontSize: 14,
+                    color: theme.colors.accentText,
+                    alignSelf: "flex-start",
+                  }}>Для подачи объявлений необходимо авторизоваться и пройти верификацию в профиле</Text>
                 </View>
-              </View>
-              <View style={{ flexDirection: "row", paddingVertical: 12 }}>
-                <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
-                        onPress={handleAddImageBtn}>
-                  <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
-                </Button>
-                <DraggableFlatList
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                  animationConfig={{ clamp: 1 }}
-                  data={data}
-                  onDragEnd={({ data }) => setData(data)}
-                  keyExtractor={(item) => item.key}
-                  renderItem={renderItem}
-                  containerStyle={{ flex: 1 }}
-                />
-              </View>
-              <View style={styles.imagesFooterContainer}>
-                <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет
-                  помещено
-                  на обложку</Text>
-              </View>
-            </View>
-            <View style={styles.categoriesModal}>
-              <View style={styles.categoriesModalBtnContainer}>
-                <TouchableOpacity onPress={() => handleCategoryModal(true)} style={styles.categoriesModalBtn}>
-                  {selectedSubcategory ? (
-                    <Text style={styles.categoriesModalBtnText}>{selectedSubcategory}</Text>) : (
-                    <Text style={styles.categoriesModalBtnText}>Выберите категорию</Text>)}
-                  <Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />
-                </TouchableOpacity>
-              </View>
-              <Modal visible={isModalVisible}>
-                <ScrollView style={styles.categoriesModal}>
-                  <View style={styles.categoriesModalHeader}><Text style={styles.categoriesModalHeaderMainText}>
-                    Выберите категорию
-                  </Text><TouchableOpacity onPress={handleCategoryModal}>
-                    <Text style={styles.categoriesModalHeaderBackBtnText}>Отмена</Text>
-                  </TouchableOpacity></View>
-                  {categories.map((category) => (
-                    <ListItem.Accordion
-                      containerStyle={{ backgroundColor: theme.colors.background }}
-                      key={category.name}
-                      content={
-                        <ListItem.Content>
-                          <ListItem.Title style={styles.categoriesModalCategoryName}>{category.name}</ListItem.Title>
-                        </ListItem.Content>
-                      }
-                      icon={<Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />}
-                      isExpanded={selectedCategory === category.name}
-                      onPress={() => handleCategoryPress(category.name)}
-                    >
-                      {selectedCategory === category.name &&
-                        category.subCategories.map((subCategory, id) => {
-                          return (
-                            <ListItem key={id} containerStyle={{ backgroundColor: theme.colors.background }}
-                                      onPress={() => handleSubcategoryPress(subCategory)}>
-                              <ListItem.Content>
-                                <ListItem.Title
-                                  style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
-                              </ListItem.Content>
-                            </ListItem>
-                          );
-                        })
-                      }
-                    </ListItem.Accordion>
-                  ))}
-                </ScrollView>
-              </Modal>
-            </View>
-            {selectedSubcategory &&
-              <>
-                <View style={styles.categoryFields}>
-                  <View style={styles.defaultFieldsContainer}>
-                    <View style={styles.listingTitleContainer}>
-                      <Input containerStyle={styles.listingTitleInputContainer}
-                             inputContainerStyle={styles.listingTitleInputInputContainer}
-                             inputStyle={styles.listingTitleInput}
-                             placeholder={"Название товара"}
-                             placeholderTextColor={theme.colors.grey3}
-                             maxLength={50}
-                             value={fieldsData.title}
-                             onChangeText={value => handleFieldsChange("title", value)}
-                      />
-                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
-                      </View>
-                    </View>
-                    <View style={{ marginBottom: 12 }}>
-                      <View style={styles.listingDescriptionContainer}>
-                        <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
-                                   style={styles.listingDescriptionText} maxLength={1000} multiline
-                                   value={fieldsData.description}
-                                   onChangeText={value => handleFieldsChange("description", value)} />
-                      </View>
-                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View>
-                    <View style={styles.listingPriceContainer}>
-                      <Input containerStyle={styles.listingTitleInputContainer}
-                             inputContainerStyle={styles.listingTitleInputInputContainer}
-                             inputStyle={styles.listingTitleInput}
-                             placeholder={"Цена"}
-                             placeholderTextColor={theme.colors.grey3}
-                             inputMode={"numeric"}
-                             maxLength={7}
-                             value={fieldsData.price}
-                             rightIcon={<Text style={styles.listingTitleInput}>р./сут.</Text>}
-                             onChangeText={value => handleFieldsChange("price", value)}
-                      />
-                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                    </View>
-                    <View style={styles.listingDatesContainer}>
-                      <View>
-                        <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start", marginBottom: 6 }]}>Укажите
-                          промежуток дат доступных для аренды</Text>
-                      </View>
-                      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
-                        <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
-                          <Text style={styles.listingTitleInput}>С</Text>
-                          {(fieldsData.dates && fieldsData.dates.startsDay) &&
-                            <Text style={styles.listingTitleInput}>{fieldsData.dates.startsDay.getDate()}-
-                              {fieldsData.dates.startsDay.getMonth() + 1}-
-                              {fieldsData.dates.startsDay.getFullYear()}</Text>}
-                          {(fieldsData.dates && fieldsData.dates.startsDay) &&
-                            <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18}
-                                                    color={theme.colors.text} /></TouchableOpacity>}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
-                          <Text style={styles.listingTitleInput}>По</Text>
-                          {(fieldsData.dates && fieldsData.dates.endsDay) &&
-                            <Text style={styles.listingTitleInput}>{fieldsData.dates.endsDay.getDate()}-
-                              {fieldsData.dates.endsDay.getMonth() + 1}-
-                              {fieldsData.dates.endsDay.getFullYear()}</Text>}
-                          {(fieldsData.dates && fieldsData.dates.endsDay) &&
-                            <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18}
-                                                    color={theme.colors.text} /></TouchableOpacity>}
-                        </TouchableOpacity>
-                      </View>
-                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                    </View>
-                    <View style={styles.listingGeoContainer}>
-                      <View>
-                        <FAB onPress={handleOpenMap} />
-                        <Modal visible={isMapOpen}>
-                          <View style={{
-                            height: 60,
-                            backgroundColor: theme.colors.accent,
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            paddingHorizontal: 12,
-                          }}>
-                            <Text numberOfLines={1} style={styles.headerMainText}>Выбор местоположения</Text>
-                            <TouchableOpacity onPress={handleCloseMap}>
-                              <Text numberOfLines={1} style={styles.headerCancelText}>Отмена</Text>
-                            </TouchableOpacity>
-                          </View>
-                          <MapView
-                            ref={mapRef}
-                            onMapReady={handleMapReady}
-                            onPress={handleMapPress}
-                            initialRegion={{
-                              latitude: userCoordinates.latitude,
-                              longitude: userCoordinates.longitude,
-                              latitudeDelta: 0,
-                              longitudeDelta: 0,
-                            }}
-                            region={markerCoordinates}
-                            showsUserLocation={true}
-                            showsMyLocationButton={true}
-                            followsUserLocation={true}
-                            showsIndoors={false}
-                            showsTraffic={false}
-                            provider={PROVIDER_GOOGLE}
-                            style={{ width: widthPercentageToDP(100), height: heightPercentageToDP(100) }}
-                          >
-                            <Marker title={"Выбранное место"} titleVisibility={true}
-                                    draggable coordinate={markerCoordinates} />
-                          </MapView>
-                          <FAB size="small" title="Сохранить" color={theme.colors.accent} upperCase style={{
-                            position: "absolute",
-                            bottom: heightPercentageToDP(5),
-                            right: widthPercentageToDP(10),
-                          }}><Text style={{fontFamily: 'Roboto-Medium', fontSize: 16, color: theme.colors.accentText}}>Сохранить</Text></FAB>
-                        </Modal>
-                      </View>
-                      <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                    </View>
-                  </View>
-                  <View style={styles.submitBtnViewContainer}>
-                    <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
-                      <Text style={styles.submitBtnText}>Подать объявление</Text>
-                    </Button>
+                <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"chevron-forward"} size={18}
+                      color={theme.colors.accentText} />
+              </Button>
+            </View> :
+            <>
+              <View style={styles.imagesContainer}>
+                <View style={styles.imagesHeaderContainer}>
+                  <Text style={styles.imagesHeaderMainText}>Добавьте фотографии</Text>
+                  <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                    <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20}
+                          color={theme.colors.grey1} />
+                    <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
                   </View>
                 </View>
-                {selectedSubcategory === "Мотоциклы и скутеры" && <View></View>}
-              </>
-            }
-          </>
+                <View style={{ flexDirection: "row", paddingVertical: 12 }}>
+                  <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
+                          onPress={handleAddImageBtn}>
+                    <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
+                  </Button>
+                  <DraggableFlatList
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    animationConfig={{ clamp: 1 }}
+                    data={data}
+                    onDragEnd={({ data }) => setData(data)}
+                    keyExtractor={(item) => item.key}
+                    renderItem={renderItem}
+                    containerStyle={{ flex: 1 }}
+                  />
+                </View>
+                <View style={styles.imagesFooterContainer}>
+                  <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start" }]}>Первое изображение будет
+                    помещено
+                    на обложку</Text>
+                </View>
+              </View>
+              <View style={styles.categoriesModal}>
+                <View style={styles.categoriesModalBtnContainer}>
+                  <TouchableOpacity onPress={() => handleCategoryModal(true)} style={styles.categoriesModalBtn}>
+                    {selectedSubcategory ? (
+                      <Text style={styles.categoriesModalBtnText}>{selectedSubcategory}</Text>) : (
+                      <Text style={styles.categoriesModalBtnText}>Выберите категорию</Text>)}
+                    <Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />
+                  </TouchableOpacity>
+                </View>
+                <Modal visible={isModalVisible}>
+                  <ScrollView style={styles.categoriesModal}>
+                    <View style={styles.categoriesModalHeader}><Text style={styles.categoriesModalHeaderMainText}>
+                      Выберите категорию
+                    </Text><TouchableOpacity onPress={handleCategoryModal}>
+                      <Text style={styles.categoriesModalHeaderBackBtnText}>Отмена</Text>
+                    </TouchableOpacity></View>
+                    {categories.map((category) => (
+                      <ListItem.Accordion
+                        containerStyle={{ backgroundColor: theme.colors.background }}
+                        key={category.name}
+                        content={
+                          <ListItem.Content>
+                            <ListItem.Title style={styles.categoriesModalCategoryName}>{category.name}</ListItem.Title>
+                          </ListItem.Content>
+                        }
+                        icon={<Icon type={"ionicon"} name={"chevron-down"} color={theme.colors.text} size={18} />}
+                        isExpanded={selectedCategory === category.name}
+                        onPress={() => handleCategoryPress(category.name)}
+                      >
+                        {selectedCategory === category.name &&
+                          category.subCategories.map((subCategory, id) => {
+                            return (
+                              <ListItem key={id} containerStyle={{ backgroundColor: theme.colors.background }}
+                                        onPress={() => handleSubcategoryPress(subCategory)}>
+                                <ListItem.Content>
+                                  <ListItem.Title
+                                    style={styles.categoriesModalSubcategoryName}>{subCategory}</ListItem.Title>
+                                </ListItem.Content>
+                              </ListItem>
+                            );
+                          })
+                        }
+                      </ListItem.Accordion>
+                    ))}
+                  </ScrollView>
+                </Modal>
+              </View>
+              {selectedSubcategory &&
+                <>
+                  <View style={styles.categoryFields}>
+                    <View style={styles.defaultFieldsContainer}>
+                      <View style={styles.listingTitleContainer}>
+                        <Input containerStyle={styles.listingTitleInputContainer}
+                               inputContainerStyle={styles.listingTitleInputInputContainer}
+                               inputStyle={styles.listingTitleInput}
+                               placeholder={"Название товара"}
+                               placeholderTextColor={theme.colors.grey3}
+                               maxLength={50}
+                               value={fieldsData.title}
+                               onChangeText={value => handleFieldsChange("title", value)}
+                        />
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
+                        </View>
+                      </View>
+                      <View style={{ marginBottom: 12 }}>
+                        <View style={styles.listingDescriptionContainer}>
+                          <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
+                                     style={styles.listingDescriptionText} maxLength={1000} multiline
+                                     value={fieldsData.description}
+                                     onChangeText={value => handleFieldsChange("description", value)} />
+                        </View>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View>
+                      <View style={styles.listingPriceContainer}>
+                        <Input containerStyle={styles.listingTitleInputContainer}
+                               inputContainerStyle={styles.listingTitleInputInputContainer}
+                               inputStyle={styles.listingTitleInput}
+                               placeholder={"Цена"}
+                               placeholderTextColor={theme.colors.grey3}
+                               inputMode={"numeric"}
+                               maxLength={7}
+                               value={fieldsData.price}
+                               rightIcon={<Text style={styles.listingTitleInput}>р./сут.</Text>}
+                               onChangeText={value => handleFieldsChange("price", value)}
+                        />
+                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                      </View>
+                      <View style={styles.listingDatesContainer}>
+                        <View>
+                          <Text style={[styles.imagesHeaderInfoText, { alignSelf: "flex-start", marginBottom: 6 }]}>Укажите
+                            промежуток дат доступных для аренды</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                          <TouchableOpacity style={styles.listingDatesBtn} onPress={handleStartsDayModalOpen}>
+                            <Text style={styles.listingTitleInput}>С</Text>
+                            {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                              <Text style={styles.listingTitleInput}>{fieldsData.dates.startsDay.getDate()}-
+                                {fieldsData.dates.startsDay.getMonth() + 1}-
+                                {fieldsData.dates.startsDay.getFullYear()}</Text>}
+                            {(fieldsData.dates && fieldsData.dates.startsDay) &&
+                              <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18}
+                                                      color={theme.colors.text} /></TouchableOpacity>}
+                          </TouchableOpacity>
+                          <TouchableOpacity style={styles.listingDatesBtn} onPress={handleEndsDayModalOpen}>
+                            <Text style={styles.listingTitleInput}>По</Text>
+                            {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                              <Text style={styles.listingTitleInput}>{fieldsData.dates.endsDay.getDate()}-
+                                {fieldsData.dates.endsDay.getMonth() + 1}-
+                                {fieldsData.dates.endsDay.getFullYear()}</Text>}
+                            {(fieldsData.dates && fieldsData.dates.endsDay) &&
+                              <TouchableOpacity><Icon type={"ionicon"} name={"close"} size={18}
+                                                      color={theme.colors.text} /></TouchableOpacity>}
+                          </TouchableOpacity>
+                        </View>
+                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                      </View>
+                      <View style={styles.listingGeoContainer}>
+                        <View>
+                          <FAB onPress={handleOpenMap} />
+                          <Modal visible={isMapOpen}>
+                            <View style={{
+                              height: 60,
+                              backgroundColor: theme.colors.accent,
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              paddingHorizontal: 12,
+                            }}>
+                              <Text numberOfLines={1} style={styles.headerMainText}>Выбор местоположения</Text>
+                              <TouchableOpacity onPress={handleCloseMap}>
+                                <Text numberOfLines={1} style={styles.headerCancelText}>Отмена</Text>
+                              </TouchableOpacity>
+                            </View>
+                            <MapView
+                              ref={mapRef}
+                              onMapReady={handleMapReady}
+                              onPress={handleMapPress}
+                              initialRegion={{
+                                latitude: userCoordinates.latitude,
+                                longitude: userCoordinates.longitude,
+                                latitudeDelta: 0,
+                                longitudeDelta: 0,
+                              }}
+                              region={markerCoordinates}
+                              showsUserLocation={true}
+                              showsMyLocationButton={true}
+                              followsUserLocation={true}
+                              showsIndoors={false}
+                              showsTraffic={false}
+                              provider={PROVIDER_GOOGLE}
+                              style={{ width: widthPercentageToDP(100), height: heightPercentageToDP(100) }}
+                            >
+                              <Marker title={"Выбранное место"} titleVisibility={true}
+                                      draggable coordinate={markerCoordinates} />
+                            </MapView>
+                            <FAB size="small" title="Сохранить" color={theme.colors.accent} upperCase style={{
+                              position: "absolute",
+                              bottom: heightPercentageToDP(5),
+                              right: widthPercentageToDP(10),
+                            }}><Text style={{
+                              fontFamily: "Roboto-Medium",
+                              fontSize: 16,
+                              color: theme.colors.accentText,
+                            }}>Сохранить</Text></FAB>
+                          </Modal>
+                        </View>
+                        <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
+                      </View>
+                    </View>
+                    <View style={styles.submitBtnViewContainer}>
+                      <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
+                        <Text style={styles.submitBtnText}>Подать объявление</Text>
+                      </Button>
+                    </View>
+                  </View>
+                  {selectedSubcategory === "Мотоциклы и скутеры" && <View></View>}
+                </>
+              }
+            </>}
         </View>
       </ScrollView>
     </SafeAreaView>
