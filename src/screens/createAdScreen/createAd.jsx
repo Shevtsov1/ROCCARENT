@@ -738,7 +738,7 @@ const CreateAd = ({ theme, navigation }) => {
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/50</Text>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>{fieldsData && fieldsData.title ? fieldsData.title.length : 0}/50</Text>
                         </View>
                       </View>
                       <View style={{ marginBottom: 12 }}>
@@ -750,7 +750,7 @@ const CreateAd = ({ theme, navigation }) => {
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>0/1000</Text>
+                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>{fieldsData && fieldsData.description ? fieldsData.description.length : 0}/1000</Text>
                         </View>
                       </View>
                     </View>
