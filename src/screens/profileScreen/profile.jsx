@@ -508,6 +508,18 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                     onPress={() => navigation.navigate("DealArchive")}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
+              }}>Мои объявления</Text>
+              <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
+            </Button>
+          </>}
+          {!auth().currentUser.isAnonymous && <>
+            <Divider />
+            <Button containerStyle={[styles.profileAppDataBtnContainer, {
+              borderBottomStartRadius: 15, borderBottomEndRadius: 15,
+            }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
+                    onPress={() => navigation.navigate("DealArchive")}>
+              <Text style={{
+                fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
               }}>Архив сделок</Text>
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
