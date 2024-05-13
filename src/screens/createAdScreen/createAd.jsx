@@ -27,6 +27,7 @@ const CreateAd = ({ theme, navigation }) => {
   const [fieldsData, setFieldsData] = useState({});
 
   const [selectedImages, setSelectedImages] = useState([]);
+  const [isAddingImageInProcess, setIsAddingImageInProcess] = useState(false);
 
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
@@ -87,6 +88,7 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const handleAddImageBtn = async () => {
+    setIsAddingImageInProcess(true);
     const options = {
       title: "Выберите изображение",
       cancelButtonTitle: "Отмена",
@@ -121,7 +123,7 @@ const CreateAd = ({ theme, navigation }) => {
         assets.forEach((image) => {
           const fileName = image.fileName;
           const isDuplicate = selectedImages.some(
-            (selectedImage) => Object.keys(selectedImage)[0] === fileName
+            (selectedImage) => Object.keys(selectedImage)[0] === fileName,
           );
 
           if (!isDuplicate && freePositionInSelectedImages > 0) {
@@ -131,7 +133,7 @@ const CreateAd = ({ theme, navigation }) => {
 
             // Проверка на совпадение и добавление в newSelectedImages
             const isSameFileName = selectedImages.some(
-              (selectedImage) => Object.keys(selectedImage)[0] === fileName
+              (selectedImage) => Object.keys(selectedImage)[0] === fileName,
             );
 
             if (!isSameFileName) {
@@ -146,6 +148,7 @@ const CreateAd = ({ theme, navigation }) => {
     } catch (error) {
       console.log("Ошибка выбора изображения:", error);
     }
+    setIsAddingImageInProcess(false);
   };
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
@@ -345,10 +348,10 @@ const CreateAd = ({ theme, navigation }) => {
       latitude: latitude,
       longitude: longitude,
     });
-  }
+  };
 
   const reverseGeocode = async (latitude, longitude) => {
-    const apiKey = '6641df921a9da299602964nvkdd5cad';
+    const apiKey = "6641df921a9da299602964nvkdd5cad";
     const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${apiKey}`;
 
     try {
@@ -368,8 +371,8 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const handleCreateListing = () => {
-    console.log(selectedSubcategory)
-    categoryFieldsVerify({theme, category: selectedCategory, subcategory: selectedSubcategory, fieldsData});
+    console.log(selectedSubcategory);
+    categoryFieldsVerify({ theme, category: selectedCategory, subcategory: selectedSubcategory, fieldsData });
   };
 
   const styles = StyleSheet.create({
@@ -589,7 +592,7 @@ const CreateAd = ({ theme, navigation }) => {
                 borderRadius: 5,
                 backgroundColor: theme.colors.error,
               }} titleStyle={{ color: theme.colors.grey1 }}
-              onPress={() => navigation.navigate('LogIn')}>
+                      onPress={() => navigation.navigate("LogIn")}>
                 <View style={{ marginStart: 12 }}>
                   <Text style={{
                     fontFamily: "Roboto-Medium",
@@ -620,7 +623,8 @@ const CreateAd = ({ theme, navigation }) => {
                 </View>
                 <View style={{ flexDirection: "row", paddingVertical: 12 }}>
                   <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
-                          onPress={handleAddImageBtn} disabled={selectedImages.length === 20}>
+                          onPress={handleAddImageBtn} loading={isAddingImageInProcess}
+                          loadingStyle={styles.imagesAddImageBtn} disabled={selectedImages.length === 20}>
                     <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
                   </Button>
                   <DraggableFlatList
@@ -765,8 +769,8 @@ const CreateAd = ({ theme, navigation }) => {
                       </View>
                       <View style={styles.listingGeoContainer}>
                         <View>
-                          <View style={{flexDirection: 'row'}}>
-                            <Input containerStyle={[styles.listingTitleInputContainer, {flex: 1}]}
+                          <View style={{ flexDirection: "row" }}>
+                            <Input containerStyle={[styles.listingTitleInputContainer, { flex: 1 }]}
                                    inputContainerStyle={styles.listingTitleInputInputContainer}
                                    inputStyle={styles.listingTitleInput}
                                    placeholder={"Выберите адрес на карте"}
@@ -777,7 +781,7 @@ const CreateAd = ({ theme, navigation }) => {
                                    onFocus={handleOpenMap}
                             />
                             <FAB size="small"
-                                 style={{flex: 0.2}}
+                                 style={{ flex: 0.2 }}
                                  icon={{
                                    name: "place",
                                    color: "white",
@@ -834,7 +838,8 @@ const CreateAd = ({ theme, navigation }) => {
                       </View>
                     </View>
                     <View style={styles.submitBtnViewContainer}>
-                      <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn} onPress={handleCreateListing}>
+                      <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
+                              onPress={handleCreateListing}>
                         <Text style={styles.submitBtnText}>Подать объявление</Text>
                       </Button>
                     </View>
