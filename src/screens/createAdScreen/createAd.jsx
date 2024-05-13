@@ -15,6 +15,7 @@ import LoadingScreen from "../../components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
 import FastImage from "react-native-fast-image";
+import { categoryFieldsVerify } from "./components/categoryFields";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -170,8 +171,10 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const handleSubcategoryPress = (subcategory) => {
-    setSelectedSubcategory(subcategory);
-    setFieldsData({});
+    if (selectedSubcategory !== subcategory) {
+      setSelectedSubcategory(subcategory);
+      setFieldsData({});
+    }
     handleCategoryModal(false);
   };
 
@@ -346,10 +349,10 @@ const CreateAd = ({ theme, navigation }) => {
     setIsMapOpen(false);
   };
 
-  useEffect(() => {
-    console.log(selectedCoordinates)
-  }, [selectedCoordinates]);
-
+  const handleCreateListing = () => {
+    console.log(selectedSubcategory)
+    categoryFieldsVerify({theme, category: selectedCategory, subcategory: selectedSubcategory, fieldsData});
+  };
 
   const styles = StyleSheet.create({
 
@@ -813,7 +816,7 @@ const CreateAd = ({ theme, navigation }) => {
                       </View>
                     </View>
                     <View style={styles.submitBtnViewContainer}>
-                      <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}>
+                      <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn} onPress={handleCreateListing}>
                         <Text style={styles.submitBtnText}>Подать объявление</Text>
                       </Button>
                     </View>
