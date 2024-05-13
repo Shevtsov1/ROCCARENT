@@ -105,35 +105,11 @@ const CreateAd = ({ theme, navigation }) => {
         console.log("Ошибка съемки фотографии:", response.error);
       }
     });
-    console.log(selectedImages)
-    setSelectedImages(...selectedImages, selectedImage.assets[0].uri);
+    setSelectedImages([...selectedImages, selectedImage.assets[0].uri]);
   };
-
-  const NUM_ITEMS = 20;
-
-  type Item = {
-    key: string;
-    label: string;
-    height: number;
-    width: number;
-    backgroundColor: string;
-  };
-
-  const initialData: Item[] = [...Array(NUM_ITEMS)].map((d, index) => {
-    const backgroundColor = theme.colors.grey3;
-    return {
-      key: `item-${index}`,
-      label: String(index) + "",
-      height: 100,
-      width: 60 + Math.random() * 40,
-      backgroundColor,
-    };
-  });
-
-  const [data, setData] = useState(initialData);
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
-    //const selectedImage = selectedImages.find(image => image.key === item.key);
+    const selectedImage = selectedImages.find((imageUri) => imageUri === item);
 
     return (
       <ScaleDecorator activeScale={0.9}>
@@ -141,21 +117,22 @@ const CreateAd = ({ theme, navigation }) => {
           <TouchableOpacity
             onLongPress={drag}
             disabled={isActive}
-            style={[{ width: 72, height: 72, borderRadius: 5 },
+            style={[
+              { width: 72, height: 72, borderRadius: 5 },
               { backgroundColor: isActive ? `${theme.colors.grey1}3A` : item.backgroundColor },
             ]}
           >
-            {/*{selectedImages && (*/}
-            {/*  <FastImage*/}
-            {/*    source={{ uri: selectedImage }}*/}
-            {/*    style={{ width: 72, height: 72, borderRadius: 5 }}*/}
-            {/*  />*/}
-            {/*)}*/}
+            {selectedImage && (
+              <FastImage
+                source={{ uri: selectedImage }}
+                style={{ width: 72, height: 72, borderRadius: 5 }}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </ScaleDecorator>
     );
-  }
+  };
 
   const handleCategoryModal = (mode) => {
     setModalVisible(mode);
@@ -609,9 +586,9 @@ const CreateAd = ({ theme, navigation }) => {
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     animationConfig={{ clamp: 1 }}
-                    data={data}
-                    onDragEnd={({ data }) => setData(data)}
-                    keyExtractor={(item) => item.key}
+                    data={selectedImages}
+                    onDragEnd={({ data }) => setSelectedImages(data)}
+                    keyExtractor={(item) => item}
                     renderItem={renderItem}
                     containerStyle={{ flex: 1 }}
                   />

@@ -86,7 +86,6 @@ const App = React.memo(() => {
           }
           const endTime = performance.now(); // Записываем время окончания выполнения
           const executionTime = endTime - startTime; // Вычисляем время выполнения в миллисекундах
-          console.log(endTime);
           resolve(executionTime);
         } catch (error) {
           // Обработка ошибки при предварительной загрузке иконок
@@ -98,13 +97,11 @@ const App = React.memo(() => {
 
     init()
       .then((executionTime) => {
-        if (executionTime < 1000) {
+        if (executionTime < 500) {
           setTimeout(() => {
-            console.log('if' + executionTime);
             setInitializing(false);
-          }, 1000 - executionTime);
+          }, 500 - executionTime);
         } else {
-          console.log(executionTime);
           setInitializing(false);
         }
       })
