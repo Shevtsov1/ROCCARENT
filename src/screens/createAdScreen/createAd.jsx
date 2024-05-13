@@ -28,10 +28,6 @@ const CreateAd = ({ theme, navigation }) => {
 
   const [selectedImages, setSelectedImages] = useState([]);
 
-  useEffect(() => {
-    console.log(selectedImages);
-  }, [selectedImages]);
-
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
     longitude: 27.5615, // Долгота Минска
@@ -85,6 +81,11 @@ const CreateAd = ({ theme, navigation }) => {
     },
   ];
 
+  const handleCleanBtn = () => {
+    setFieldsData({});
+    setSelectedImages([]);
+  };
+
   const handleAddImageBtn = async () => {
     const options = {
       title: "Выберите изображение",
@@ -96,23 +97,63 @@ const CreateAd = ({ theme, navigation }) => {
         skipBackup: true,
         path: "images",
       },
-      selectionLimit: 1,
+      selectionLimit: 20 - selectedImages.length,
     };
-    const selectedImage = await launchImageLibrary(options, (response) => {
+
+    try {
+      const response = await launchImageLibrary(options);
+
       if (response.didCancel) {
         console.log("Пользователь отменил съемку фотографии");
-      } else if (response.error) {
-        console.log("Ошибка съемки фотографии:", response.error);
+        return;
       }
-    });
-    setSelectedImages([...selectedImages, selectedImage.assets[0].uri]);
+
+      if (response.error) {
+        console.log("Ошибка съемки фотографии:", response.error);
+        return;
+      }
+
+      if (response.assets) {
+        const assets = response.assets;
+        const newSelectedImages = []; // Создаем новый массив для добавления объектов
+        let freePositionInSelectedImages = 20 - selectedImages.length;
+
+        assets.forEach((image) => {
+          const fileName = image.fileName;
+          const isDuplicate = selectedImages.some(
+            (selectedImage) => Object.keys(selectedImage)[0] === fileName
+          );
+
+          if (!isDuplicate && freePositionInSelectedImages > 0) {
+            const newSelectedImage = {
+              [fileName]: image.uri,
+            };
+
+            // Проверка на совпадение и добавление в newSelectedImages
+            const isSameFileName = selectedImages.some(
+              (selectedImage) => Object.keys(selectedImage)[0] === fileName
+            );
+
+            if (!isSameFileName) {
+              newSelectedImages.push(newSelectedImage); // Добавляем новый объект в newSelectedImages
+            }
+            freePositionInSelectedImages--;
+          }
+        });
+
+        setSelectedImages([...selectedImages, ...newSelectedImages]); // Обновляем selectedImages
+      }
+    } catch (error) {
+      console.log("Ошибка выбора изображения:", error);
+    }
   };
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
-    const selectedImage = selectedImages.find((imageUri) => imageUri === item);
-
+    const selectedImage = Object.keys(item)[0];
+    const selectedImageUri = item[selectedImage];
+    const key = Object.keys(item)[0];
     return (
-      <ScaleDecorator activeScale={0.9}>
+      <ScaleDecorator activeScale={0.9} key={key}>
         <View style={{ width: 72, height: 72, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
           <TouchableOpacity
             onLongPress={drag}
@@ -124,7 +165,7 @@ const CreateAd = ({ theme, navigation }) => {
           >
             {selectedImage && (
               <FastImage
-                source={{ uri: selectedImage }}
+                source={{ uri: selectedImageUri }}
                 style={{ width: 72, height: 72, borderRadius: 5 }}
               />
             )}
@@ -535,7 +576,7 @@ const CreateAd = ({ theme, navigation }) => {
           <View style={styles.header}>
             <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
             {auth().currentUser && !auth().currentUser.isAnonymous && userdata.passportData && auth().currentUser.emailVerified &&
-              <TouchableOpacity onPress={() => setFieldsData({})}>
+              <TouchableOpacity onPress={handleCleanBtn}>
                 <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
               </TouchableOpacity>}
           </View>
@@ -574,12 +615,12 @@ const CreateAd = ({ theme, navigation }) => {
                   <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                     <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"image"} size={20}
                           color={theme.colors.grey1} />
-                    <Text style={styles.imagesHeaderInfoText}>0 из 20</Text>
+                    <Text style={styles.imagesHeaderInfoText}>{selectedImages.length} из 20</Text>
                   </View>
                 </View>
                 <View style={{ flexDirection: "row", paddingVertical: 12 }}>
                   <Button containerStyle={styles.imagesAddImageBtnContainer} buttonStyle={styles.imagesAddImageBtn}
-                          onPress={handleAddImageBtn}>
+                          onPress={handleAddImageBtn} disabled={selectedImages.length === 20}>
                     <Icon type={"ionicon"} name={"add-outline"} size={30} color={theme.colors.accent}></Icon>
                   </Button>
                   <DraggableFlatList
@@ -588,7 +629,7 @@ const CreateAd = ({ theme, navigation }) => {
                     animationConfig={{ clamp: 1 }}
                     data={selectedImages}
                     onDragEnd={({ data }) => setSelectedImages(data)}
-                    keyExtractor={(item) => item}
+                    keyExtractor={(item) => Object.keys(item)[0]}
                     renderItem={renderItem}
                     containerStyle={{ flex: 1 }}
                   />
