@@ -87,6 +87,7 @@ const CreateAd = ({ theme, navigation }) => {
   const handleCleanBtn = () => {
     setFieldsData({});
     setSelectedImages([]);
+    setSelectedCoordinates({});
   };
 
   const handleAddImageBtn = async () => {
@@ -379,14 +380,15 @@ const CreateAd = ({ theme, navigation }) => {
 
   useEffect(() => {
     verifyNewListingDataBeforeCreating({
-      theme,
-      selectedImages,
+      theme: theme,
+      selectedImages: selectedImages,
       category: selectedCategory,
       subcategory: selectedSubcategory,
-      fieldsData,
-      selectedCoordinates,
+      fieldsData: fieldsData,
+      selectedCoordinates: selectedCoordinates,
       setIsSubmitBtnEnabled
     });
+
   }, [selectedImages, selectedCategory, selectedSubcategory, fieldsData, selectedCoordinates]);
 
 
@@ -740,10 +742,11 @@ const CreateAd = ({ theme, navigation }) => {
                     </View>
                     <View>
                       <View style={styles.listingPriceContainer}>
+                        <Text style={styles.listingTitleFooterText}>"Укажите цену с отделением копеек запятой"</Text>
                         <Input containerStyle={styles.listingTitleInputContainer}
                                inputContainerStyle={styles.listingTitleInputInputContainer}
                                inputStyle={styles.listingTitleInput}
-                               placeholder={"Цена"}
+                               placeholder={"Цена (Например 9,99)"}
                                placeholderTextColor={theme.colors.text}
                                inputMode={"numeric"}
                                maxLength={7}

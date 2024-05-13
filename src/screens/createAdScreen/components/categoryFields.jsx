@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, TextInput } from "react-native";
 
 const Belarus = [
@@ -50,6 +50,73 @@ export const translateAddressName = (fullAddress) => {
   return translatedRegion && translatedCity ? translatedRegion + ", " + translatedCity : fullAddress;
 };
 
+const verifySelectedImages = (selectedImages) => {
+  return selectedImages.length > 0 && selectedImages.length <= 20;
+};
+
+const verifyCategory = (category) => {
+  return !!category;
+};
+
+const verifySubcategory = (subcategory) => {
+  return !!subcategory;
+};
+
+const verifyFieldsData = (fieldsData) => {
+  const title = fieldsData.title;
+  const description = fieldsData.description;
+  const price = fieldsData.price;
+  const dates = fieldsData.dates;
+
+  const verifyTitle = () => {
+    if (title) {
+      const titleRegex = /^[a-zA-Zа-яА-Я\d\s.\-()]+$/;
+      return titleRegex.test(title);
+    }
+    return false;
+  };
+
+  const verifyDescription = () => {
+    if (description) {
+      const descriptionRegex = /^[a-zA-Zа-яА-Я\d\s.\-()\/_~!$&*'+,;=@[\]%#]+$/;
+      return descriptionRegex.test(description);
+    }
+    return false;
+  };
+
+  const verifyPrice = () => {
+    if (price) {
+      const priceRegex = /^\d+(,\d{1,2})?$/;
+      return priceRegex.test(price);
+    }
+    return false;
+  };
+
+  const verifyDates = () => {
+    if (dates) {
+      if (dates.startsDay && dates.endsDay) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const titleReady = verifyTitle();
+  const descriptionReady = verifyDescription();
+  const priceReady = verifyPrice();
+  const datesReady = verifyDates();
+  return titleReady && descriptionReady && priceReady && datesReady;
+};
+
+const verifySelectedCoordinates = (selectedCoordinates) => {
+  if (selectedCoordinates) {
+    if (selectedCoordinates.address) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export const verifyNewListingDataBeforeCreating = ({
                                   theme,
                                   selectedImages,
@@ -60,151 +127,15 @@ export const verifyNewListingDataBeforeCreating = ({
                                   setIsSubmitBtnEnabled,
                                 }) => {
 
-  console.log(`selectedImages exists: ${selectedImages && selectedImages.length > 0}\n
-  category exists: ${!!category}\n
-  subcategory exists: ${!!subcategory}\n
-  fieldsData exists: ${fieldsData && fieldsData.length > 0}\n
-  selectedCoordinates exists: ${selectedCoordinates && selectedCoordinates.length > 0}`);
+  const selectedImagesReady = verifySelectedImages(selectedImages);
+  const categoryReady = verifyCategory(category);
+  const subcategoryReady = verifySubcategory(subcategory);
+  const fieldsDataReady = verifyFieldsData(fieldsData);
+  const selectedCoordinatesReady = verifySelectedCoordinates(selectedCoordinates);
 
-  // const verifyDefaultFields = () => {
-  //   console.log("verify called");
-  // };
-
-  // if (category === "Автомобили и транспорт") {
-  //   if (subcategory === "Легковые автомобили" || subcategory === "Грузовики и коммерческий транспорт") {
-  //     verifyDefaultFields();
-  //   }
-  //   if (subcategory === "Мотоциклы и скутеры") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Велосипеды") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Яхты и лодки") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Автодома и прицепы") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-  //
-  // if (category === "Недвижимость") {
-  //   if (subcategory === "Квартиры") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Дома и коттеджи") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Коммерческая недвижимость") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Отпускные дома и виллы") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Земельные участки") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-  //
-  // if (category === "Электроника") {
-  //   if (subcategory === "Телефоны и планшеты") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Компьютеры и ноутбуки") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Телевизоры и аудио-видео техника") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Фото- и видеокамеры") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Игровые приставки и аксессуары") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-  //
-  // if (category === "Спорт и отдых") {
-  //   if (subcategory === "Спортивные снаряды и инвентарь") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Велосипеды и аксессуары") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Палатки и снаряжение для кемпинга") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Горнолыжное и сноубордическое снаряжение") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Рыболовные снасти") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-  //
-  // if (category === "Мода и аксессуары") {
-  //   if (subcategory === "Одежда и обувь") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Сумки и аксессуары") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Украшения и часы") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Костюмы и наряды для особых случаев") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Косметика и парфюмерия") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-  //
-  // if (category === "Дом и сад") {
-  //   if (subcategory === "Мебель и интерьер") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Бытовая техника") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Садовый инструмент и оборудование") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Декор и освещение") {
-  //     return (<>
-  //     </>);
-  //   }
-  //   if (subcategory === "Газоны и садовые участки") {
-  //     return (<>
-  //     </>);
-  //   }
-  // }
-
+  if (selectedImagesReady && categoryReady && subcategoryReady && fieldsDataReady && selectedCoordinatesReady) {
+    setIsSubmitBtnEnabled(true);
+  } else {
+    setIsSubmitBtnEnabled(false);
+  }
 };
