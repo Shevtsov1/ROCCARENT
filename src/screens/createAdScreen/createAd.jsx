@@ -35,6 +35,8 @@ const CreateAd = ({ theme, navigation }) => {
 
   const { userdata } = useContext(AppContext);
 
+  const [listingUploading, setListingUploading] = useState(false);
+
   const [isSubmitBtnEnabled, setIsSubmitBtnEnabled] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -441,6 +443,7 @@ const CreateAd = ({ theme, navigation }) => {
   // };
 
   const handleCreateListing = async () => {
+    setListingUploading(true);
     const listingId = uuid.v4();
     // await resizeImages();
     const mainImage = Object.values(selectedImages[0])[0];
@@ -464,8 +467,23 @@ const CreateAd = ({ theme, navigation }) => {
       ...fieldsData,
       selectedCoordinates,
       mainImageUrl: mainImageUrl,
+      ownerId: auth().currentUser.uid,
     };
     await firestore().collection("listingCategories").doc(selectedCategory).collection(selectedSubcategory).doc(listingId).set(listingData);
+
+    const doc = await firestore().collection('users').doc(auth().currentUser.uid).get();
+      if (doc.exists) {
+        const userData = doc.data();
+        if (userData.hasOwnProperty("listings")) {
+          await firestore().collection('users').doc(auth().currentUser.uid).update({listings: firestore.FieldValue.arrayUnion(listingId)})
+        } else {
+          await firestore().collection('users').doc(auth().currentUser.uid).update({listings: [listingId]})
+        }
+      } else {
+        console.log("Пользователь не найден");
+      }
+    handleCleanBtn();
+    setListingUploading(false);
     navigation.navigate('Main');
   };
 
@@ -670,7 +688,7 @@ const CreateAd = ({ theme, navigation }) => {
     /* BODY END */
   });
 
-  if (userLocationLoading) {
+  if (userLocationLoading || listingUploading) {
     return (
       <LoadingScreen theme={theme} />
     );
