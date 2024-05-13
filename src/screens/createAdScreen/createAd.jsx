@@ -310,28 +310,12 @@ const CreateAd = ({ theme, navigation }) => {
     });
   }
 
-  // const geocodeAddress = async (address) => {
-  //   const apiKey = 'your_api_key';
-  //   const url = `https://geocode.maps.co/search?q=${encodeURIComponent(address)}&api_key=${apiKey}`;
-  //
-  //   try {
-  //     const response = await axios.get(url);
-  //     const data = response.data;
-  //     // Обработка полученных данных
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
   const reverseGeocode = async (latitude, longitude) => {
     const apiKey = '6641df921a9da299602964nvkdd5cad';
-    const lang = 'ru';
-    const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${apiKey}&lang=${lang}`;
+    const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${apiKey}`;
 
     try {
       const response = await fetch(url);
-      console.log(response)
       const data = await response.json();
       // Обработка полученных данных
       console.log(data);
@@ -744,7 +728,24 @@ const CreateAd = ({ theme, navigation }) => {
                       </View>
                       <View style={styles.listingGeoContainer}>
                         <View>
-                          <FAB onPress={handleOpenMap} />
+                          <View style={{flexDirection: 'row'}}>
+                            <Input containerStyle={[styles.listingTitleInputContainer, {flex: 1}]}
+                                   inputContainerStyle={styles.listingTitleInputInputContainer}
+                                   inputStyle={styles.listingTitleInput}
+                                   placeholder={"Выберите адрес на карте"}
+                                   placeholderTextColor={theme.colors.text}
+                                   maxLength={50}
+                                   value={fieldsData.title}
+                                   editable={false}
+                                   onFocus={handleOpenMap}
+                            />
+                            <FAB size="small"
+                                 style={{flex: 0.2}}
+                                 icon={{
+                                   name: "place",
+                                   color: "white",
+                                 }} color={theme.colors.accent} onPress={handleOpenMap} />
+                          </View>
                           <Modal visible={isMapOpen}>
                             <View style={{
                               height: 60,
