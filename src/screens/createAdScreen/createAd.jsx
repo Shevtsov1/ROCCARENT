@@ -623,7 +623,7 @@ const CreateAd = ({ theme, navigation }) => {
                 borderRadius: 5,
                 backgroundColor: theme.colors.error,
               }} titleStyle={{ color: theme.colors.grey1 }}
-                      onPress={() => navigation.navigate("LogIn")}>
+                      onPress={() => navigation.navigate("ProfileStack", {screen: 'LogIn'})}>
                 <View style={{ marginStart: 12 }}>
                   <Text style={{
                     fontFamily: "Roboto-Medium",
