@@ -311,6 +311,16 @@ const CreateAd = ({ theme, navigation }) => {
     });
   };
 
+  const handleSaveLocation = () => {
+    setSelectedCoordinates(markerCoordinates);
+    setIsMapOpen(false);
+  };
+
+  useEffect(() => {
+    console.log(selectedCoordinates)
+  }, [selectedCoordinates]);
+
+
   const styles = StyleSheet.create({
 
     defaultFieldsContainer: {},
@@ -320,7 +330,7 @@ const CreateAd = ({ theme, navigation }) => {
     listingTitleFooterText: {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
-      color: theme.colors.grey3,
+      color: theme.colors.grey2,
     },
     listingTitleInputContainer: {
       height: 42,
@@ -344,9 +354,9 @@ const CreateAd = ({ theme, navigation }) => {
 
     listingDescriptionContainer: {
       borderWidth: 1,
-      borderColor: theme.colors.grey3,
+      borderColor: theme.colors.greyOutline,
       borderRadius: 5,
-      backgroundColor: `${theme.colors.grey3}5A`,
+      backgroundColor: theme.colors.grey3,
       height: 120,
       marginBottom: 6,
     },
@@ -434,7 +444,7 @@ const CreateAd = ({ theme, navigation }) => {
     }, imagesHeaderInfoText: {
       fontFamily: "Roboto-Regular",
       fontSize: 14,
-      color: theme.colors.grey3,
+      color: theme.colors.grey2,
       alignSelf: "center",
     }, imagesPickerContainer: {
       flex: 2,
@@ -635,7 +645,7 @@ const CreateAd = ({ theme, navigation }) => {
                                inputContainerStyle={styles.listingTitleInputInputContainer}
                                inputStyle={styles.listingTitleInput}
                                placeholder={"Название товара"}
-                               placeholderTextColor={theme.colors.grey3}
+                               placeholderTextColor={theme.colors.text}
                                maxLength={50}
                                value={fieldsData.title}
                                onChangeText={value => handleFieldsChange("title", value)}
@@ -647,7 +657,7 @@ const CreateAd = ({ theme, navigation }) => {
                       </View>
                       <View style={{ marginBottom: 12 }}>
                         <View style={styles.listingDescriptionContainer}>
-                          <TextInput placeholder="Описание" placeholderTextColor={theme.colors.grey3}
+                          <TextInput placeholder="Описание" placeholderTextColor={theme.colors.text}
                                      style={styles.listingDescriptionText} maxLength={1000} multiline
                                      value={fieldsData.description}
                                      onChangeText={value => handleFieldsChange("description", value)} />
@@ -664,7 +674,7 @@ const CreateAd = ({ theme, navigation }) => {
                                inputContainerStyle={styles.listingTitleInputInputContainer}
                                inputStyle={styles.listingTitleInput}
                                placeholder={"Цена"}
-                               placeholderTextColor={theme.colors.grey3}
+                               placeholderTextColor={theme.colors.text}
                                inputMode={"numeric"}
                                maxLength={7}
                                value={fieldsData.price}
@@ -745,7 +755,7 @@ const CreateAd = ({ theme, navigation }) => {
                               position: "absolute",
                               bottom: heightPercentageToDP(5),
                               right: widthPercentageToDP(10),
-                            }}><Text style={{
+                            }} onPress={handleSaveLocation}><Text style={{
                               fontFamily: "Roboto-Medium",
                               fontSize: 16,
                               color: theme.colors.accentText,
