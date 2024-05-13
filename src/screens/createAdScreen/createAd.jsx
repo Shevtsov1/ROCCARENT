@@ -156,6 +156,14 @@ const CreateAd = ({ theme, navigation }) => {
     setIsAddingImageInProcess(false);
   };
 
+  const handleDeleteImageBtn = (image, uri) => {
+    const updatedImages = selectedImages.filter((selectedImage) => {
+      const imageUrl = Object.values(selectedImage)[0];
+      return Object.keys(selectedImage)[0] !== image || imageUrl !== uri;
+    });
+    setSelectedImages(updatedImages);
+  };
+
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
     const selectedImage = Object.keys(item)[0];
     const selectedImageUri = item[selectedImage];
@@ -172,10 +180,16 @@ const CreateAd = ({ theme, navigation }) => {
             ]}
           >
             {selectedImage && (
-              <FastImage
-                source={{ uri: selectedImageUri }}
-                style={{ width: 72, height: 72, borderRadius: 5 }}
-              />
+              <>
+                <FastImage
+                  source={{ uri: selectedImageUri }}
+                  style={{ width: 72, height: 72, borderRadius: 5 }}
+                />
+                <TouchableOpacity style={{ position: "absolute", top: 0, right: 0 }} onPress={() => handleDeleteImageBtn(selectedImage, selectedImageUri)}><Icon type={"ionicon"}
+                                                                                                      name={"close"}
+                                                                                                      size={24}
+                                                                                                      color={theme.colors.accent} /></TouchableOpacity>
+              </>
             )}
           </TouchableOpacity>
         </View>
@@ -375,7 +389,7 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const handleCreateListing = () => {
-    console.log('create listsing')
+    console.log("create listsing");
   };
 
   useEffect(() => {
@@ -386,7 +400,7 @@ const CreateAd = ({ theme, navigation }) => {
       subcategory: selectedSubcategory,
       fieldsData: fieldsData,
       selectedCoordinates: selectedCoordinates,
-      setIsSubmitBtnEnabled
+      setIsSubmitBtnEnabled,
     });
 
   }, [selectedImages, selectedCategory, selectedSubcategory, fieldsData, selectedCoordinates]);
