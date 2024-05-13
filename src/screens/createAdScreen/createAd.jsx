@@ -1,5 +1,15 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+  Modal,
+  TextInput,
+  ToastAndroid,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, FAB, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
@@ -16,6 +26,10 @@ import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
 import FastImage from "react-native-fast-image";
 import { verifyNewListingDataBeforeCreating, getAddressName, translateAddressName } from "./components/categoryFields";
+import firestore from "@react-native-firebase/firestore";
+import uuid from "react-native-uuid";
+import storage from "@react-native-firebase/storage";
+import ImageResizer from "@bam.tech/react-native-image-resizer";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -127,6 +141,7 @@ const CreateAd = ({ theme, navigation }) => {
 
         assets.forEach((image) => {
           const fileName = image.fileName;
+          const fileSize = image.fileSize;
           const isDuplicate = selectedImages.some(
             (selectedImage) => Object.keys(selectedImage)[0] === fileName,
           );
@@ -134,6 +149,7 @@ const CreateAd = ({ theme, navigation }) => {
           if (!isDuplicate && freePositionInSelectedImages > 0) {
             const newSelectedImage = {
               [fileName]: image.uri,
+              fileSize: fileSize,
             };
 
             // Проверка на совпадение и добавление в newSelectedImages
@@ -185,10 +201,12 @@ const CreateAd = ({ theme, navigation }) => {
                   source={{ uri: selectedImageUri }}
                   style={{ width: 72, height: 72, borderRadius: 5 }}
                 />
-                <TouchableOpacity style={{ position: "absolute", top: 0, right: 0 }} onPress={() => handleDeleteImageBtn(selectedImage, selectedImageUri)}><Icon type={"ionicon"}
-                                                                                                      name={"close"}
-                                                                                                      size={24}
-                                                                                                      color={theme.colors.accent} /></TouchableOpacity>
+                <TouchableOpacity style={{ position: "absolute", top: 0, right: 0 }}
+                                  onPress={() => handleDeleteImageBtn(selectedImage, selectedImageUri)}><Icon
+                  type={"ionicon"}
+                  name={"close"}
+                  size={24}
+                  color={theme.colors.accent} /></TouchableOpacity>
               </>
             )}
           </TouchableOpacity>
@@ -388,8 +406,67 @@ const CreateAd = ({ theme, navigation }) => {
     setIsMapOpen(false);
   };
 
-  const handleCreateListing = () => {
-    console.log("create listsing");
+  // const resizeImages = async () => {
+  //   try {
+  //     let newSelectedImages = [];
+  //     selectedImages.map(async (selectedImage) => {
+  //       const fileSize = selectedImage.fileSize;
+  //       let compressionQuality;
+  //       if (fileSize > 10 * 1024 && fileSize < 5 * 1024 * 1024) {
+  //         compressionQuality = 100;
+  //       } else if (fileSize >= 5 * 1024 * 1024) {
+  //         compressionQuality = Math.floor((5 * 1024 * 1024 / fileSize) * 100);
+  //         compressionQuality = Math.max(10, Math.min(100, compressionQuality));
+  //       }
+  //
+  //       if (!compressionQuality) {
+  //         ToastAndroid.show("Размер изображений должен быть от 100 кБ до 5 МБ", 5000);
+  //         return;
+  //       }
+  //
+  //       if (compressionQuality) {
+  //         // Resize the image
+  //         const resizedImage = await ImageResizer.createResizedImage(
+  //           Object.values(selectedImage)[0],
+  //           "JPEG",
+  //           compressionQuality // compression quality
+  //         );
+  //         newSelectedImages.push(resizedImage);
+  //       }
+  //     });
+  //     setSelectedImages(newSelectedImages);
+  //   } catch (error) {
+  //     console.log("Error resizing image:", error);
+  //   }
+  // };
+
+  const handleCreateListing = async () => {
+    const listingId = uuid.v4();
+    // await resizeImages();
+    const mainImage = Object.values(selectedImages[0])[0];
+    const otherImages = [];
+    const mainImageRef = storage().ref(`listings/${listingId}/mainImage/`);
+    const otherImagesRef = storage().ref(`listings/${listingId}/otherImages`);
+    await mainImageRef.putFile(mainImage);
+    selectedImages.slice(1,).forEach((selectedImage) => {
+      otherImages.push(selectedImage);
+    })
+    for (const image of otherImages) {
+      try {
+        await otherImagesRef.child(Object.keys(image)[0]).putFile(Object.values(image)[0]);
+        console.log(`Изображение ${Object.keys(image)[0]} успешно загружено`);
+      } catch (error) {
+        console.log(`Ошибка загрузки изображения ${image.fileName}:`, error);
+      }
+    }
+    const mainImageUrl = await mainImageRef.getDownloadURL();
+    const listingData = {
+      ...fieldsData,
+      selectedCoordinates,
+      mainImageUrl: mainImageUrl,
+    };
+    await firestore().collection("listingCategories").doc(selectedCategory).collection(selectedSubcategory).doc(listingId).set(listingData);
+    navigation.navigate('Main');
   };
 
   useEffect(() => {
@@ -593,10 +670,6 @@ const CreateAd = ({ theme, navigation }) => {
     /* BODY END */
   });
 
-  useEffect(() => {
-    console.log(fieldsData);
-  }, [fieldsData]);
-
   if (userLocationLoading) {
     return (
       <LoadingScreen theme={theme} />
@@ -623,7 +696,7 @@ const CreateAd = ({ theme, navigation }) => {
                 borderRadius: 5,
                 backgroundColor: theme.colors.error,
               }} titleStyle={{ color: theme.colors.grey1 }}
-                      onPress={() => navigation.navigate("ProfileStack", {screen: 'LogIn'})}>
+                      onPress={() => navigation.navigate("ProfileStack", { screen: "LogIn" })}>
                 <View style={{ marginStart: 12 }}>
                   <Text style={{
                     fontFamily: "Roboto-Medium",
@@ -738,7 +811,8 @@ const CreateAd = ({ theme, navigation }) => {
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>{fieldsData && fieldsData.title ? fieldsData.title.length : 0}/50</Text>
+                          <Text numberOfLines={1}
+                                style={styles.listingTitleFooterText}>{fieldsData && fieldsData.title ? fieldsData.title.length : 0}/50</Text>
                         </View>
                       </View>
                       <View style={{ marginBottom: 12 }}>
@@ -750,7 +824,8 @@ const CreateAd = ({ theme, navigation }) => {
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
-                          <Text numberOfLines={1} style={styles.listingTitleFooterText}>{fieldsData && fieldsData.description ? fieldsData.description.length : 0}/1000</Text>
+                          <Text numberOfLines={1}
+                                style={styles.listingTitleFooterText}>{fieldsData && fieldsData.description ? fieldsData.description.length : 0}/1000</Text>
                         </View>
                       </View>
                     </View>
