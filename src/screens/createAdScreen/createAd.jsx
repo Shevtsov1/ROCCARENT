@@ -28,6 +28,7 @@ const CreateAd = ({ theme, navigation }) => {
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [isAddingImageInProcess, setIsAddingImageInProcess] = useState(false);
+  const [addressToShow, setAddressToShow] = useState([]);
 
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
@@ -39,6 +40,18 @@ const CreateAd = ({ theme, navigation }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState({});
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    console.log(selectedCoordinates);
+    const displayNameStr = selectedCoordinates.display_name;
+    let finalArr;
+    console.log(typeof displayNameStr)
+    if (typeof displayNameStr === 'string') {
+      finalArr = displayNameStr.split(',')
+    }
+    console.log(finalArr);
+  }, [selectedCoordinates]);
+
 
   const [isMapOpen, setIsMapOpen] = useState(false);
 
@@ -107,11 +120,13 @@ const CreateAd = ({ theme, navigation }) => {
 
       if (response.didCancel) {
         console.log("Пользователь отменил съемку фотографии");
+        setIsAddingImageInProcess(false);
         return;
       }
 
       if (response.error) {
         console.log("Ошибка съемки фотографии:", response.error);
+        setIsAddingImageInProcess(false);
         return;
       }
 
@@ -357,16 +372,15 @@ const CreateAd = ({ theme, navigation }) => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      // Обработка полученных данных
-      console.log(data);
+      return(data);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleSaveLocation = async () => {
-    setSelectedCoordinates(markerCoordinates);
-    await reverseGeocode(markerCoordinates.latitude, markerCoordinates.longitude);
+    const selectedLocationData = await reverseGeocode(markerCoordinates.latitude, markerCoordinates.longitude);
+    setSelectedCoordinates(selectedLocationData);
     setIsMapOpen(false);
   };
 
@@ -776,7 +790,7 @@ const CreateAd = ({ theme, navigation }) => {
                                    placeholder={"Выберите адрес на карте"}
                                    placeholderTextColor={theme.colors.text}
                                    maxLength={50}
-                                   value={fieldsData.title}
+                                   value={selectedCoordinates.display_name}
                                    editable={false}
                                    onFocus={handleOpenMap}
                             />
