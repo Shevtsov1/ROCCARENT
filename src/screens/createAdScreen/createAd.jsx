@@ -255,7 +255,7 @@ const CreateAd = ({ theme, navigation }) => {
         },
         (error) => {
           // Ошибка при запросе разрешения
-          console.error("Error requesting location permission:", error);
+          console.log("Error requesting location permission:", error);
           resolve(false);
         },
       );
