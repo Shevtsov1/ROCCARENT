@@ -14,6 +14,7 @@ import { isLocationEnabled, promptForEnableLocationIfNeeded } from "react-native
 import LoadingScreen from "../../components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
+import FastImage from "react-native-fast-image";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -23,6 +24,12 @@ const CreateAd = ({ theme, navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [fieldsData, setFieldsData] = useState({});
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  useEffect(() => {
+    console.log(selectedImages);
+  }, [selectedImages]);
 
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
@@ -91,13 +98,14 @@ const CreateAd = ({ theme, navigation }) => {
       selectionLimit: 1,
     };
     const selectedImage = await launchImageLibrary(options, (response) => {
-      console.log(selectedImage);
       if (response.didCancel) {
         console.log("Пользователь отменил съемку фотографии");
       } else if (response.error) {
         console.log("Ошибка съемки фотографии:", response.error);
       }
     });
+    console.log(selectedImages)
+    setSelectedImages(...selectedImages, selectedImage.assets[0].uri);
   };
 
   const NUM_ITEMS = 20;
@@ -124,6 +132,8 @@ const CreateAd = ({ theme, navigation }) => {
   const [data, setData] = useState(initialData);
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<Item>) => {
+    //const selectedImage = selectedImages.find(image => image.key === item.key);
+
     return (
       <ScaleDecorator activeScale={0.9}>
         <View style={{ width: 72, height: 72, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
@@ -134,11 +144,17 @@ const CreateAd = ({ theme, navigation }) => {
               { backgroundColor: isActive ? `${theme.colors.grey1}3A` : item.backgroundColor },
             ]}
           >
+            {/*{selectedImages && (*/}
+            {/*  <FastImage*/}
+            {/*    source={{ uri: selectedImage }}*/}
+            {/*    style={{ width: 72, height: 72, borderRadius: 5 }}*/}
+            {/*  />*/}
+            {/*)}*/}
           </TouchableOpacity>
         </View>
       </ScaleDecorator>
     );
-  };
+  }
 
   const handleCategoryModal = (mode) => {
     setModalVisible(mode);
