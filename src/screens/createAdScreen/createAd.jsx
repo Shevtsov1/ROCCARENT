@@ -15,7 +15,7 @@ import LoadingScreen from "../../components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
 import FastImage from "react-native-fast-image";
-import { categoryFieldsVerify } from "./components/categoryFields";
+import { categoryFieldsVerify, getAddressName, translateAddressName } from "./components/categoryFields";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -40,18 +40,6 @@ const CreateAd = ({ theme, navigation }) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState({});
   const [userLocationLoading, setUserLocationLoading] = useState(false);
   const mapRef = useRef(null);
-
-  useEffect(() => {
-    console.log(selectedCoordinates);
-    const displayNameStr = selectedCoordinates.display_name;
-    let finalArr;
-    console.log(typeof displayNameStr)
-    if (typeof displayNameStr === 'string') {
-      finalArr = displayNameStr.split(',')
-    }
-    console.log(finalArr);
-  }, [selectedCoordinates]);
-
 
   const [isMapOpen, setIsMapOpen] = useState(false);
 
@@ -787,10 +775,14 @@ const CreateAd = ({ theme, navigation }) => {
                             <Input containerStyle={[styles.listingTitleInputContainer, { flex: 1 }]}
                                    inputContainerStyle={styles.listingTitleInputInputContainer}
                                    inputStyle={styles.listingTitleInput}
-                                   placeholder={"Выберите адрес на карте"}
+                                   placeholder={"Укажите место на карте"}
                                    placeholderTextColor={theme.colors.text}
                                    maxLength={50}
-                                   value={selectedCoordinates.display_name}
+                                   value={
+                                     selectedCoordinates &&
+                                     selectedCoordinates.display_name &&
+                                     translateAddressName(getAddressName(selectedCoordinates.display_name))
+                                   }
                                    editable={false}
                                    onFocus={handleOpenMap}
                             />
