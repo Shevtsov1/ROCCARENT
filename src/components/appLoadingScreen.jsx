@@ -4,9 +4,9 @@ import { heightPercentageToDP, widthPercentageToDP as wp } from "react-native-re
 import { Button } from "@rneui/base";
 import auth from "@react-native-firebase/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Animated, { Easing, FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 
-const AppLoadingScreen = React.memo(({ theme, text, textColor, resendEmailVerify }) => {
+const AppLoadingScreen =({ theme, text, textColor, resendEmailVerify }) => {
 
   const [resendBtnLoading, setResendBtnLoading] = useState(false);
 
@@ -54,9 +54,8 @@ const AppLoadingScreen = React.memo(({ theme, text, textColor, resendEmailVerify
           justifyContent: 'space-between',
           alignItems: "center",
         }}>
-          <Animated.View
-            entering={FadeIn.duration(250)}
-
+          <View
+            entering={FadeIn}
             style={{
               top: heightPercentageToDP(35),
             }}
@@ -66,7 +65,7 @@ const AppLoadingScreen = React.memo(({ theme, text, textColor, resendEmailVerify
               style={{ width: wp("60%"), height: wp(60) }}
               resizeMode="contain"
             />
-          </Animated.View>
+          </View>
           <View>
             <Text style={{ fontFamily: "Roboto-Medium", color: textColor ? textColor : theme.colors.text }}>{text}</Text>
             {resendEmailVerify && <Button onPress={handleResendVerification}
@@ -79,6 +78,6 @@ const AppLoadingScreen = React.memo(({ theme, text, textColor, resendEmailVerify
       </View>
     </SafeAreaView>
   );
-})
+}
 
 export default AppLoadingScreen;

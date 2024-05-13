@@ -69,27 +69,48 @@ const App = React.memo(() => {
       }
     };
 
-    const init = async () => {
-      try {
-        await initializeApp();
-        const currentUser = auth().currentUser;
-        if (
-          currentUser &&
-          !currentUser.isAnonymous &&
-          !currentUser.emailVerified
-        ) {
-          await waitForEmailVerification().catch((error) =>
-            setLoadingScreenText("Ошибка при подтверждении почты: " + error),
-          );
+    const init = () => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const startTime = performance.now();
+          await initializeApp();
+          const currentUser = auth().currentUser;
+          if (
+            currentUser &&
+            !currentUser.isAnonymous &&
+            !currentUser.emailVerified
+          ) {
+            await waitForEmailVerification().catch((error) =>
+              setLoadingScreenText("Ошибка при подтверждении почты: " + error),
+            );
+          }
+          const endTime = performance.now(); // Записываем время окончания выполнения
+          const executionTime = endTime - startTime; // Вычисляем время выполнения в миллисекундах
+          console.log(endTime);
+          resolve(executionTime);
+        } catch (error) {
+          // Обработка ошибки при предварительной загрузке иконок
+          console.error("Ошибка при предварительной загрузке иконок:", error);
+          reject(error);
         }
-      } catch (error) {
-        // Обработка ошибки при предварительной загрузке иконок
-        console.error("Ошибка при предварительной загрузке иконок:", error);
-      }
+      });
     };
-    Promise.all([init()])
-      .then(() => setInitializing(false))
-      .catch((error) => console.error("Ошибка при инициализации приложения:", error));
+
+    init()
+      .then((executionTime) => {
+        if (executionTime < 1000) {
+          setTimeout(() => {
+            console.log('if' + executionTime);
+            setInitializing(false);
+          }, 1000 - executionTime);
+        } else {
+          console.log(executionTime);
+          setInitializing(false);
+        }
+      })
+      .catch((error) =>
+        console.error("Ошибка при инициализации приложения:", error),
+      );
   }, []);
 
   useEffect(() => {
@@ -154,13 +175,11 @@ const App = React.memo(() => {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       // Get the users ID token
       const { idToken } = await GoogleSignin.signIn();
-      setInitializing(true);
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Sign-in the user with the credential
       await auth().signInWithCredential(googleCredential);
-      setInitializing(false);
     } catch (error) {
       console.log(error);
     }
@@ -174,22 +193,16 @@ const App = React.memo(() => {
     );
   }
 
+  if (initializing) {
+    return <AppLoadingScreen theme={theme} text={loadingScreenText} />
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        {
-          initializing ? (
-            <AppLoadingScreen theme={theme} text={loadingScreenText} />
-          ) : (
-
             <AppContext.Provider value={{ userdata, loadUserdata }}>
               <AppNavigator theme={theme} toggleMode={toggleMode} setInitializing={setInitializing}
                             setLoadingScreenText={setLoadingScreenText} />
             </AppContext.Provider>
-          )
-        }
-
-      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 });
