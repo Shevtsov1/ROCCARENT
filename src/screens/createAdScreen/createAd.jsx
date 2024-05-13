@@ -15,11 +15,13 @@ import LoadingScreen from "../../components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
 import FastImage from "react-native-fast-image";
-import { categoryFieldsVerify, getAddressName, translateAddressName } from "./components/categoryFields";
+import { verifyNewListingDataBeforeCreating, getAddressName, translateAddressName } from "./components/categoryFields";
 
 const CreateAd = ({ theme, navigation }) => {
 
   const { userdata } = useContext(AppContext);
+
+  const [isSubmitBtnEnabled, setIsSubmitBtnEnabled] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -28,7 +30,6 @@ const CreateAd = ({ theme, navigation }) => {
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [isAddingImageInProcess, setIsAddingImageInProcess] = useState(false);
-  const [addressToShow, setAddressToShow] = useState([]);
 
   const [userCoordinates, setUserCoordinates] = useState({
     latitude: 53.9045, // Широта Минска
@@ -360,7 +361,7 @@ const CreateAd = ({ theme, navigation }) => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      return(data);
+      return (data);
     } catch (error) {
       console.error(error);
     }
@@ -373,9 +374,21 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const handleCreateListing = () => {
-    console.log(selectedSubcategory);
-    categoryFieldsVerify({ theme, category: selectedCategory, subcategory: selectedSubcategory, fieldsData });
+    console.log('create listsing')
   };
+
+  useEffect(() => {
+    verifyNewListingDataBeforeCreating({
+      theme,
+      selectedImages,
+      category: selectedCategory,
+      subcategory: selectedSubcategory,
+      fieldsData,
+      selectedCoordinates,
+      setIsSubmitBtnEnabled
+    });
+  }, [selectedImages, selectedCategory, selectedSubcategory, fieldsData, selectedCoordinates]);
+
 
   const styles = StyleSheet.create({
 
@@ -845,7 +858,7 @@ const CreateAd = ({ theme, navigation }) => {
                     </View>
                     <View style={styles.submitBtnViewContainer}>
                       <Button containerStyle={styles.submitBtnContainer} buttonStyle={styles.submitBtn}
-                              onPress={handleCreateListing}>
+                              onPress={handleCreateListing} disabled={!isSubmitBtnEnabled}>
                         <Text style={styles.submitBtnText}>Подать объявление</Text>
                       </Button>
                     </View>
