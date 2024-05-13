@@ -14,7 +14,6 @@ import { isLocationEnabled, promptForEnableLocationIfNeeded } from "react-native
 import LoadingScreen from "../../components/loadingScreen";
 import auth from "@react-native-firebase/auth";
 import { AppContext } from "../../../App";
-import ionicons from "react-native-vector-icons/Ionicons";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -309,10 +308,41 @@ const CreateAd = ({ theme, navigation }) => {
       latitude: latitude,
       longitude: longitude,
     });
+  }
+
+  // const geocodeAddress = async (address) => {
+  //   const apiKey = 'your_api_key';
+  //   const url = `https://geocode.maps.co/search?q=${encodeURIComponent(address)}&api_key=${apiKey}`;
+  //
+  //   try {
+  //     const response = await axios.get(url);
+  //     const data = response.data;
+  //     // Обработка полученных данных
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  const reverseGeocode = async (latitude, longitude) => {
+    const apiKey = '6641df921a9da299602964nvkdd5cad';
+    const lang = 'ru';
+    const url = `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=${apiKey}&lang=${lang}`;
+
+    try {
+      const response = await fetch(url);
+      console.log(response)
+      const data = await response.json();
+      // Обработка полученных данных
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleSaveLocation = () => {
+  const handleSaveLocation = async () => {
     setSelectedCoordinates(markerCoordinates);
+    await reverseGeocode(markerCoordinates.latitude, markerCoordinates.longitude);
     setIsMapOpen(false);
   };
 
