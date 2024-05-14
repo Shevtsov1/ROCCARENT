@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../../../../App";
 import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "../../../components/loadingScreen";
 import CardsGrid from "../../../components/cardsGrid";
+import auth from "@react-native-firebase/auth";
+import { query } from "@react-native-firebase/firestore/lib/modular/query";
+import { onSnapshot } from "@react-native-firebase/firestore/lib/modular/snapshot";
 
 const UserListings = ({ theme, navigation }) => {
 
@@ -14,30 +17,33 @@ const UserListings = ({ theme, navigation }) => {
   const [userListings, setUserListings] = useState([]);
 
   useEffect(() => {
-    loadUserdata();
-    const subscriber = firestore()
-      .collection('listings')
-      .onSnapshot(querySnapshot => {
-        const userListings = [];
+    const fetchUserListings = async () => {
+      await loadUserdata();
 
-        querySnapshot.forEach(documentSnapshot => {
-          userdata.listings.forEach(listing => {
-            if (documentSnapshot.id === listing)
-              userListings.push({
-                ...documentSnapshot.data(),
-                key: documentSnapshot.id,
-              });
-          })
+      const querySnapshot = await firestore().collection("listings").get();
+      const updatedUserListings = [];
+
+      querySnapshot.forEach(documentSnapshot => {
+        userdata.listings.forEach(listing => {
+          if (documentSnapshot.id === listing) {
+            updatedUserListings.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
+          }
         });
-
-        setUserListings(userListings);
-        setListingsLoading(false);
       });
 
-    // Unsubscribe from events when no longer in use
-    return () => subscriber();
-  }, []);
+      setUserListings(updatedUserListings);
+      setListingsLoading(false);
+    };
 
+    const interval = setInterval(fetchUserListings, 5000); // Выполнять каждые 5 секунд
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [loadUserdata]);
 
   const styles = StyleSheet.create({
     body: {
@@ -59,7 +65,7 @@ const UserListings = ({ theme, navigation }) => {
       fontSize: 16,
       color: theme.colors.accentText,
     }, contentContainer: {
-      alignItems: 'center',
+      alignItems: 'flex-start',
     },
   });
 
