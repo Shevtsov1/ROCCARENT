@@ -24,14 +24,22 @@ const UserListings = ({ theme, navigation }) => {
       const updatedUserListings = [];
 
       querySnapshot.forEach(documentSnapshot => {
-        userdata.listings.forEach(listing => {
-          if (documentSnapshot.id === listing) {
-            updatedUserListings.push({
-              ...documentSnapshot.data(),
-              key: documentSnapshot.id,
-            });
-          }
-        });
+        if(userdata && userdata.listings) {
+          userdata.listings.forEach(listing => {
+            if (documentSnapshot.id === listing) {
+              updatedUserListings.push({
+                ...documentSnapshot.data(),
+                key: documentSnapshot.id,
+              });
+            }
+          });
+        }
+      });
+
+      updatedUserListings.sort((a, b) => {
+        const dateA = new Date(a.creationDate);
+        const dateB = new Date(b.creationDate);
+        return dateB.getTime() - dateA.getTime(); // Сортировка в порядке убывания
       });
 
       setUserListings(updatedUserListings);

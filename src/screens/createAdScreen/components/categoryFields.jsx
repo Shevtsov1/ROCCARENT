@@ -86,7 +86,7 @@ const verifyFieldsData = (fieldsData) => {
 
   const verifyPrice = () => {
     if (price) {
-      const priceRegex = /^\d+(,\d{1,2})?$/;
+      const priceRegex = /^\d+(.\d{1,2})?$/;
       return priceRegex.test(price);
     }
     return false;
