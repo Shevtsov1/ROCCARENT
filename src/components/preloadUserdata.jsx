@@ -32,3 +32,10 @@ export  const getPhoneNumber = async () => {
       return "";
     }
   };
+
+export const getUserListings = async () => {
+  const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+  if (snapshot.data().listings) {
+    return snapshot.data().listings;
+  }
+}

@@ -11,7 +11,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
-import { getNickname, getPassportData, getPhoneNumber } from "./src/components/preloadUserdata";
+import { getNickname, getPassportData, getPhoneNumber, getUserListings } from "./src/components/preloadUserdata";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const AppContext = createContext();
@@ -141,10 +141,12 @@ const App = React.memo(() => {
     const nickname = await getNickname();
     const passportData = await getPassportData();
     const phoneNumber = await getPhoneNumber();
+    const listings = await getUserListings();
     const updatedUserdata = {
       nickname,
       passportData,
       phoneNumber,
+      listings,
     };
     setUserdata(updatedUserdata);
   };

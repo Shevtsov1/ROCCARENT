@@ -444,7 +444,44 @@ const CreateAd = ({ theme, navigation }) => {
 
   const handleCreateListing = async () => {
     setListingUploading(true);
-    const listingId = uuid.v4();
+    let listingId = uuid.v4();
+
+    function checkListingIdExists(listingId) {
+      const listingRef = firestore().collection("listings").doc(listingId);
+
+      return listingRef.get().then((doc) => {
+        if (doc.exists) {
+          // Объявление существует
+          console.log("Объявление существует");
+          return true;
+        } else {
+          return false;
+        }
+      }).catch((error) => {
+        console.log("Ошибка при проверке существования объявления:", error);
+        return false;
+      });
+    }
+
+    function checkListingIdRecursively(listingId) {
+      return checkListingIdExists(listingId).then((exists) => {
+        if (exists) {
+          // Изменение listingId
+          listingId = uuid.v4();
+          // Вызов проверки снова
+          return checkListingIdRecursively(listingId);
+        } else {
+          // Объявление существует, выполнение завершено
+          return exists;
+        }
+      }).catch((error) => {
+        console.log("Ошибка при проверке существования объявления:", error);
+        return false;
+      });
+    }
+    checkListingIdRecursively(listingId).catch((error) => {
+      console.log("Ошибка при проверке существования объявления:", error);
+    });
     // await resizeImages();
     const mainImage = Object.values(selectedImages[0])[0];
     const otherImages = [];
@@ -457,7 +494,6 @@ const CreateAd = ({ theme, navigation }) => {
     for (const image of otherImages) {
       try {
         await otherImagesRef.child(Object.keys(image)[0]).putFile(Object.values(image)[0]);
-        console.log(`Изображение ${Object.keys(image)[0]} успешно загружено`);
       } catch (error) {
         console.log(`Ошибка загрузки изображения ${image.fileName}:`, error);
       }
