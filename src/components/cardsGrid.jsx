@@ -1,8 +1,8 @@
 import React from "react";
 import ItemCard from "./itemCard";
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
-const CardsGrid = ({theme, items}) => {
+const CardsGrid = ({ theme, items }) => {
 
   const styles = StyleSheet.create({
     cardsContainer: {
@@ -17,12 +17,14 @@ const CardsGrid = ({theme, items}) => {
   });
 
   return (
-    <View style={styles.cardsContainer}>
-      {items.map((item, index) => (
-        <ItemCard theme={theme} item={item} key={index}/>
-      ))}
-    </View>
+    <FlatList
+      data={items}
+      numColumns={2}
+      renderItem={({ item }) => (
+        <ItemCard item={item} theme={theme} />
+      )
+      } />
   );
-  };
+};
 
 export default CardsGrid;

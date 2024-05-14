@@ -48,7 +48,7 @@ const Main = ({ theme }) => {
             radius: 24,
             offset: [0, 6],
           })]}>
-            <CardsGrid theme={theme} items={items} />
+            {/*<CardsGrid theme={theme} items={items} />*/}
           </ShadowedView>
           <ShadowedView style={shadowStyle({
             color: theme.colors.grey3,
@@ -56,7 +56,7 @@ const Main = ({ theme }) => {
             radius: 24,
             offset: [0, 0],
           })}>
-            <CardsGrid theme={theme} items={items} />
+            {/*<CardsGrid theme={theme} items={items} />*/}
           </ShadowedView>
         </ScrollView>
       </SafeAreaView>

@@ -6,6 +6,8 @@ import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import LoadingScreen from "../../../components/loadingScreen";
 import FastImage from "react-native-fast-image";
+import ItemCard from "../../../components/itemCard";
+import CardsGrid from "../../../components/cardsGrid";
 
 const UserListings = ({ theme, navigation }) => {
 
@@ -73,18 +75,7 @@ const UserListings = ({ theme, navigation }) => {
           </View>
           {listingsLoading ? <LoadingScreen theme={theme}/> : <>
             <View style={styles.contentContainer}>
-              <FlatList
-                data={userListings}
-                renderItem={({ item }) => (
-                  <View style={{ height: 'auto', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>User ID: {item.title}</Text>
-                    <Text>User Name: {item.description}</Text>
-                    <View style={{width: 48, height: 48}}>
-                      <FastImage style={{width: '100%', height: '100%'}} source={{uri: item.mainImageUrl}} resizeMode={FastImage.resizeMode.cover}/>
-                    </View>
-                  </View>
-                )}
-              />
+              <CardsGrid theme={theme} items={userListings}/>
             </View>
           </>
           }

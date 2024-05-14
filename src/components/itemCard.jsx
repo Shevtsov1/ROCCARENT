@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { Button, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import FastImage from "react-native-fast-image";
 
 const ItemCard = ({ theme, item }) => {
 
@@ -48,7 +49,7 @@ const ItemCard = ({ theme, item }) => {
       height: "65%",
       borderRadius: 15,
     },
-    mainCardImage: { maxWidth: "100%", maxHeight: "100%" },
+    mainCardImage: { width: "100%", height: "100%" },
     mainCardTextContainer: {
       width: "100%",
       height: "35%",
@@ -79,7 +80,7 @@ const ItemCard = ({ theme, item }) => {
             titleStyle={{ color: theme.colors.grey1, height: 0 }}>
       <View style={styles.mainCardContentContainer}>
         <View style={styles.mainCardImageContainer}>
-          <Image source={require("../assets/images/telephone.png")} resizeMode={"contain"}
+          <FastImage source={{uri: item.mainImageUrl}} resizeMode={FastImage.resizeMode.cover}
                  style={styles.mainCardImage} />
         </View>
         <View style={styles.mainCardTextContainer}>
@@ -91,9 +92,9 @@ const ItemCard = ({ theme, item }) => {
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
             </View>
-            <Text numberOfLines={1} style={styles.mainCardTextMark}>
-              {"\ "}{item.mark.toFixed(1).replace(".", ",")}{"\ "}
-            </Text>
+            {/*<Text numberOfLines={1} style={styles.mainCardTextMark}>*/}
+            {/*  {"\ "}{item.mark.toFixed(1).replace(".", ",")}{"\ "}*/}
+            {/*</Text>*/}
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
             </View>
