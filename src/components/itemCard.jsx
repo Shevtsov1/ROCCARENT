@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import { Button, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
-import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
 const ItemCard = ({ theme, item }) => {
 
   const screenWidth = Dimensions.get('window').width;
+  const [ownerNickname, setOwnerNickname] = useState();
 
   const cardWidth = wp(50);
   const cardMinWidth = screenWidth < 384 ? wp(100) : 192;
+
+  useEffect(() => {
+    getOwnerNickname().then();
+  }, []);
+
+
+  const getOwnerNickname = async () => {
+    const snapshot = await firestore().collection('users').doc(item.ownerId).get();
+    if (snapshot.exists && snapshot.data().nickname) {
+      setOwnerNickname(snapshot.data().nickname);
+    }
+  };
 
   function getRatingWord(count) {
     const lastDigit = count % 10;
@@ -87,7 +100,7 @@ const ItemCard = ({ theme, item }) => {
         <View style={styles.mainCardTextContainer}>
           <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
             style={{ fontSize: 14 }}>BYN/сут</Text></Text>
-          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.ownerId}</Text>
+          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{ownerNickname}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
           <View style={{ flexDirection: "row" }}>
             {item.ratings ? <>
