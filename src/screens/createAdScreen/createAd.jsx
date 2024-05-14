@@ -29,7 +29,6 @@ import { verifyNewListingDataBeforeCreating, getAddressName, translateAddressNam
 import firestore from "@react-native-firebase/firestore";
 import uuid from "react-native-uuid";
 import storage from "@react-native-firebase/storage";
-import ImageResizer from "@bam.tech/react-native-image-resizer";
 
 const CreateAd = ({ theme, navigation }) => {
 
@@ -59,6 +58,12 @@ const CreateAd = ({ theme, navigation }) => {
   const mapRef = useRef(null);
 
   const [isMapOpen, setIsMapOpen] = useState(false);
+
+  const titleRef = useRef(null);
+  const descriptionRef = useRef(null);
+  const priceRef = useRef(null);
+  const startsDayRef = useRef(null);
+  const endsDayRef = useRef(null);
 
   const handleFieldsChange = (fieldName, value) => {
     setFieldsData(prevData => ({
@@ -188,12 +193,12 @@ const CreateAd = ({ theme, navigation }) => {
     const key = Object.keys(item)[0];
     return (
       <ScaleDecorator activeScale={0.9} key={key}>
-        <View style={{ width: 72, height: 72, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
+        <View style={{ width: 96, height: 96, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
           <TouchableOpacity
             onLongPress={drag}
             disabled={isActive}
             style={[
-              { width: 72, height: 72, borderRadius: 5 },
+              { width: 96, height: 96, borderRadius: 5 },
               { backgroundColor: isActive ? `${theme.colors.grey1}3A` : item.backgroundColor },
             ]}
           >
@@ -201,7 +206,7 @@ const CreateAd = ({ theme, navigation }) => {
               <>
                 <FastImage
                   source={{ uri: selectedImageUri }}
-                  style={{ width: 72, height: 72, borderRadius: 5 }}
+                  style={{ width: 96, height: 96, borderRadius: 5 }}
                 />
                 <TouchableOpacity style={{ position: "absolute", top: 0, right: 0 }}
                                   onPress={() => handleDeleteImageBtn(selectedImage, selectedImageUri)}><Icon
@@ -408,40 +413,6 @@ const CreateAd = ({ theme, navigation }) => {
     setIsMapOpen(false);
   };
 
-  // const resizeImages = async () => {
-  //   try {
-  //     let newSelectedImages = [];
-  //     selectedImages.map(async (selectedImage) => {
-  //       const fileSize = selectedImage.fileSize;
-  //       let compressionQuality;
-  //       if (fileSize > 10 * 1024 && fileSize < 5 * 1024 * 1024) {
-  //         compressionQuality = 100;
-  //       } else if (fileSize >= 5 * 1024 * 1024) {
-  //         compressionQuality = Math.floor((5 * 1024 * 1024 / fileSize) * 100);
-  //         compressionQuality = Math.max(10, Math.min(100, compressionQuality));
-  //       }
-  //
-  //       if (!compressionQuality) {
-  //         ToastAndroid.show("Размер изображений должен быть от 100 кБ до 5 МБ", 5000);
-  //         return;
-  //       }
-  //
-  //       if (compressionQuality) {
-  //         // Resize the image
-  //         const resizedImage = await ImageResizer.createResizedImage(
-  //           Object.values(selectedImage)[0],
-  //           "JPEG",
-  //           compressionQuality // compression quality
-  //         );
-  //         newSelectedImages.push(resizedImage);
-  //       }
-  //     });
-  //     setSelectedImages(newSelectedImages);
-  //   } catch (error) {
-  //     console.log("Error resizing image:", error);
-  //   }
-  // };
-
   const handleCreateListing = async () => {
     setListingUploading(true);
     let listingId = uuid.v4();
@@ -498,6 +469,12 @@ const CreateAd = ({ theme, navigation }) => {
         console.log(`Ошибка загрузки изображения ${image.fileName}:`, error);
       }
     }
+    const creationDate = new Date();
+    const year = creationDate.getFullYear();
+    const month = String(creationDate.getMonth() + 1).padStart(2, "0");
+    const day = String(creationDate.getDate()).padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day}`;
     const mainImageUrl = await mainImageRef.getDownloadURL();
     const listingData = {
       listingId: listingId,
@@ -508,6 +485,7 @@ const CreateAd = ({ theme, navigation }) => {
       mainImageUrl: mainImageUrl,
       ownerId: auth().currentUser.uid,
       ownerPhoneNumber: auth().currentUser.phoneNumber,
+      creationDate: formattedDate,
     };
     await firestore().collection("listings").doc(listingId).set(listingData);
 
@@ -649,7 +627,7 @@ const CreateAd = ({ theme, navigation }) => {
       alignSelf: "center",
     }, imagesContainer: {
       flex: 1,
-      height: 144,
+      height: 'auto',
       backgroundColor: theme.colors.background,
       marginBottom: 12,
       paddingHorizontal: 12,
@@ -677,7 +655,7 @@ const CreateAd = ({ theme, navigation }) => {
       borderColor: theme.colors.accent,
       borderWidth: 1,
       borderRadius: 5,
-      width: 72, height: 72,
+      width: 96, height: 96,
       backgroundColor: theme.colors.grey3,
     }, imagesFooterContainer: {
       flex: 1,
@@ -867,6 +845,10 @@ const CreateAd = ({ theme, navigation }) => {
                                maxLength={50}
                                value={fieldsData.title}
                                onChangeText={value => handleFieldsChange("title", value)}
+                               ref={titleRef}
+                               onSubmitEditing={() => {
+                                 descriptionRef.current.focus();
+                               }}
                         />
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
@@ -879,7 +861,11 @@ const CreateAd = ({ theme, navigation }) => {
                           <TextInput placeholder="Описание" placeholderTextColor={theme.colors.text}
                                      style={styles.listingDescriptionText} maxLength={1000} multiline
                                      value={fieldsData.description}
-                                     onChangeText={value => handleFieldsChange("description", value)} />
+                                     onChangeText={value => handleFieldsChange("description", value)}
+                                     ref={descriptionRef}
+                                     onSubmitEditing={() => {
+                                       priceRef.current.focus();
+                                     }}/>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                           <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
@@ -901,6 +887,7 @@ const CreateAd = ({ theme, navigation }) => {
                                value={fieldsData.price}
                                rightIcon={<Text style={styles.listingTitleInput}>р./сут.</Text>}
                                onChangeText={value => handleFieldsChange("price", value)}
+                               ref={priceRef}
                         />
                         <Text numberOfLines={1} style={styles.listingTitleFooterText}>Обязательное поле</Text>
                       </View>

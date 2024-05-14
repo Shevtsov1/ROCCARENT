@@ -37,12 +37,7 @@ const UserListings = ({ theme, navigation }) => {
       setUserListings(updatedUserListings);
       setListingsLoading(false);
     };
-
-    const interval = setInterval(fetchUserListings, 5000); // Выполнять каждые 5 секунд
-
-    return () => {
-      clearInterval(interval);
-    };
+    fetchUserListings().then();
   }, [loadUserdata]);
 
   const styles = StyleSheet.create({
