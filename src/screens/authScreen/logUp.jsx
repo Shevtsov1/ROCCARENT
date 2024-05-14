@@ -119,19 +119,6 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
       setInitializing(false);
     };
 
-    const waitForEmailVerification = async () => {
-      return new Promise((resolve) => {
-        const intervalId = setInterval(async () => {
-          const user = auth().currentUser;
-          await user.reload();
-          if (user.emailVerified) {
-            clearInterval(intervalId);
-            resolve();
-          }
-        }, 1000); // Проверяем каждую секунду
-      });
-    };
-
     const styles = StyleSheet.create({
       container: {
         flex: 1, backgroundColor: backColor, justifyContent: "center",
