@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import { Button, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
+import auth from "@react-native-firebase/auth";
 
 const ItemCard = ({ theme, item }) => {
 
@@ -86,21 +87,23 @@ const ItemCard = ({ theme, item }) => {
         <View style={styles.mainCardTextContainer}>
           <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
             style={{ fontSize: 14 }}>BYN/сут</Text></Text>
-          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.owner}</Text>
+          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.ownerId}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
           <View style={{ flexDirection: "row" }}>
+            {item.ratings ? <>
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
             </View>
-            {/*<Text numberOfLines={1} style={styles.mainCardTextMark}>*/}
-            {/*  {"\ "}{item.mark.toFixed(1).replace(".", ",")}{"\ "}*/}
-            {/*</Text>*/}
+            <Text numberOfLines={1} style={styles.mainCardTextMark}>
+              {'\t'}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{'\t'}
+            </Text>
             <View style={{ justifyContent: "center" }}>
               <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
             </View>
             <Text numberOfLines={1}
-                  style={styles.mainCardTextRating}>{"\ "}{item.ratings} {getRatingWord(item.ratings)}</Text>
-          </View>
+                  style={styles.mainCardTextRating}>{'\t'}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
+            </> : <Text numberOfLines={1} style={styles.mainCardTextRating}>Нет оценок</Text> }
+            </View>
         </View>
       </View>
     </Button>
