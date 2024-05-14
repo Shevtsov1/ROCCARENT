@@ -111,6 +111,7 @@ const App = React.memo(() => {
   }, []);
 
   useEffect(() => {
+    console.log(auth().currentUser)
     if (auth().currentUser && !auth().currentUser.isAnonymous && !userdata) {
       loadUserdata().then();
     }

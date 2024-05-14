@@ -13,7 +13,7 @@ export  const getNickname = async () => {
 
 export  const getPassportData = async () => {
   const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get()
-      if (snapshot.data().passportData) {
+      if (snapshot.exists && snapshot.data().passportData) {
         const localPassportData = snapshot.data().passportData;
         const visibleText = localPassportData.slice(0, 3);
         const hiddenText = localPassportData.slice(3, -1).replace(/./g, "*");
@@ -35,7 +35,7 @@ export  const getPhoneNumber = async () => {
 
 export const getUserListings = async () => {
   const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
-  if (snapshot.data().listings) {
+  if (snapshot.exists && snapshot.data().listings) {
     return snapshot.data().listings;
   }
 }

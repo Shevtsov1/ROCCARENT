@@ -135,10 +135,11 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
     const styles = StyleSheet.create({
       container: {
         flex: 1, backgroundColor: backColor, justifyContent: "center",
-      }, contentContainer: {
-        marginTop: hp(25), marginHorizontal: wp(4),
-      }, imageContainer: {
-        position: "absolute", alignSelf: "center", top: hp(5),
+      },   contentContainer: {
+        paddingHorizontal: 12,
+      },
+      imageContainer: {
+        paddingTop: hp(20),
       }, image: {
         width: 144, height: 144, alignSelf: "center",
       }, inputViewContainer: {

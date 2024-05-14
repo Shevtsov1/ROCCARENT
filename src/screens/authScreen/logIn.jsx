@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, Image, TouchableOpacity, StyleSheet,
+  View, Text, Image, TouchableOpacity, StyleSheet, ScrollView,
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon, Input } from "@rneui/themed";
@@ -71,13 +71,13 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1, backgroundColor: backColor, justifyContent: "center",
+      flex: 1, backgroundColor: backColor,
     },
     contentContainer: {
-      marginTop: hp(30), marginHorizontal: wp(4),
+      paddingHorizontal: 12,
     },
     imageContainer: {
-      position: "absolute", alignSelf: "center", top: hp(20),
+      paddingTop: hp(20),
     },
     image: {
       width: 144, height: 144, alignSelf: "center",
@@ -163,7 +163,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
   });
 
   return (<SafeAreaView style={{ flex: 1 }}>
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.backButton}>
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Text style={{fontFamily: 'Roboto-Medium', fontSize: 16, color: theme.colors.grey1}}>Назад</Text>
@@ -270,7 +270,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   </SafeAreaView>);
 };
 
