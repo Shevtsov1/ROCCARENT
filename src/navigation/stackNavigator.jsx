@@ -13,6 +13,7 @@ import EditEmail from "../screens/profileScreen/components/editProfile/editEmail
 import EditPassport from "../screens/profileScreen/components/editProfile/editPassport";
 import EditPhoneNumber from "../screens/profileScreen/components/editProfile/editPhoneNumber";
 import UserListings from "../screens/profileScreen/components/userListings";
+import firestore from "@react-native-firebase/firestore";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,15 +41,20 @@ export const ProfileStackNavigator = ({
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Sign-in the user with the credential
-      return await auth().signInWithCredential(googleCredential).then(() => {
-        setInitializing(false);
+      return await auth().signInWithCredential(googleCredential).then(async () => {
+        const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+        if (snapshot.exists && !snapshot.data().nickname) {
+          await firestore().collection("users").doc(auth().currentUser.uid).update({ nickname: auth().currentUser.displayName }).then(() => setInitializing(false));
+        } else {
+          setInitializing(false);
+        }
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [passportData, setPassportData] = useState('');
+  const [passportData, setPassportData] = useState("");
 
   return (
     <Stack.Navigator
@@ -74,22 +80,22 @@ export const ProfileStackNavigator = ({
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>
       <Stack.Screen name="Settings" options={{ headerShown: false }}>{(props) =>
         <Settings {...props} theme={theme} setInitializing={setInitializing}
-                     setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+                  setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
       <Stack.Screen name="DealArchive" options={{ headerShown: false }}>{(props) =>
         <DealArchive {...props} theme={theme} setInitializing={setInitializing}
-                  setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
-      <Stack.Screen name="EditName" options={{headerShown: false }}>{(props) =>
-        <EditName {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="EditEmail" options={{headerShown: false }}>{(props) =>
-        <EditEmail {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="EditPassport" options={{headerShown: false }}>{(props) =>
-        <EditPassport {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="EditPhoneNumber" options={{headerShown: false }}>{(props) =>
-        <EditPhoneNumber {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="Support" options={{headerShown: false }}>{(props) =>
-        <Support {...props} theme={theme}/>}</Stack.Screen>
-      <Stack.Screen name="UserListings" options={{headerShown: false }}>{(props) =>
-        <UserListings {...props} theme={theme}/>}</Stack.Screen>
+                     setLoadingScreenText={setLoadingScreenText} />}</Stack.Screen>
+      <Stack.Screen name="EditName" options={{ headerShown: false }}>{(props) =>
+        <EditName {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="EditEmail" options={{ headerShown: false }}>{(props) =>
+        <EditEmail {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="EditPassport" options={{ headerShown: false }}>{(props) =>
+        <EditPassport {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="EditPhoneNumber" options={{ headerShown: false }}>{(props) =>
+        <EditPhoneNumber {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="Support" options={{ headerShown: false }}>{(props) =>
+        <Support {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="UserListings" options={{ headerShown: false }}>{(props) =>
+        <UserListings {...props} theme={theme} />}</Stack.Screen>
     </Stack.Navigator>
   );
 };

@@ -8,6 +8,7 @@ import { Button } from "@rneui/base";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FastImage from "react-native-fast-image";
+import firestore from "@react-native-firebase/firestore";
 
 const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPress, navigation }) => {
 
@@ -106,6 +107,8 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         await currentUser.updateProfile({
           displayName: newDisplayName,
         });
+
+        await firestore().collection("users").doc(currentUser.uid).update({ nickname: newDisplayName} );
 
         // Регистрация завершена, отправляем письмо с подтверждением
         await auth().currentUser.sendEmailVerification({handleCodeInApp: true}).catch(() => setLoadingScreenText("Ошибка при отправке подтверждения на Email"));
