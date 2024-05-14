@@ -84,7 +84,7 @@ const ItemCard = ({ theme, item }) => {
                  style={styles.mainCardImage} />
         </View>
         <View style={styles.mainCardTextContainer}>
-          <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price} <Text
+          <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
             style={{ fontSize: 14 }}>BYN/сут</Text></Text>
           <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.owner}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
