@@ -61,7 +61,9 @@ const UserListings = ({ theme, navigation }) => {
       fontFamily: "Roboto-Regular",
       fontSize: 16,
       color: theme.colors.accentText,
-    }, contentContainer: {},
+    }, contentContainer: {
+      alignItems: 'center',
+    },
   });
 
   return (

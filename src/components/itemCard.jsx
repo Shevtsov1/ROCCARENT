@@ -1,13 +1,15 @@
 import React from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import { Button, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
 
 const ItemCard = ({ theme, item }) => {
 
-  const cardWidth = wp(49.5);
-  const cardMinWidth = 192;
+  const screenWidth = Dimensions.get('window').width;
+
+  const cardWidth = wp(50);
+  const cardMinWidth = screenWidth < 384 ? wp(100) : 192;
 
   function getRatingWord(count) {
     const lastDigit = count % 10;
@@ -29,7 +31,7 @@ const ItemCard = ({ theme, item }) => {
   }
 
   const styles = StyleSheet.create({
-    mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 15 },
+    mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 0 },
     mainCard: {
       width: "100%",
       height: "100%",
@@ -37,7 +39,6 @@ const ItemCard = ({ theme, item }) => {
       backgroundColor: theme.colors.background,
       paddingVertical: 0,
       paddingHorizontal: 0,
-      borderRadius: 15,
       justifyContent: "flex-start",
       alignItems: "center",
 
@@ -47,13 +48,12 @@ const ItemCard = ({ theme, item }) => {
     }, mainCardImageContainer: {
       width: "100%",
       height: "65%",
-      borderRadius: 15,
+      paddingHorizontal: 2,
     },
     mainCardImage: { width: "100%", height: "100%" },
     mainCardTextContainer: {
       width: "100%",
       height: "35%",
-      borderRadius: 15,
       paddingVertical: 6,
       paddingHorizontal: 12,
     }, mainCardTextPrice: {
