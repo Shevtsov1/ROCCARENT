@@ -464,12 +464,15 @@ const CreateAd = ({ theme, navigation }) => {
     }
     const mainImageUrl = await mainImageRef.getDownloadURL();
     const listingData = {
+      category: selectedCategory,
+      subcategory: selectedSubcategory,
       ...fieldsData,
       selectedCoordinates,
       mainImageUrl: mainImageUrl,
       ownerId: auth().currentUser.uid,
+      ownerPhoneNumber: auth().currentUser.phoneNumber,
     };
-    await firestore().collection("listingCategories").doc(selectedCategory).collection(selectedSubcategory).doc(listingId).set(listingData);
+    await firestore().collection("listings").doc(listingId).set(listingData);
 
     const doc = await firestore().collection('users').doc(auth().currentUser.uid).get();
       if (doc.exists) {
