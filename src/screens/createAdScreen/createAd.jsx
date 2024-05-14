@@ -33,7 +33,7 @@ import ImageResizer from "@bam.tech/react-native-image-resizer";
 
 const CreateAd = ({ theme, navigation }) => {
 
-  const { userdata } = useContext(AppContext);
+  const { userdata, loadUserdata } = useContext(AppContext);
 
   const [listingUploading, setListingUploading] = useState(false);
 
@@ -524,6 +524,7 @@ const CreateAd = ({ theme, navigation }) => {
       }
     handleCleanBtn();
     setListingUploading(false);
+    loadUserdata();
     navigation.navigate('Main');
   };
 

@@ -2,10 +2,9 @@ import React from "react";
 import ItemCard from "./itemCard";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 
-const CardsGrid = ({ theme, items }) => {
+const CardsGrid = ({ theme, items, likes }) => {
 
   const screenWidth = Dimensions.get('window').width;
-
   const numColumns = screenWidth >= 384 ? 2 : 1;
 
   const styles = StyleSheet.create({
@@ -26,7 +25,7 @@ const CardsGrid = ({ theme, items }) => {
       numColumns={numColumns}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => (
-        <ItemCard item={item} theme={theme} />
+        <ItemCard item={item} theme={theme} likes={likes}/>
       )
       } />
   );

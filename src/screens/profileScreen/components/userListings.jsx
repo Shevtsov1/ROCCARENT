@@ -3,20 +3,18 @@ import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../../../../App";
 import firestore from "@react-native-firebase/firestore";
-import auth from "@react-native-firebase/auth";
 import LoadingScreen from "../../../components/loadingScreen";
-import FastImage from "react-native-fast-image";
-import ItemCard from "../../../components/itemCard";
 import CardsGrid from "../../../components/cardsGrid";
 
 const UserListings = ({ theme, navigation }) => {
 
-  const { userdata } = useContext(AppContext);
+  const { userdata, loadUserdata } = useContext(AppContext);
 
   const [listingsLoading, setListingsLoading] = useState(true);
   const [userListings, setUserListings] = useState([]);
 
   useEffect(() => {
+    loadUserdata();
     const subscriber = firestore()
       .collection('listings')
       .onSnapshot(querySnapshot => {
@@ -24,7 +22,6 @@ const UserListings = ({ theme, navigation }) => {
 
         querySnapshot.forEach(documentSnapshot => {
           userdata.listings.forEach(listing => {
-            console.log(documentSnapshot.id + ' ' + listing);
             if (documentSnapshot.id === listing)
               userListings.push({
                 ...documentSnapshot.data(),
@@ -77,7 +74,7 @@ const UserListings = ({ theme, navigation }) => {
           </View>
           {listingsLoading ? <LoadingScreen theme={theme}/> : <>
             <View style={styles.contentContainer}>
-              <CardsGrid theme={theme} items={userListings}/>
+              <CardsGrid theme={theme} items={userListings} likes/>
             </View>
           </>
           }

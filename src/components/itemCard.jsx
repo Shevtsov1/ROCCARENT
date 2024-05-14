@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
-import { Button, Icon, Rating } from "@rneui/base";
+import { Button, CheckBox, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
-const ItemCard = ({ theme, item }) => {
+const ItemCard = ({ theme, item, likes }) => {
 
   const screenWidth = Dimensions.get('window').width;
   const [ownerNickname, setOwnerNickname] = useState();
+  const [isLiked, setIsLiked] = useState(false);
 
   const cardWidth = wp(50);
   const cardMinWidth = screenWidth < 384 ? wp(100) : 192;
@@ -17,6 +19,16 @@ const ItemCard = ({ theme, item }) => {
     getOwnerNickname().then();
   }, []);
 
+  const checkIsLiked = async () => {
+    const userRef = firestore().collection('users').doc(auth().currentUser.uid);
+    const snapshot = await userRef.get();
+
+    if (snapshot.exists) {
+      const likedListings = snapshot.data().likedListings || [];
+      const isLiked = likedListings.includes(item.listingId);
+      console.log('Is Liked:', isLiked);
+    }
+  };
 
   const getOwnerNickname = async () => {
     const snapshot = await firestore().collection('users').doc(item.ownerId).get();
@@ -64,7 +76,7 @@ const ItemCard = ({ theme, item }) => {
       height: "65%",
       paddingHorizontal: 2,
     },
-    mainCardImage: { width: "100%", height: "100%" },
+    mainCardImage: { width: "100%", height: "100%", borderRadius: 15 },
     mainCardTextContainer: {
       width: "100%",
       height: "35%",
@@ -89,6 +101,12 @@ const ItemCard = ({ theme, item }) => {
     },
   });
 
+  const SaveToFavoritesBtn = (props) => (
+    <View style={{position: 'absolute', top: 0, right: 0}}>
+      <Text>Delete</Text>
+    </View>
+  );
+
   return (
     <Button containerStyle={styles.mainCardContainer} buttonStyle={styles.mainCard}
             titleStyle={{ color: theme.colors.grey1, height: 0 }}>
@@ -96,10 +114,12 @@ const ItemCard = ({ theme, item }) => {
         <View style={styles.mainCardImageContainer}>
           <FastImage source={{uri: item.mainImageUrl}} resizeMode={FastImage.resizeMode.cover}
                  style={styles.mainCardImage} />
+          {likes &&
+            <SaveToFavoritesBtn theme={theme}/>}
         </View>
         <View style={styles.mainCardTextContainer}>
-          <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
-            style={{ fontSize: 14 }}>BYN/сут</Text></Text>
+            <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
+              style={{ fontSize: 14 }}>BYN/сут</Text></Text>
           <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{ownerNickname}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
           <View style={{ flexDirection: "row" }}>
