@@ -500,6 +500,7 @@ const CreateAd = ({ theme, navigation }) => {
     }
     const mainImageUrl = await mainImageRef.getDownloadURL();
     const listingData = {
+      listingId: listingId,
       category: selectedCategory,
       subcategory: selectedSubcategory,
       ...fieldsData,
