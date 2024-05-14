@@ -12,6 +12,7 @@ import Support from "../screens/profileScreen/components/support/support";
 import EditEmail from "../screens/profileScreen/components/editProfile/editEmail";
 import EditPassport from "../screens/profileScreen/components/editProfile/editPassport";
 import EditPhoneNumber from "../screens/profileScreen/components/editProfile/editPhoneNumber";
+import UserListings from "../screens/profileScreen/components/userListings";
 
 const Stack = createNativeStackNavigator();
 
@@ -87,6 +88,8 @@ export const ProfileStackNavigator = ({
         <EditPhoneNumber {...props} theme={theme}/>}</Stack.Screen>
       <Stack.Screen name="Support" options={{headerShown: false }}>{(props) =>
         <Support {...props} theme={theme}/>}</Stack.Screen>
+      <Stack.Screen name="UserListings" options={{headerShown: false }}>{(props) =>
+        <UserListings {...props} theme={theme}/>}</Stack.Screen>
     </Stack.Navigator>
   );
 };

@@ -505,7 +505,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
             <Button containerStyle={[styles.profileAppDataBtnContainer, {
               borderBottomStartRadius: 15, borderBottomEndRadius: 15,
             }]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                    onPress={() => navigation.navigate("DealArchive")}>
+                    onPress={() => navigation.navigate("UserListings")}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
               }}>Мои объявления</Text>
