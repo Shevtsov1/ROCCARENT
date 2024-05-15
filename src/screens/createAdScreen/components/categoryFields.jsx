@@ -50,92 +50,33 @@ export const translateAddressName = (fullAddress) => {
   return translatedRegion && translatedCity ? translatedRegion + ", " + translatedCity : fullAddress;
 };
 
-const verifySelectedImages = (selectedImages) => {
-  return selectedImages.length > 0 && selectedImages.length <= 20;
-};
-
-const verifyCategory = (category) => {
-  return !!category;
-};
-
-const verifySubcategory = (subcategory) => {
-  return !!subcategory;
-};
-
 const verifyFieldsData = (fieldsData) => {
-  const title = fieldsData.title;
-  const description = fieldsData.description;
-  const price = fieldsData.price;
-  const dates = fieldsData.dates;
+  const { title, description, price, dates } = fieldsData;
 
-  const verifyTitle = () => {
-    if (title) {
-      const titleRegex = /^[a-zA-Zа-яА-Я\d\s.\-()]+$/;
-      return titleRegex.test(title);
-    }
-    return false;
-  };
+  const verifyField = (field, regex) => field && regex.test(field);
 
-  const verifyDescription = () => {
-    if (description) {
-      const descriptionRegex = /^[a-zA-Zа-яА-Я\d\s.\-()\/_~!$&*'+,;=@[\]%#]+$/;
-      return descriptionRegex.test(description);
-    }
-    return false;
-  };
+  const titleReady = verifyField(title, /^[a-zA-Zа-яА-Я\d\s.\-()]+$/);
+  const descriptionReady = verifyField(description, /^[a-zA-Zа-яА-Я\d\s.\-()\/_~!$&*'+,;=@[\]%#]+$/);
+  const priceReady = verifyField(price, /^\d+(.\d{1,2})?$/);
+  const datesReady = dates && dates.startsDay && dates.endsDay;
 
-  const verifyPrice = () => {
-    if (price) {
-      const priceRegex = /^\d+(.\d{1,2})?$/;
-      return priceRegex.test(price);
-    }
-    return false;
-  };
-
-  const verifyDates = () => {
-    if (dates) {
-      if (dates.startsDay && dates.endsDay) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const titleReady = verifyTitle();
-  const descriptionReady = verifyDescription();
-  const priceReady = verifyPrice();
-  const datesReady = verifyDates();
   return titleReady && descriptionReady && priceReady && datesReady;
 };
 
-const verifySelectedCoordinates = (selectedCoordinates) => {
-  if (selectedCoordinates) {
-    if (selectedCoordinates.address) {
-      return true;
-    }
-  }
-  return false;
-};
-
 export const verifyNewListingDataBeforeCreating = ({
-                                  theme,
-                                  selectedImages,
-                                  category,
-                                  subcategory,
-                                  fieldsData,
-                                  selectedCoordinates,
-                                  setIsSubmitBtnEnabled,
-                                }) => {
-
-  const selectedImagesReady = verifySelectedImages(selectedImages);
-  const categoryReady = verifyCategory(category);
-  const subcategoryReady = verifySubcategory(subcategory);
+                                                     selectedImages,
+                                                     category,
+                                                     subcategory,
+                                                     fieldsData,
+                                                     selectedCoordinates,
+                                                     setIsSubmitBtnEnabled,
+                                                   }) => {
+  const selectedImagesReady = selectedImages.length > 0 && selectedImages.length <= 20;
+  const categoryReady = !!category;
+  const subcategoryReady = !!subcategory;
   const fieldsDataReady = verifyFieldsData(fieldsData);
-  const selectedCoordinatesReady = verifySelectedCoordinates(selectedCoordinates);
+  const selectedCoordinatesReady = selectedCoordinates && selectedCoordinates.address;
 
-  if (selectedImagesReady && categoryReady && subcategoryReady && fieldsDataReady && selectedCoordinatesReady) {
-    setIsSubmitBtnEnabled(true);
-  } else {
-    setIsSubmitBtnEnabled(false);
-  }
+  setIsSubmitBtnEnabled(selectedImagesReady && categoryReady && subcategoryReady && fieldsDataReady && selectedCoordinatesReady);
 };
+
