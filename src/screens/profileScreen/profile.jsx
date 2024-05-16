@@ -16,6 +16,7 @@ import { launchImageLibrary } from "react-native-image-picker";
 import ImageResizer from "@bam.tech/react-native-image-resizer";
 import LoadingScreen from "../../components/loadingScreen";
 import { AppContext } from "../../../App";
+import { BottomSheet } from "@rneui/base";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
 
@@ -304,52 +305,46 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                       resizeMode={FastImage.resizeMode.contain}
                     />
                   </TouchableOpacity>
-                  <Overlay overlayStyle={styles.logoutOverlay} isVisible={visible} onBackdropPress={toggleOverlay}>
-                    <ShadowedView style={[{ alignSelf: "center", borderRadius: 15 }, shadowStyle({
-                      color: theme.colors.error, opacity: 0.1, radius: 15, offset: [0, 2],
-                    })]}>
-                      <Icon type={"ionicon"} name={"warning-outline"} color={theme.colors.error} size={36} />
-                    </ShadowedView>
-                    <View style={{ alignSelf: "center" }}>
-                      <Text
-                        style={{
-                          fontFamily: "Roboto-Black", fontSize: 18, color: theme.colors.text, marginBottom: 6,
+                  <BottomSheet modalProps={{}} isVisible={visible} onBackdropPress={toggleOverlay}>
+                    <View style={{backgroundColor: theme.colors.background}}>
+                      <View style={{ alignSelf: "center" }}>
+                        <Text
+                          style={{
+                            fontFamily: "Roboto-Black", fontSize: 18, color: theme.colors.text, marginBottom: 6,
+                          }}>
+                          Выход из аккаунта
+                        </Text>
+                      </View>
+                      <View style={{ alignSelf: "center" }}>
+                        <Text style={{ fontFamily: "Roboto-Medium", fontSize: 14, color: theme.colors.text }}>
+                          Вы уверены что хотите выйти?
+                        </Text>
+                        <Text style={{
+                          fontFamily: "Roboto-Medium",
+                          fontSize: 12,
+                          color: theme.colors.text,
+                          alignSelf: "center",
+                          marginBottom: 12,
                         }}>
-                        Выход из аккаунта
-                      </Text>
-                    </View>
-                    <View style={{ alignSelf: "center" }}>
-                      <Text style={{ fontFamily: "Roboto-Medium", fontSize: 14, color: theme.colors.text }}>
-                        Вы уверены что хотите выйти?
-                      </Text>
-                      <Text style={{
-                        fontFamily: "Roboto-Medium",
-                        fontSize: 12,
-                        color: theme.colors.text,
-                        alignSelf: "center",
-                        marginBottom: 12,
-                      }}>
-                        (Ваши данные будут сохранены)
-                      </Text>
-                    </View>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                          (Ваши данные будут сохранены)
+                        </Text>
+                      </View>
                       <TouchableOpacity style={{
-                        width: "46%",
+                        width: "100%",
                         height: 36,
-                        borderRadius: 15,
                         backgroundColor: theme.colors.grey3,
                         alignItems: "center",
                         justifyContent: "center",
+                        marginBottom: 6,
                       }} onPress={toggleOverlay}>
                         <Text
                           style={{
-                            fontFamily: "Roboto-Bold", color: theme.colors.accentText, fontSize: 16,
-                          }}>Назад</Text>
+                            fontFamily: "Roboto-Bold", color: theme.colors.text, fontSize: 16,
+                          }}>Отмена</Text>
                       </TouchableOpacity>
                       <TouchableOpacity style={{
-                        width: "46%",
+                        width: "100%",
                         height: 36,
-                        borderRadius: 15,
                         backgroundColor: theme.colors.error,
                         alignItems: "center",
                         justifyContent: "center",
@@ -360,7 +355,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                           }}>Выйти</Text>
                       </TouchableOpacity>
                     </View>
-                  </Overlay>
+                  </BottomSheet>
                 </View>
                 <View style={styles.profileMainCardBody}>
                   <View>
