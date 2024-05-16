@@ -528,16 +528,16 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
             </Button>
           </>}
-          <Divider />
-          <Button containerStyle={[styles.profileAppDataBtnContainer, (auth().currentUser.isAnonymous && {
-            borderBottomStartRadius: 15, borderBottomEndRadius: 15,
-          })]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-                  onPress={() => navigation.navigate("Settings")}>
-            <Text style={{
-              fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
-            }}>Настройки</Text>
-            <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />
-          </Button>
+          {/*<Divider />*/}
+          {/*<Button containerStyle={[styles.profileAppDataBtnContainer, (auth().currentUser.isAnonymous && {*/}
+          {/*  borderBottomStartRadius: 15, borderBottomEndRadius: 15,*/}
+          {/*})]} buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}*/}
+          {/*        onPress={() => navigation.navigate("Settings")}>*/}
+          {/*  <Text style={{*/}
+          {/*    fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,*/}
+          {/*  }}>Настройки</Text>*/}
+          {/*  <Icon type={"ionicon"} name={"chevron-forward"} size={18} color={theme.colors.text} />*/}
+          {/*</Button>*/}
           {!auth().currentUser.isAnonymous && <>
             <Divider />
             <Button containerStyle={[styles.profileAppDataBtnContainer, {
