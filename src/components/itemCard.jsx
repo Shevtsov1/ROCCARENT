@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { BottomSheet, Button, CheckBox, Icon, Rating } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
+import { AppContext } from "../../App";
 
-const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
+const ItemCard = ({ theme, item, likes, editBtn, deleteBtn,}) => {
+
+  const { userdata, loadUserdata } = useContext(AppContext);
+
+  const [cardLikeLoading, setCardLikeLoading] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const screenWidth = Dimensions.get("window").width;
   const [ownerNickname, setOwnerNickname] = useState();
-  const [isLiked, setIsLiked] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const contentWidth = screenWidth - 24;
   const cardWidth = wp(50);
   const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
-
-  useEffect(() => {
-    getOwnerNickname().then();
-  }, []);
 
   const checkIsLiked = async () => {
     const userRef = firestore().collection("users").doc(auth().currentUser.uid);
@@ -93,6 +94,28 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
     setDeleteModalOpen(false);
   };
 
+  const handleLikePress = async () => {
+    const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+    if (snapshot.exists) {
+      if (snapshot.data() && snapshot.data().favoriteListings) {
+        const favoriteListings = snapshot.data().favoriteListings;
+        if (favoriteListings.includes(item.listingId)) {
+          const index = favoriteListings.findIndex(listing => listing === item.listingId);
+          if (index !== -1) {
+            favoriteListings.splice(index, 1);
+          }
+          await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+        } else {
+          favoriteListings.push(item.listingId);
+          await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+        }
+      } else {
+        await firestore().collection("users").doc(auth().currentUser.uid).set({ favoriteListings: [item.listingId] });
+      }
+      loadUserdata();
+    }
+  };
+
   const styles = StyleSheet.create({
     mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 15 },
     mainCard: {
@@ -139,9 +162,37 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
   });
 
   const SaveToFavoritesBtn = (props) => (
-    <View style={{ position: "absolute", top: 0, right: 0 }}>
-      <Text>Save</Text>
-    </View>
+    cardLikeLoading ?
+      <View style={{
+        position: "absolute",
+        top: 0,
+        right: 0,
+        padding: 6,
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 15,
+        borderBottomStartRadius: 5,
+        backgroundColor: `${theme.colors.background}AA`,
+      }}>
+        <ActivityIndicator size={24} color={theme.colors.accent} />
+      </View>
+      :
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          padding: 6,
+          borderTopStartRadius: 5,
+          borderTopEndRadius: 15,
+          borderBottomStartRadius: 5,
+          backgroundColor: `${theme.colors.background}AA`,
+        }}
+        onPress={handleLikePress}
+      >
+        <FastImage
+          source={userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
+          style={{ width: 30, height: 30 }} tintColor={theme.colors.accent} resizeMode={FastImage.resizeMode.contain} />
+      </TouchableOpacity>
   );
 
   return (
@@ -154,25 +205,25 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
           {likes &&
             <SaveToFavoritesBtn theme={theme} />}
           {editBtn &&
-          <>
-            <TouchableOpacity
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                padding: 6,
-                borderTopEndRadius: 5,
-                borderTopStartRadius: 15,
-                borderBottomEndRadius: 5,
-                backgroundColor: `${theme.colors.background}AA`,
-              }}
-              onPress={() => {
-                setDeleteModalOpen(true);
-              }}
-            >
-              <Icon type={"ionicon"} name={"pencil"} color={theme.colors.accent} />
-            </TouchableOpacity>
-          </>
+            <>
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  padding: 6,
+                  borderTopEndRadius: 5,
+                  borderTopStartRadius: 15,
+                  borderBottomEndRadius: 5,
+                  backgroundColor: `${theme.colors.background}AA`,
+                }}
+                onPress={() => {
+                  setDeleteModalOpen(true);
+                }}
+              >
+                <Icon type={"ionicon"} name={"pencil"} color={theme.colors.accent} size={30}/>
+              </TouchableOpacity>
+            </>
           }
           {deleteBtn &&
             <>
@@ -191,7 +242,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
                   setDeleteModalOpen(true);
                 }}
               >
-                <Icon type={"ionicon"} name={"trash"} color={theme.colors.accent} />
+                <Icon type={"ionicon"} name={"trash"} color={theme.colors.accent} size={30} />
               </TouchableOpacity>
               <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
                            onBackdropPress={() => setDeleteModalOpen(false)}>

@@ -7,7 +7,6 @@ import auth from "@react-native-firebase/auth";
 import AuthHint from "./components/authHint";
 import ScreenHeader from "../../components/ScreenHeader";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import firestore from "@react-native-firebase/firestore";
 
 const Main = ({ theme }) => {

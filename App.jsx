@@ -11,7 +11,13 @@ import NetInfo from "@react-native-community/netinfo";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
-import { getNickname, getPassportData, getPhoneNumber, getUserListings } from "./src/components/preloadUserdata";
+import {
+  getNickname,
+  getPassportData,
+  getPhoneNumber,
+  getUserFavoriteListings,
+  getUserListings,
+} from "./src/components/preloadUserdata";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import firestore from "@react-native-firebase/firestore";
 
@@ -60,7 +66,9 @@ const App = React.memo(() => {
       try {
         const currentUser = auth().currentUser;
         if (!currentUser || currentUser.isAnonymous) {
-          await auth().signInAnonymously();
+          await auth().signInAnonymously().then(async () => {
+            await firestore().collection('users').doc(auth().currentUser.uid).set({ favoriteListings: [] })
+          });
           await onGoogleButtonPress();
         }
         await preloadImages();
@@ -159,11 +167,13 @@ const App = React.memo(() => {
     const passportData = await getPassportData();
     const phoneNumber = await getPhoneNumber();
     const listings = await getUserListings();
+    const favoriteListings = await getUserFavoriteListings();
     const updatedUserdata = {
       nickname,
       passportData,
       phoneNumber,
       listings,
+      favoriteListings,
     };
     setUserdata(updatedUserdata);
   };
@@ -196,6 +206,10 @@ const App = React.memo(() => {
 
       // Sign-in the user with the credential
       await auth().signInWithCredential(googleCredential);
+      const snapshot = await firestore().collection('users').doc(auth().currentUser.uid).get();
+      if (!snapshot.exists) {
+        await firestore().collection('users').doc(auth().currentUser.uid).set({favoriteListings: []});
+      }
     } catch (error) {
       console.log(error);
     }

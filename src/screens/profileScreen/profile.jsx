@@ -17,6 +17,7 @@ import ImageResizer from "@bam.tech/react-native-image-resizer";
 import LoadingScreen from "../../components/loadingScreen";
 import { AppContext } from "../../../App";
 import { BottomSheet } from "@rneui/base";
+import firestore from "@react-native-firebase/firestore";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
 
@@ -63,6 +64,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
       await auth().signOut().then(GoogleSignin.signOut());
     }
     await auth().signInAnonymously();
+    const snapshot = await firestore().collection('users').doc(auth().currentUser.uid).get();
+    if (!snapshot.exists) {
+      await firestore().collection('users').doc(auth().currentUser.uid).set({favoriteListings: []});
+    }
     setInitializing(false);
   };
 
