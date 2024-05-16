@@ -14,8 +14,9 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const contentWidth = screenWidth - 24;
   const cardWidth = wp(50);
-  const cardMinWidth = screenWidth < 384 ? wp(100) : 192;
+  const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
 
   useEffect(() => {
     getOwnerNickname().then();
