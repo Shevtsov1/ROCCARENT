@@ -5,8 +5,9 @@ import LoadingScreen from "../../components/loadingScreen";
 import CardsGrid from "../../components/cardsGrid";
 import { AppContext } from "../../../App";
 import firestore from "@react-native-firebase/firestore";
+import { Button } from "@rneui/base";
 
-const Favorites = ({ theme }) => {
+const Favorites = ({ theme, navigation }) => {
 
   const { userdata, loadUserdata } = useContext(AppContext);
 
@@ -70,7 +71,29 @@ const Favorites = ({ theme }) => {
         {listingsLoading ? <LoadingScreen theme={theme} /> :
           <>
             <View style={styles.contentContainer}>
-              <CardsGrid theme={theme} items={favoriteListings} likes/>
+              {favoriteListings.length === 0 ?
+                <>
+                  <View style={{ justifyContent: "center", alignItems: "center", padding: 12, }}>
+                    <Text style={{
+                      fontFamily: "Roboto-Regular",
+                      fontSize: 16,
+                      color: theme.colors.text,
+                      marginBottom: 12,
+                    }}>Вы не добавляли объявления в избранное</Text>
+                    <Button containerStyle={{ borderRadius: 5, width: '100%' }} buttonStyle={{ height: 48, width: '100%', backgroundColor: theme.colors.accent }}
+                            titleStyle={{backgroundColor: theme.colors.grey1}}
+                            onPress={() => navigation.navigate("Main")}>
+                      <Text style={{
+                        fontFamily: "Roboto-Regular",
+                        fontSize: 14,
+                        color: theme.colors.accentText,
+                      }}>Перейти к просмотру объявлений</Text>
+                    </Button>
+                  </View>
+                </>
+                :
+                <CardsGrid theme={theme} items={favoriteListings} likes />
+              }
             </View>
           </>
         }
