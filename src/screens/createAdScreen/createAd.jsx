@@ -293,7 +293,7 @@ const CreateAd = ({ theme, navigation }) => {
     const currentYear = currentDate.getFullYear();  // Получаем текущий год
     const currentMonth = currentDate.getMonth();  // Получаем текущий год
     const currentDay = currentDate.getDate();  // Получаем текущий год
-    const desiredYear = currentYear + 2;  // Например, добавляем 1 год
+    const desiredYear = currentYear + 3;  // Добавляем 3 года
     const maximumDate = new Date(desiredYear, currentMonth, currentDay);  // 1 января желаемого года
     DateTimePickerAndroid.open({
       value: new Date(),
@@ -486,6 +486,7 @@ const CreateAd = ({ theme, navigation }) => {
       ownerId: auth().currentUser.uid,
       ownerPhoneNumber: auth().currentUser.phoneNumber,
       creationDate: formattedDate,
+      city: translateAddressName(getAddressName(selectedCoordinates.display_name)).split(', ')[0],
     };
     await firestore().collection("listings").doc(listingId).set(listingData);
 
