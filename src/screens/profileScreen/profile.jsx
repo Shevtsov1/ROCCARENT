@@ -436,7 +436,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           <Button
             containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
-            onPress={() => navigation.navigate("EditPassport", { passportData: userdata.passportData })}>
+            onPress={() => navigation.navigate("EditPassport", { passportData: userdata.passportData})}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,

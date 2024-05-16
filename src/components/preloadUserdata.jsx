@@ -1,6 +1,7 @@
 import React from "react";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import CryptoJS from "react-native-crypto-js";
 
 export  const getNickname = async () => {
     const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
@@ -14,10 +15,14 @@ export  const getNickname = async () => {
 export  const getPassportData = async () => {
   const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get()
       if (snapshot.exists && snapshot.data().passportData) {
+        let decryptedData;
         const localPassportData = snapshot.data().passportData;
-        const visibleText = localPassportData.slice(0, 3);
-        const hiddenText = localPassportData.slice(3, -1).replace(/./g, "*");
-        const lastVisibleChar = localPassportData.slice(-1);
+        const secretKey = '2024roccarentbyvshevtsov2024'; // 32-байтовый ключ
+        const bytes = CryptoJS.AES.decrypt(localPassportData, secretKey);
+        decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+        const visibleText = decryptedData.slice(0, 3);
+        const hiddenText = decryptedData.slice(3, -1).replace(/./g, "*");
+        const lastVisibleChar = decryptedData.slice(-1);
         return (visibleText + hiddenText + lastVisibleChar);
       } else {
         return "";

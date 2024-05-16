@@ -7,7 +7,7 @@ import TextRecognition from "@react-native-ml-kit/text-recognition";
 import { useCameraDevice, useCameraPermission, Camera } from "react-native-vision-camera";
 import FastImage from "react-native-fast-image";
 import { launchImageLibrary } from "react-native-image-picker";
-import storage from "@react-native-firebase/storage";
+import CryptoJS from 'react-native-crypto-js';
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { AppContext } from "../../../../../App";
@@ -108,17 +108,18 @@ const EditPassport = ({ theme, navigation, route }) => {
 
   const uploadPassportImage = async (newPassportData) => {
     try {
+      const secretKey = '2024roccarentbyvshevtsov2024'; // 32-байтовый ключ
+      const ciphertext = CryptoJS.AES.encrypt(newPassportData.toString(), secretKey).toString();
       const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
       if (snapshot.exists) {
         await firestore().collection("users").doc(auth().currentUser.uid).update({
-          passportData: newPassportData,
+          passportData: ciphertext,
         });
       } else {
         await firestore().collection("users").doc(auth().currentUser.uid).set({
-          passportData: newPassportData,
+          passportData: ciphertext,
         });
       }
-      console.log("Image uploaded successfully");
     } catch (error) {
       console.log("Error uploading image:", error);
     }
