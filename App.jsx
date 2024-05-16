@@ -13,6 +13,7 @@ import FastImage from "react-native-fast-image";
 import interfaceIcons from "./src/components/interfaceIcons";
 import { getNickname, getPassportData, getPhoneNumber, getUserListings } from "./src/components/preloadUserdata";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import firestore from "@react-native-firebase/firestore";
 
 export const AppContext = createContext();
 
@@ -115,6 +116,22 @@ const App = React.memo(() => {
       loadUserdata().then();
     }
   }, [auth().currentUser]);
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('users')
+      .doc(auth().currentUser.uid)
+      .onSnapshot(async documentSnapshot => {
+        if (documentSnapshot.exists) {
+          await loadUserdata();
+        } else {
+          console.log('User does not exist');
+        }
+      });
+
+    // Отписаться от прослушивателя при размонтировании компонента
+    subscriber();
+  }, [auth().currentUser.uid]);
 
 
   // Загрузка сохраненной темы при запуске приложения
