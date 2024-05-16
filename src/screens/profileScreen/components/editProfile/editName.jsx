@@ -83,7 +83,12 @@ const EditName = ({ theme, navigation, route }) => {
     setIsSubmitBtnLoading(true);
     try {
       if (newNickname) {
-        await firestore().collection("users").doc(auth().currentUser.uid).update({ nickname: newNickname });
+        const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+        if (snapshot.exists) {
+          await firestore().collection("users").doc(auth().currentUser.uid).update({ nickname: newNickname });
+        } else {
+          await firestore().collection("users").doc(auth().currentUser.uid).set({ nickname: newNickname });
+        }
       }
       if (newName && newSurname) {
         await auth().currentUser.updateProfile({
