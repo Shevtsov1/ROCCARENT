@@ -126,19 +126,21 @@ const App = React.memo(() => {
   }, [auth().currentUser]);
 
   useEffect(() => {
-    const subscriber = firestore()
-      .collection('users')
-      .doc(auth().currentUser.uid)
-      .onSnapshot(async documentSnapshot => {
-        if (documentSnapshot.exists) {
-          await loadUserdata();
-        } else {
-          console.log('User does not exist');
-        }
-      });
+    if (auth().currentUser) {
+      const subscriber = firestore()
+        .collection('users')
+        .doc(auth().currentUser.uid)
+        .onSnapshot(async documentSnapshot => {
+          if (documentSnapshot.exists) {
+            await loadUserdata();
+          } else {
+            console.log('User does not exist');
+          }
+        });
 
-    // Отписаться от прослушивателя при размонтировании компонента
-    subscriber();
+      // Отписаться от прослушивателя при размонтировании компонента
+      subscriber();
+    }
   }, []);
 
 

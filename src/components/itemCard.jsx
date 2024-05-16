@@ -155,7 +155,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn,}) => {
         onPress={handleLikePress}
       >
         <FastImage
-          source={userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
+          source={userdata && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
           style={{ width: 30, height: 30 }} tintColor={theme.colors.accent} resizeMode={FastImage.resizeMode.contain} />
       </TouchableOpacity>
   );
