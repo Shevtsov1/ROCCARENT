@@ -94,7 +94,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
   };
 
   const styles = StyleSheet.create({
-    mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 0 },
+    mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 15 },
     mainCard: {
       width: "100%",
       height: "100%",
@@ -104,7 +104,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn }) => {
       paddingHorizontal: 0,
       justifyContent: "flex-start",
       alignItems: "center",
-
+      borderRadius: 15,
     }, mainCardContentContainer: {
       width: "100%",
       height: "100%",
