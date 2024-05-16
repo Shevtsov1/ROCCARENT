@@ -12,7 +12,6 @@ const interfaceIcons = [
   require('../assets/images/sun.png'),
   require('../assets/images/moon.png'),
   require('../assets/images/usingPhone/auth.png'),
-  require('../assets/images/user-pen.png'),
   require('../assets/images/logo/logo.png'),
   require('../assets/images/google-icon.png'),
 ];

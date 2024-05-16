@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, Modal, Button, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, Modal, Button, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { Icon } from "@rneui/base";
 
 const Terms = ({ theme, isVisible, onClose, handleConfirm, isChecked }) => {
   const [isScrollAtBottom, setIsScrollAtBottom] = useState(isChecked);
@@ -60,11 +61,7 @@ const Terms = ({ theme, isVisible, onClose, handleConfirm, isChecked }) => {
         <View style={styles.modalContent}>
           <Text style={styles.title}>Пользовательское соглашение RoccaRent</Text>
           <TouchableOpacity onPress={() => onClose()} style={styles.closeButton}>
-            <Image
-              source={require("../../assets/images/SearchBar/cancel.png")}
-              style={styles.closeImage}
-              resizeMode={"contain"}
-            />
+            <Icon size={24} color={theme.colors.text} type={'ionicon'} name={'close'}/>
           </TouchableOpacity>
           <ScrollView
             style={{ maxHeight: "100" }}
