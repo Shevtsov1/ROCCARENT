@@ -1,11 +1,12 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const Chat = ({theme, messages, handleSendMessage, handleChangeMessage}) => {
+const Chat = ({theme}) => {
   return (
-    <View>
+    <SafeAreaView>
       <Text>Chat</Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

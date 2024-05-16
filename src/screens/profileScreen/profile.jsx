@@ -285,8 +285,8 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               </>}
               {!auth().currentUser.isAnonymous && <>
                 <View style={styles.profileMainCardHeader}>
-                  <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-                    <Icon type={"ionicon"} name={"settings-outline"} size={24} color={theme.colors.text} />
+                  <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+                    <Icon type={"ionicon"} name={"chatbubbles-outline"} size={26} color={theme.colors.accent} />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ position: "absolute", top: 0, right: 0 }}

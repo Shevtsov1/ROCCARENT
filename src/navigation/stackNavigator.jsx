@@ -14,6 +14,7 @@ import EditPassport from "../screens/profileScreen/components/editProfile/editPa
 import EditPhoneNumber from "../screens/profileScreen/components/editProfile/editPhoneNumber";
 import UserListings from "../screens/profileScreen/components/userListings";
 import firestore from "@react-native-firebase/firestore";
+import Chat from "../screens/chat/chat";
 
 const Stack = createNativeStackNavigator();
 
@@ -96,6 +97,8 @@ export const ProfileStackNavigator = ({
         <Support {...props} theme={theme} />}</Stack.Screen>
       <Stack.Screen name="UserListings" options={{ headerShown: false }}>{(props) =>
         <UserListings {...props} theme={theme} />}</Stack.Screen>
+      <Stack.Screen name="Chat" options={{ headerShown: false }}>{(props) =>
+        <Chat {...props} theme={theme} />}</Stack.Screen>
     </Stack.Navigator>
   );
 };
