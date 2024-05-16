@@ -486,7 +486,7 @@ const CreateAd = ({ theme, navigation }) => {
       ownerId: auth().currentUser.uid,
       ownerPhoneNumber: auth().currentUser.phoneNumber,
       creationDate: formattedDate,
-      city: translateAddressName(getAddressName(selectedCoordinates.display_name)).split(', ')[0],
+      city: translateAddressName(getAddressName(selectedCoordinates.display_name)).split(', ')[0].trim(),
     };
     await firestore().collection("listings").doc(listingId).set(listingData);
 

@@ -120,7 +120,7 @@ const ItemCard = ({ theme, item, likes }) => {
         <View style={styles.mainCardTextContainer}>
             <Text numberOfLines={1} style={styles.mainCardTextPrice}>{item.price}{' '}<Text
               style={{ fontSize: 14 }}>BYN/сут</Text></Text>
-          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{ownerNickname}</Text>
+          <Text numberOfLines={1} style={[styles.mainCardTextTitle, {opacity: 0.8}]}>{item.city}</Text>
           <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
           <View style={{ flexDirection: "row" }}>
             {item.ratings ? <>
