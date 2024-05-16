@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, ToastAndroid,
@@ -19,12 +19,16 @@ import { AppContext } from "../../../App";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
 
-  const { userdata } = useContext(AppContext);
+  const { userdata, loadUserdata } = useContext(AppContext);
 
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
   const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
+
+  useLayoutEffect(() => {
+    loadUserdata();
+  }, []);
 
   const handleToggleModePress = () => {
     switchTheme({
