@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/profileScreen/profile";
 import LogIn from "../screens/authScreen/logIn";
@@ -55,8 +55,6 @@ export const ProfileStackNavigator = ({
     }
   };
 
-  const [passportData, setPassportData] = useState("");
-
   return (
     <Stack.Navigator
       initialRouteName={"Profile"}
@@ -72,7 +70,7 @@ export const ProfileStackNavigator = ({
       }}>
       <Stack.Screen name="Profile" options={{ title: "Профиль", headerShown: false }}>{(props) =>
         <Profile {...props} user={user} theme={theme} toggleMode={toggleMode}
-                 setInitializing={setInitializing} passportData={passportData} />}</Stack.Screen>
+                 setInitializing={setInitializing} />}</Stack.Screen>
       <Stack.Screen name="LogIn" options={{ title: "Вход", headerShown: false }}>{(props) =>
         <LogIn {...props} user={user} theme={theme} setInitializing={setInitializing}
                setLoadingScreenText={setLoadingScreenText} onGoogleButtonPress={onGoogleButtonPress} />}</Stack.Screen>

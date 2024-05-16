@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, ToastAndroid,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, ToastAndroid,
 } from "react-native";
-import { Overlay, Avatar, Button, Divider, Icon, Skeleton, Badge } from "@rneui/themed";
+import { Button, Divider, Icon, Skeleton, Badge } from "@rneui/themed";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,11 +23,11 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
   const { userdata, loadUserdata } = useContext(AppContext);
 
   const [isAvatarLoading, setIsAvatarLoading] = useState(true);
-  const [backendProcess, setBackendProcess] = useState(false);
   const [visible, setVisible] = useState(false);
   const [isSun, setIsSun] = useState(theme.mode === "light");
 
   useLayoutEffect(() => {
+
     loadUserdata();
   }, []);
 
@@ -218,10 +217,6 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
       alignSelf: "center", fontFamily: "Roboto-Regular", color: theme.colors.text,
     },
   });
-
-  if (backendProcess) {
-    return (<LoadingScreen theme={theme} />);
-  }
 
   if (auth().currentUser && !auth().currentUser.isAnonymous && !userdata) {
     return (<LoadingScreen theme={theme} />);
@@ -457,7 +452,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
             containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn]} titleStyle={{ color: theme.colors.grey1 }}
             onPress={() => navigation.navigate(
-              "EditPhoneNumber", { phoneNumber: userdata.phoneNumber })}>
+              "EditPhoneNumber")}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,

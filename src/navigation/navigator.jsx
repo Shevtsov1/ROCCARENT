@@ -170,7 +170,7 @@ const BottomTabNavigator = React.memo(({ theme, toggleMode, isDarkMode, routeNam
         {TabArr.map((item, index) => {
           return (
             <Tab.Screen key={index} name={item.route}
-                        options={({ route }) => ({
+                        options={() => ({
                           tabBarStyle: routeWithoutTabBar ? { display: "none" } : { borderTopWidth: 0, height: 48 },
                           tabBarShowLabel: false,
                           tabBarButton: (props) => (
@@ -200,7 +200,6 @@ const AppNavigator = ({ setInitializing, theme, toggleMode, setLoadingScreenText
         setRouteName(ref.getCurrentRoute().name);
       }}
       onStateChange={async () => {
-        const previousRouteName = routeName;
         const currentRouteName = ref.getCurrentRoute().name;
         setRouteName(currentRouteName);
       }}>

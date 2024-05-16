@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -26,7 +26,6 @@ const EditPassport = ({ theme, navigation, route }) => {
   const [isTakingPhotoFromCameraLibrary, setTakingPhotoFromCameraLibrary] = useState(false);
 
   const [passportPhoto, setPassportPhoto] = useState("");
-  const [passportVerified, setPassportVerified] = useState(false);
   const passportRegexPattern = /^\d{7}[A-Z]\d{3}[A-Z]{2}\d$/;
 
   const handleOpenCamera = async () => {
@@ -91,7 +90,6 @@ const EditPassport = ({ theme, navigation, route }) => {
       const element = finalArray[i];
       if (passportRegexPattern.test(element.trim())) {
         newPassportData = element;
-        setPassportVerified(true);
       }
     }
     if (newPassportData) {

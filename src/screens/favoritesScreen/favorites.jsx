@@ -9,10 +9,10 @@ import { Button } from "@rneui/base";
 
 const Favorites = ({ theme, navigation }) => {
 
-  const { userdata, loadUserdata } = useContext(AppContext);
+  const { userdata } = useContext(AppContext);
 
   const [listingsLoading, setListingsLoading] = useState(true);
-  const [favoriteListings, setFavoriteListings] = useState(userdata.favoriteListings);
+  const [favoriteListings, setFavoriteListings] = useState([]);
 
   useEffect(() => {
     const fetchFavoriteListings = async () => {

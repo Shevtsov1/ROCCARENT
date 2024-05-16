@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import React from "react";
 
 export const Belarus = [
   { "Minsk Region": [{ "Minsk Region": "Минский район" }, { "Minsk": "Минск" }, { "Barysaw": "Борисов" }, { "Salihorsk": "Солигорск" }, { "Maladzyechna": "Молодечно" }, { "Zhodzina": "Жодино" }, { "Slutsk": "Слуцк" }, { "Vilyeyka": "Вилейка" }, { "Dzyarzhynsk": "Дзержинск" }, { "Maryina Horka": "Марьина Горка" }, { "Stowbtsy": "Столбцы" }, { "Smalyavichy": "Смолевичи" }, { "Zaslawye": "Заславль" }, { "Nyasvizh": "Несвиж" }, { "Fanipal": "Фаниполь" }, { "Byerazino": "Березино" }, { "Lyuban": "Любань" }, { "Lahoysk": "Логойск" }, { "Staryya Darohi": "Старые Дороги" }, { "Klyetsk": "Клецк" }, { "Valozhyn": "Воложин" }, { "Chervyen": "Червень" }, { "Kapyl": "Копыль" }, { "Uzda": "Узда" }, { "Krupki": "Крупки" }, { "Myadzyel": "Мядель" }] },

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
 import AuthHint from "./components/authHint";
-import ScreenHeader from "../../components/ScreenHeader";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import firestore from "@react-native-firebase/firestore";
 
@@ -53,7 +51,6 @@ const Main = ({ theme }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
-        <ScreenHeader theme={theme} page={"main"} />
         {auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme} />}
         {listings &&
           <ShadowedView style={[{ marginBottom: 12 }, shadowStyle({

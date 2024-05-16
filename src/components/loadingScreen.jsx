@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const LoadingScreen = ({ theme, text, textColor }) => (
+const LoadingScreen = ({ theme }) => (
   <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background}}>
     <ActivityIndicator color={theme.colors.accent} size={48}/>
   </SafeAreaView>

@@ -5,11 +5,7 @@ import { AppContext } from "../../../../App";
 import firestore from "@react-native-firebase/firestore";
 import LoadingScreen from "../../../components/loadingScreen";
 import CardsGrid from "../../../components/cardsGrid";
-import auth from "@react-native-firebase/auth";
-import { query } from "@react-native-firebase/firestore/lib/modular/query";
-import { onSnapshot } from "@react-native-firebase/firestore/lib/modular/snapshot";
 import { Button } from "@rneui/base";
-import { widthPercentageToDP } from "react-native-responsive-screen";
 
 const UserListings = ({ theme, navigation }) => {
 

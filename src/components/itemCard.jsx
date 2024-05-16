@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
-import { BottomSheet, Button, CheckBox, Icon, Rating } from "@rneui/base";
+import React, { useContext, useState } from "react";
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity } from "react-native";
+import { BottomSheet, Button, Icon } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
@@ -12,34 +12,13 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn,}) => {
 
   const { userdata, loadUserdata } = useContext(AppContext);
 
-  const [cardLikeLoading, setCardLikeLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-
   const screenWidth = Dimensions.get("window").width;
-  const [ownerNickname, setOwnerNickname] = useState();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const contentWidth = screenWidth - 24;
   const cardWidth = wp(50);
   const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
 
-  const checkIsLiked = async () => {
-    const userRef = firestore().collection("users").doc(auth().currentUser.uid);
-    const snapshot = await userRef.get();
-
-    if (snapshot.exists) {
-      const likedListings = snapshot.data().likedListings || [];
-      const isLiked = likedListings.includes(item.listingId);
-      console.log("Is Liked:", isLiked);
-    }
-  };
-
-  const getOwnerNickname = async () => {
-    const snapshot = await firestore().collection("users").doc(item.ownerId).get();
-    if (snapshot.exists && snapshot.data().nickname) {
-      setOwnerNickname(snapshot.data().nickname);
-    }
-  };
 
   function getRatingWord(count) {
     const lastDigit = count % 10;
@@ -161,21 +140,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn,}) => {
     },
   });
 
-  const SaveToFavoritesBtn = (props) => (
-    cardLikeLoading ?
-      <View style={{
-        position: "absolute",
-        top: 0,
-        right: 0,
-        padding: 6,
-        borderTopStartRadius: 5,
-        borderTopEndRadius: 15,
-        borderBottomStartRadius: 5,
-        backgroundColor: `${theme.colors.background}AA`,
-      }}>
-        <ActivityIndicator size={24} color={theme.colors.accent} />
-      </View>
-      :
+  const SaveToFavoritesBtn = () => (
       <TouchableOpacity
         style={{
           position: "absolute",

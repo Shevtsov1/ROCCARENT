@@ -1,21 +1,19 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Modal,
   TextInput,
-  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, FAB, Icon, ListItem } from "@rneui/themed";
 import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist";
 import { RenderItemParams } from "react-native-draggable-flatlist";
 import { launchImageLibrary } from "react-native-image-picker";
-import { Input, Skeleton } from "@rneui/base";
+import { Input } from "@rneui/base";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { heightPercentageToDP, widthPercentageToDP } from "react-native-responsive-screen";
@@ -62,8 +60,6 @@ const CreateAd = ({ theme, navigation }) => {
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
   const priceRef = useRef(null);
-  const startsDayRef = useRef(null);
-  const endsDayRef = useRef(null);
 
   const handleFieldsChange = (fieldName, value) => {
     setFieldsData(prevData => ({
@@ -330,7 +326,7 @@ const CreateAd = ({ theme, navigation }) => {
   };
 
   const checkLocationPermission = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       Geolocation.requestAuthorization(
         () => {
           // Разрешение предоставлено
