@@ -95,7 +95,7 @@ const EditPassport = ({ theme, navigation, route }) => {
       }
     }
     if (newPassportData) {
-      await uploadPassportImage(passportImageUri, newPassportData);
+      await uploadPassportImage(newPassportData);
       ToastAndroid.show("Паспорт успешно подтвержден", 7000);
       loadUserdata();
       navigation.navigate("Profile");
@@ -106,21 +106,18 @@ const EditPassport = ({ theme, navigation, route }) => {
     }
   };
 
-  const uploadPassportImage = async (imageUri, newPassportData) => {
+  const uploadPassportImage = async (newPassportData) => {
     try {
-      // Reference to the Firebase Storage bucket
-      const storageRef = storage().ref(`users/${auth().currentUser.uid}/passportPhoto/`);
-
-      // Upload the compressed image file to Firebase Storage
-      await storageRef.putFile(imageUri);
-
-      // Get the download URL of the uploaded image
-      const imageUrl = await storageRef.getDownloadURL();
-
-      await firestore().collection("users").doc(auth().currentUser.uid).update({
-        passportData: newPassportData,
-        passportPhotoURL: imageUrl,
-      });
+      const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+      if (snapshot.exists) {
+        await firestore().collection("users").doc(auth().currentUser.uid).update({
+          passportData: newPassportData,
+        });
+      } else {
+        await firestore().collection("users").doc(auth().currentUser.uid).set({
+          passportData: newPassportData,
+        });
+      }
       console.log("Image uploaded successfully");
     } catch (error) {
       console.log("Error uploading image:", error);
