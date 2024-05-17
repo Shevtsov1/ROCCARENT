@@ -64,7 +64,6 @@ const UserListings = ({ theme, navigation }) => {
       color: theme.colors.accentText,
     }, contentContainer: {
       alignItems: "flex-start",
-      padding: 12,
     },
   });
 
