@@ -22,7 +22,9 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
 
     const contentWidth = screenWidth - 24;
     const cardWidth = wp(50);
+    const cardHeight = cardWidth * 1.75;
     const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
+    const cardImageWidth = cardWidth - 4;
 
 
     function getRatingWord(count) {
@@ -100,10 +102,9 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
     };
 
     const styles = StyleSheet.create({
-        mainCardContainer: {minWidth: cardMinWidth, width: cardWidth, height: 312, borderRadius: 15},
+        mainCardContainer: {minWidth: cardMinWidth, width: cardWidth, height: cardHeight, borderRadius: 15},
         mainCard: {
             width: "100%",
-            height: "100%",
             flexDirection: "column",
             backgroundColor: theme.colors.background,
             paddingVertical: 0,
@@ -115,11 +116,11 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
             width: "100%",
             height: "100%",
         }, mainCardImageContainer: {
-            width: "100%",
-            height: "65%",
+            width: cardImageWidth,
+            height: cardImageWidth * 1.3,
             paddingHorizontal: 2,
         },
-        mainCardImage: {width: "100%", height: "100%", borderRadius: 15},
+        mainCardImage: {width: cardImageWidth, height: cardImageWidth * 1.3, borderRadius: 15},
         mainCardTextContainer: {
             width: "100%",
             height: "35%",
@@ -159,7 +160,7 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
             onPress={handleLikePress}
         >
             <FastImage
-                source={userdata && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
+                source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
                 style={{width: 30, height: 30}} tintColor={theme.colors.accent}
                 resizeMode={FastImage.resizeMode.contain}/>
         </TouchableOpacity>
