@@ -368,7 +368,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
                                                     style={{ position: "absolute", zIndex: 1 }} />) : null}
                       <FastImage
                         style={{ width: "100%", height: "100%", borderRadius: 78 / 2 }}
-                        source={auth().currentUser.photoURL ? { uri: auth().currentUser.photoURL } : require("../../assets/images/user.png")}
+                        source={userdata && userdata.photoUrl ? { uri: userdata.photoUrl } : require("../../assets/images/user.png")}
                         onLoad={() => setIsAvatarLoading(false)}
                         resizeMode={FastImage.resizeMode.cover}
                       />
