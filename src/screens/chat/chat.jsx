@@ -1,13 +1,37 @@
 import React from "react";
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {FlatList, Text, View} from "react-native";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {Button} from "@rneui/base";
+import FastImage from "react-native-fast-image";
+import ItemCard from "../../components/itemCard";
+
+const items = [1, 2, 3];
+
+const MessageBtn = () => {
+    return (
+        <Button>
+            <FastImage source={require('../../assets/images/save.png')}/>
+            <Text>Name</Text>
+            <Text>Message</Text>
+        </Button>
+    )
+}
 
 const Chat = ({theme}) => {
-  return (
-    <SafeAreaView>
-      <Text>Chat</Text>
-    </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={{flex: 1,}}>
+            <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+                <FlatList
+                    data={items}
+                    numColumns={1}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({item}) => (
+                        <MessageBtn/>
+                    )
+                    }/>
+            </View>
+        </SafeAreaView>
+    );
 };
 
 export default Chat;
