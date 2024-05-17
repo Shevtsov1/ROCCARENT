@@ -483,7 +483,7 @@ const CreateAd = ({ theme, navigation }) => {
       ownerId: auth().currentUser.uid,
       ownerPhoneNumber: auth().currentUser.phoneNumber,
       creationDate: formattedDate,
-      city: translateAddressName(getAddressName(selectedCoordinates.display_name)).split(', ')[0].trim(),
+      city: translateAddressName(getAddressName(selectedCoordinates.display_name)).split(', ')[1].trim(),
     };
     await firestore().collection("listings").doc(listingId).set(listingData);
 
@@ -501,7 +501,7 @@ const CreateAd = ({ theme, navigation }) => {
     handleCleanBtn();
     setListingUploading(false);
     loadUserdata();
-    navigation.navigate('Main');
+    navigation.navigate('MainStack');
   };
 
   useEffect(() => {

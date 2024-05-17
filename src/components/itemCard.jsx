@@ -10,7 +10,7 @@ import {AppContext} from "../../App";
 import OpenedItemCard from "./openedItemCard";
 import {useNavigation} from "@react-navigation/native";
 
-const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
+const ItemCard = ({theme, item, likes, editBtn, deleteBtn, screen}) => {
 
     const navigation = useNavigation();
 
@@ -161,21 +161,56 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
         >
             <FastImage
                 source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
-                style={{width: 30, height: 30}} tintColor={theme.colors.accent}
+                style={{width: 24, height: 24}} tintColor={theme.colors.accent}
                 resizeMode={FastImage.resizeMode.contain}/>
         </TouchableOpacity>
     );
 
     const handleOpenCard = () => {
-        navigation.navigate('ProfileStack', {
-            screen: 'OpenedItemCard',
-            params: {
-                item: item,
-                likes: likes,
-                editBtn: editBtn,
-                deleteBtn: deleteBtn,
-            },
-        });
+        if (screen === 'Main') {
+            navigation.navigate('MainStack', {
+                screen: 'OpenedItemCard',
+                params: {
+                    item: item,
+                    likes: likes,
+                    editBtn: editBtn,
+                    deleteBtn: deleteBtn,
+                },
+            });
+        }
+        if (screen === 'Catalog') {
+            navigation.navigate('CatalogStack', {
+                screen: 'OpenedItemCard',
+                params: {
+                    item: item,
+                    likes: likes,
+                    editBtn: editBtn,
+                    deleteBtn: deleteBtn,
+                },
+            });
+        }
+        if (screen === 'Favorites') {
+            navigation.navigate('FavoritesStack', {
+                screen: 'OpenedItemCard',
+                params: {
+                    item: item,
+                    likes: likes,
+                    editBtn: editBtn,
+                    deleteBtn: deleteBtn,
+                },
+            });
+        }
+        if (screen === 'Profile') {
+            navigation.navigate('ProfileStack', {
+                screen: 'OpenedItemCard',
+                params: {
+                    item: item,
+                    likes: likes,
+                    editBtn: editBtn,
+                    deleteBtn: deleteBtn,
+                },
+            });
+        }
     };
 
 
@@ -207,7 +242,7 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
                                         setDeleteModalOpen(true);
                                     }}
                                 >
-                                    <Icon type={"ionicon"} name={"pencil"} color={theme.colors.accent} size={30}/>
+                                    <Icon type={"ionicon"} name={"pencil"} color={theme.colors.accent} size={24}/>
                                 </TouchableOpacity>
                             </>
                         }
@@ -228,7 +263,7 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
                                         setDeleteModalOpen(true);
                                     }}
                                 >
-                                    <Icon type={"ionicon"} name={"trash"} color={theme.colors.accent} size={30}/>
+                                    <Icon type={"ionicon"} name={"trash"} color={theme.colors.accent} size={24}/>
                                 </TouchableOpacity>
                                 <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
                                              onBackdropPress={() => setDeleteModalOpen(false)}>

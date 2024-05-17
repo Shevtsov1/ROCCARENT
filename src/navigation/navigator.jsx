@@ -7,30 +7,29 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, View, Text, Animated } from "react-native";
 import Reanimated, {FadeIn} from "react-native-reanimated";
 import Icon, { Icons } from "../assets/images/bottomTab/TabBarIcons";
-import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
 import CreateAd from "../screens/createAdScreen/createAd";
-import { ProfileStackNavigator } from "./stackNavigator";
+import { ProfileStackNavigator, MainStackNavigator, CatalogStackNavigator, FavoritesStackNavigator } from "./stackNavigator";
 import { widthPercentageToDP } from "react-native-responsive-screen";
 
 // Массив с конфигурациями вкладок
 const TabArr = [
   {
-    route: "Main",
+    route: "MainStack",
     label: "Главная",
     type: Icons.Main,
     activeIcon: Icons.Main.activeIcon,
     inActiveIcon: Icons.Main.inActiveIcon,
-    component: Main,
+    component: MainStackNavigator,
   },
   {
-    route: "Catalog",
+    route: "CatalogStack",
     label: "Каталог",
     type: Icons.Catalog,
     activeIcon: Icons.Catalog.activeIcon,
     inActiveIcon: Icons.Catalog.inActiveIcon,
-    component: Catalog,
+    component: CatalogStackNavigator,
   },
   {
     route: "CreateAd",
@@ -41,12 +40,12 @@ const TabArr = [
     separate: true,
   },
   {
-    route: "Favorites",
+    route: "FavoritesStack",
     label: "Избранное",
     type: Icons.Favorites,
     activeIcon: Icons.Favorites.activeIcon,
     inActiveIcon: Icons.Favorites.inActiveIcon,
-    component: Favorites,
+    component: FavoritesStackNavigator,
   },
   {
     route: "ProfileStack",

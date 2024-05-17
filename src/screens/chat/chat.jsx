@@ -11,7 +11,7 @@ const MessageBtn = () => {
     return (
         <Button>
             <FastImage source={require('../../assets/images/save.png')}/>
-            <Text>Name</Text>
+            <Text>Name</Text>a
             <Text>Message</Text>
         </Button>
     )

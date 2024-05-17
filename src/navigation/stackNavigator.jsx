@@ -16,6 +16,9 @@ import UserListings from "../screens/profileScreen/components/userListings";
 import firestore from "@react-native-firebase/firestore";
 import Chat from "../screens/chat/chat";
 import OpenedItemCard from "../components/openedItemCard";
+import Main from "../screens/mainScreen/main";
+import Catalog from "../screens/catalogScreen/catalog";
+import Favorites from "../screens/favoritesScreen/favorites";
 
 const Stack = createNativeStackNavigator();
 
@@ -105,3 +108,84 @@ export const ProfileStackNavigator = ({
         </Stack.Navigator>
     );
 };
+
+export const MainStackNavigator = ({user,
+                                theme,
+                                toggleMode,
+                                setInitializing,
+                                setLoadingScreenText,}) => {
+    return (
+        <Stack.Navigator
+            initialRouteName={"Main"}
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.colors.background,
+                },
+                headerTitleStyle: {
+                    color: theme.colors.text,
+                },
+                headerTitleAlign: "center",
+                headerTintColor: theme.colors.text,
+            }}>
+            <Stack.Screen name="Main" options={{headerShown: false}}>{(props) =>
+                <Main {...props} user={user} theme={theme} toggleMode={toggleMode}
+                         setInitializing={setInitializing}/>}</Stack.Screen>
+            <Stack.Screen name="OpenedItemCard" options={{headerShown: false}}>{(props) =>
+                <OpenedItemCard {...props} theme={theme}/>}</Stack.Screen>
+        </Stack.Navigator>
+    )
+}
+
+export const CatalogStackNavigator = ({user,
+                                       theme,
+                                       toggleMode,
+                                       setInitializing,
+                                       setLoadingScreenText,}) => {
+    return (
+        <Stack.Navigator
+            initialRouteName={"Catalog"}
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.colors.background,
+                },
+                headerTitleStyle: {
+                    color: theme.colors.text,
+                },
+                headerTitleAlign: "center",
+                headerTintColor: theme.colors.text,
+            }}>
+            <Stack.Screen name="Catalog" options={{headerShown: false}}>{(props) =>
+                <Catalog {...props} user={user} theme={theme} toggleMode={toggleMode}
+                      setInitializing={setInitializing}/>}</Stack.Screen>
+            <Stack.Screen name="OpenedItemCard" options={{headerShown: false}}>{(props) =>
+                <OpenedItemCard {...props} theme={theme}/>}</Stack.Screen>
+        </Stack.Navigator>
+    )
+}
+
+export const FavoritesStackNavigator = ({user,
+                                          theme,
+                                          toggleMode,
+                                          setInitializing,
+                                          setLoadingScreenText,}) => {
+    return (
+        <Stack.Navigator
+            initialRouteName={"Favorites"}
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.colors.background,
+                },
+                headerTitleStyle: {
+                    color: theme.colors.text,
+                },
+                headerTitleAlign: "center",
+                headerTintColor: theme.colors.text,
+            }}>
+            <Stack.Screen name="Favorites" options={{headerShown: false}}>{(props) =>
+                <Favorites {...props} user={user} theme={theme} toggleMode={toggleMode}
+                         setInitializing={setInitializing}/>}</Stack.Screen>
+            <Stack.Screen name="OpenedItemCard" options={{headerShown: false}}>{(props) =>
+                <OpenedItemCard {...props} theme={theme}/>}</Stack.Screen>
+        </Stack.Navigator>
+    )
+}

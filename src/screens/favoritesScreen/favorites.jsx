@@ -92,7 +92,7 @@ const Favorites = ({ theme, navigation }) => {
                   </View>
                 </>
                 :
-                <CardsGrid theme={theme} items={favoriteListings} likes />
+                <CardsGrid theme={theme} items={favoriteListings} likes screen={'Favorites'}/>
               }
             </View>
           </>

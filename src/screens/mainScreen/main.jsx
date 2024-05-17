@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import {ScrollView, StyleSheet, View} from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
@@ -47,23 +47,31 @@ const Main = ({ theme }) => {
       backgroundColor: theme.colors.background,
     },
   });
+  //
+  // const headerComponent = () => (
+  //
+  // )
+  //
+  // const footerComponent = () => (
+  //
+  // )
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
-        {auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme} />}
-        {listings &&
-          <ShadowedView style={[{ marginBottom: 12 }, shadowStyle({
-            color: theme.colors.grey3,
-            opacity: 0.8,
-            radius: 24,
-            offset: [0, 6],
-          })]}>
-            <View style={{ width: "100%", backgroundColor: theme.colors.background, borderRadius: 15 }}>
-              <CardsGrid theme={theme} items={listings} likes />
-            </View>
-          </ShadowedView>
-        }
+          {auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme} />}
+          {listings &&
+              <ShadowedView style={[{ marginBottom: 12 }, shadowStyle({
+                color: theme.colors.grey3,
+                opacity: 0.8,
+                radius: 24,
+                offset: [0, 6],
+              })]}>
+                <View style={{ width: "100%", backgroundColor: theme.colors.background, borderRadius: 15 }}>
+                  <CardsGrid theme={theme} items={listings} likes screen={'Main'}/>
+                </View>
+              </ShadowedView>
+          }
       </SafeAreaView>
     </SafeAreaProvider>
   );
