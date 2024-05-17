@@ -24,7 +24,7 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn, screen}) => {
     const cardWidth = wp(50);
     const cardHeight = cardWidth * 1.75;
     const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
-    const cardImageWidth = cardWidth - 4;
+    const cardImageWidth = cardWidth;
 
 
     function getRatingWord(count) {

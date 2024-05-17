@@ -100,7 +100,7 @@ const UserListings = ({ theme, navigation }) => {
             :
             <>
               <View style={styles.contentContainer}>
-                <CardsGrid theme={theme} items={userListings} editBtn deleteBtn />
+                <CardsGrid theme={theme} items={userListings} editBtn deleteBtn screen={'Profile'} />
               </View>
             </>
         }
