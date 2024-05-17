@@ -51,3 +51,10 @@ export const getUserFavoriteListings = async () => {
     return snapshot.data().favoriteListings;
   }
 }
+
+export const getUserPhotoUrl = async () => {
+    const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+    if (snapshot.exists && snapshot.data().photoUrl) {
+        return snapshot.data().photoUrl;
+    }
+}

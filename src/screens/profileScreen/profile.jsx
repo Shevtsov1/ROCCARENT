@@ -104,7 +104,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
     try {
       const fileSize = image.fileSize;
       let compressionQuality;
-      if (fileSize > 10 * 1024 && fileSize < 1024 * 1024) {
+      if (fileSize > 1 * 1024 && fileSize < 1024 * 1024) {
         compressionQuality = 100;
       } else if (fileSize >= 1024 * 1024) {
         for (let i = 20; i <= 100; i++) {
@@ -138,6 +138,10 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
         await auth().currentUser.updateProfile({
           photoURL: imageUrl,
         });
+        const snapshot = await firestore().collection('users').doc(auth().currentUser.uid).get()
+        if (snapshot.exists) {
+          await firestore().collection('users').doc(auth().currentUser.uid).update({photoUrl: imageUrl})
+        }
         console.log("Image uploaded successfully");
       }
 

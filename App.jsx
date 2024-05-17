@@ -16,7 +16,7 @@ import {
   getPassportData,
   getPhoneNumber,
   getUserFavoriteListings,
-  getUserListings,
+  getUserListings, getUserPhotoUrl,
 } from "./src/components/preloadUserdata";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import firestore from "@react-native-firebase/firestore";
@@ -170,12 +170,14 @@ const App = React.memo(() => {
     const phoneNumber = await getPhoneNumber();
     const listings = await getUserListings();
     const favoriteListings = await getUserFavoriteListings();
+    const photoUrl = await getUserPhotoUrl();
     const updatedUserdata = {
       nickname,
       passportData,
       phoneNumber,
       listings,
       favoriteListings,
+      photoUrl,
     };
     setUserdata(updatedUserdata);
   };
@@ -211,6 +213,11 @@ const App = React.memo(() => {
       const snapshot = await firestore().collection('users').doc(auth().currentUser.uid).get();
       if (!snapshot.exists) {
         await firestore().collection('users').doc(auth().currentUser.uid).set({favoriteListings: []});
+        await firestore().collection('users').doc(auth().currentUser.uid).set({photoUrl: auth().currentUser.photoURL});
+      } else {
+        if (!snapshot.data().photoUrl) {
+          await firestore().collection('users').doc(auth().currentUser.uid).set({photoUrl: auth().currentUser.photoURL});
+        }
       }
     } catch (error) {
       console.log(error);
