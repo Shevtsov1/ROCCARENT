@@ -8,8 +8,11 @@ import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import {AppContext} from "../../App";
 import OpenedItemCard from "./openedItemCard";
+import {useNavigation} from "@react-navigation/native";
 
 const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
+
+    const navigation = useNavigation();
 
     const {userdata, loadUserdata} = useContext(AppContext);
 
@@ -49,7 +52,6 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
             const folderRef = storage().ref().child(`listings/${item.listingId}`);
             folderRef.listAll()
                 .then((res) => {
-                    console.log(res);
                     const deletePromises = res.items.map((itemRef) => itemRef.delete());
                     return Promise.all(deletePromises);
                 })
@@ -164,8 +166,16 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
     );
 
     const handleOpenCard = () => {
-        setIsCardOpen(!isCardOpen);
-    }
+        navigation.navigate('ProfileStack', {
+            screen: 'OpenedItemCard',
+            params: {
+                item: item,
+                likes: likes,
+                editBtn: editBtn,
+                deleteBtn: deleteBtn,
+            },
+        });
+    };
 
 
     return (
