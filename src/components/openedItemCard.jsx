@@ -49,7 +49,8 @@ const OpenedItemCard = ({ theme }) => {
 
     const styles = StyleSheet.create({
         imagesContainer: {
-            height: 'auto',
+            height,
+            marginBottom: 12,
         },
     });
 
@@ -71,6 +72,7 @@ const OpenedItemCard = ({ theme }) => {
                     )}
                 />
             </View>
+            {editBtn && <Text>item.title</Text>}
         </SafeAreaView>
     );
 };

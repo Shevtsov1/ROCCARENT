@@ -189,12 +189,12 @@ const CreateAd = ({ theme, navigation }) => {
     const key = Object.keys(item)[0];
     return (
       <ScaleDecorator activeScale={0.9} key={key}>
-        <View style={{ width: 96, height: 96, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
+        <View style={{ width: 96, height: 124.8, justifyContent: "center", alignItems: "center", marginEnd: 6 }}>
           <TouchableOpacity
             onLongPress={drag}
             disabled={isActive}
             style={[
-              { width: 96, height: 96, borderRadius: 5 },
+              { width: 96, height: 124.8, borderRadius: 5 },
               { backgroundColor: isActive ? `${theme.colors.grey1}3A` : item.backgroundColor },
             ]}
           >
@@ -202,7 +202,8 @@ const CreateAd = ({ theme, navigation }) => {
               <>
                 <FastImage
                   source={{ uri: selectedImageUri }}
-                  style={{ width: 96, height: 96, borderRadius: 5 }}
+                  style={{ width: 96, height: 124.8, borderRadius: 5 }}
+                  resizeMode={FastImage.resizeMode.cover}
                 />
                 <TouchableOpacity style={{ position: "absolute", top: 0, right: 0 }}
                                   onPress={() => handleDeleteImageBtn(selectedImage, selectedImageUri)}><Icon
@@ -652,7 +653,7 @@ const CreateAd = ({ theme, navigation }) => {
       borderColor: theme.colors.accent,
       borderWidth: 1,
       borderRadius: 5,
-      width: 96, height: 96,
+      width: 96, height: 124.8,
       backgroundColor: theme.colors.grey3,
     }, imagesFooterContainer: {
       flex: 1,
