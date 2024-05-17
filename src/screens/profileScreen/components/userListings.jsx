@@ -9,15 +9,13 @@ import { Button } from "@rneui/base";
 
 const UserListings = ({ theme, navigation }) => {
 
-  const { userdata, loadUserdata } = useContext(AppContext);
+  const { userdata } = useContext(AppContext);
 
   const [listingsLoading, setListingsLoading] = useState(true);
   const [userListings, setUserListings] = useState([]);
 
   useEffect(() => {
     const fetchUserListings = async () => {
-      await loadUserdata();
-
       const querySnapshot = await firestore().collection("listings").get();
       const updatedUserListings = [];
 
@@ -43,7 +41,7 @@ const UserListings = ({ theme, navigation }) => {
       setListingsLoading(false);
     };
     fetchUserListings().then();
-  }, [loadUserdata]);
+  }, [userdata]);
 
   const styles = StyleSheet.create({
     body: {
