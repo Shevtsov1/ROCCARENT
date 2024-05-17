@@ -711,45 +711,81 @@ const CreateAd = ({ theme, navigation }) => {
     );
   }
 
+  const AnonymousBtn = () => (
+    <View>
+      <Button buttonStyle={{
+        width: "auto",
+        marginHorizontal: 12,
+        paddingHorizontal: 6,
+        borderRadius: 5,
+        backgroundColor: theme.colors.error,
+      }} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("ProfileStack", { screen: "LogIn" })}>
+        <View style={{ marginStart: 12 }}>
+          <Text style={{
+            fontFamily: "Roboto-Medium",
+            fontSize: 16,
+            color: theme.colors.accentText,
+            alignSelf: "flex-start",
+          }}>Вход/регистрация</Text>
+          <Text style={{
+            fontFamily: "Roboto-Regular",
+            fontSize: 14,
+            color: theme.colors.accentText,
+            alignSelf: "flex-start",
+          }}>Для подачи объявлений необходимо авторизоваться и пройти верификацию в профиле</Text>
+        </View>
+        <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"chevron-forward"} size={18}
+              color={theme.colors.accentText} />
+      </Button>
+    </View>
+  )
+
+  const NotVerified = () => (
+    <View>
+      <Button buttonStyle={{
+        width: "auto",
+        marginHorizontal: 12,
+        paddingHorizontal: 6,
+        borderRadius: 5,
+        backgroundColor: theme.colors.warning,
+      }} titleStyle={{ color: theme.colors.grey1 }}
+              onPress={() => navigation.navigate("ProfileStack")}>
+        <View style={{ marginStart: 12 }}>
+          <Text style={{
+            fontFamily: "Roboto-Medium",
+            fontSize: 16,
+            color: theme.colors.accentText,
+            alignSelf: "flex-start",
+          }}>Профиль</Text>
+          <Text style={{
+            fontFamily: "Roboto-Regular",
+            fontSize: 14,
+            color: theme.colors.accentText,
+            alignSelf: "flex-start",
+          }}>Для подачи объявлений пройти верификацию в профиле</Text>
+        </View>
+        <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"chevron-forward"} size={18}
+              color={theme.colors.accentText} />
+      </Button>
+    </View>
+  )
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.body}>
         <View style={{ marginBottom: 12 }}>
           <View style={styles.header}>
             <Text numberOfLines={1} style={styles.headerMainText}>Новое объявление</Text>
-            {auth().currentUser && !auth().currentUser.isAnonymous && userdata.passportData && auth().currentUser.emailVerified &&
+            {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
               <TouchableOpacity onPress={handleCleanBtn}>
                 <Text numberOfLines={1} style={styles.headerCancelText}>Очистить</Text>
               </TouchableOpacity>}
           </View>
           {auth().currentUser && auth().currentUser.isAnonymous ?
-            <View>
-              <Button buttonStyle={{
-                width: "auto",
-                marginHorizontal: 12,
-                paddingHorizontal: 6,
-                borderRadius: 5,
-                backgroundColor: theme.colors.error,
-              }} titleStyle={{ color: theme.colors.grey1 }}
-                      onPress={() => navigation.navigate("ProfileStack", { screen: "LogIn" })}>
-                <View style={{ marginStart: 12 }}>
-                  <Text style={{
-                    fontFamily: "Roboto-Medium",
-                    fontSize: 16,
-                    color: theme.colors.accentText,
-                    alignSelf: "flex-start",
-                  }}>Вход/регистрация</Text>
-                  <Text style={{
-                    fontFamily: "Roboto-Regular",
-                    fontSize: 14,
-                    color: theme.colors.accentText,
-                    alignSelf: "flex-start",
-                  }}>Для подачи объявлений необходимо авторизоваться и пройти верификацию в профиле</Text>
-                </View>
-                <Icon style={{ marginEnd: 6 }} type={"ionicon"} name={"chevron-forward"} size={18}
-                      color={theme.colors.accentText} />
-              </Button>
-            </View> :
+              <AnonymousBtn/>
+             :
+              (userdata && userdata.passportData && userdata.passportData.length !== 0 && auth().currentUser.emailVerified ?
             <>
               <View style={styles.imagesContainer}>
                 <View style={styles.imagesHeaderContainer}>
@@ -1002,7 +1038,7 @@ const CreateAd = ({ theme, navigation }) => {
                   {selectedSubcategory === "Мотоциклы и скутеры" && <View></View>}
                 </>
               }
-            </>}
+            </> : <NotVerified/>)}
         </View>
       </ScrollView>
     </SafeAreaView>
