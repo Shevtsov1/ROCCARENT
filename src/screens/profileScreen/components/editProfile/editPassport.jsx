@@ -118,6 +118,7 @@ const EditPassport = ({ theme, navigation, route }) => {
           passportData: ciphertext,
         });
       }
+      loadUserdata();
     } catch (error) {
       console.log("Error uploading image:", error);
     }
