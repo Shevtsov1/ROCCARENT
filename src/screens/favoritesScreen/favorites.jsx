@@ -36,7 +36,7 @@ const Favorites = ({ theme, navigation }) => {
       fetchFavoriteListings().then();
     }
     setListingsLoading(false);
-  }, [userdata.favoriteListings]);
+  }, [userdata && userdata.favoriteListings]);
 
   const styles = StyleSheet.create({
 
