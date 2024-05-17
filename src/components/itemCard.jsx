@@ -1,12 +1,13 @@
 import React, {useContext, useState} from "react";
 import {StyleSheet, View, Text, Dimensions, TouchableOpacity, Modal} from "react-native";
-import {BottomSheet, Button, Icon} from "@rneui/base";
+import {BottomSheet, Button, Icon, Overlay} from "@rneui/base";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 import {AppContext} from "../../App";
+import OpenedItemCard from "./openedItemCard";
 
 const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
 
@@ -166,17 +167,10 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
         setIsCardOpen(!isCardOpen);
     }
 
-    const OpenedCard = () => (
-        <Modal visible={isCardOpen}>
-            <Text>OPENED CARD</Text>
-            <Button title={'close'} onPress={handleOpenCard}/>
-        </Modal>
-    );
 
     return (
-        <>
-            <OpenedCard/>
-
+        isCardOpen ?
+            <OpenedItemCard theme={theme}/> :
             <Button containerStyle={styles.mainCardContainer} buttonStyle={styles.mainCard}
                     titleStyle={{color: theme.colors.grey1, height: 0}} onPress={handleOpenCard}>
                 <View style={styles.mainCardContentContainer}>
@@ -305,7 +299,6 @@ const ItemCard = ({theme, item, likes, editBtn, deleteBtn,}) => {
                     </View>
                 </View>
             </Button>
-        </>
     );
 };
 
