@@ -8,140 +8,203 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { AppContext } from "../../App";
-import RunningText from "./runningText";
+import TextTicker from "react-native-text-ticker";
+import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 
 const OpenedItemCard = ({ theme }) => {
 
-    const { userdata } = useContext(AppContext);
+  const { userdata } = useContext(AppContext);
 
-    const route = useRoute();
+  const route = useRoute();
 
-    const { item, likes, editBtn, deleteBtn } = route.params;
+  const { item, likes, editBtn, deleteBtn } = route.params;
 
-    const [listingImages, setListingImages] = useState([]);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const carouselRef = useRef(null);
+  const [listingImages, setListingImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const carouselRef = useRef(null);
 
-    const screenWidth = Dimensions.get("window").width;
-    const width = screenWidth;
-    const height = screenWidth * 1.3;
+  const screenWidth = Dimensions.get("window").width;
+  const width = screenWidth;
+  const height = screenWidth * 1.3;
 
-    useEffect(() => {
-        const getListingImages = async () => {
-            if (item && item.listingId) {
-                let newListingImagesArr = [];
-                const firestoreSnapshot = await firestore()
-                  .collection("listings")
-                  .doc(item.listingId)
-                  .get();
-                if (
-                  firestoreSnapshot.exists &&
-                  firestoreSnapshot.data().mainImageUrl
-                ) {
-                    newListingImagesArr.push(firestoreSnapshot.data().mainImageUrl);
-                }
-                const storageSnapshot = await storage()
-                  .ref(`listings/${item.listingId}/otherImages`)
-                  .listAll();
-                for (const imageRef of storageSnapshot.items) {
-                    const imageURL = await imageRef.getDownloadURL();
-                    newListingImagesArr.push(imageURL);
-                }
-                setListingImages(newListingImagesArr);
-            }
-        };
-
-        getListingImages().then();
-    }, []);
-
-    const handleProgressChange = (offsetProgress, absoluteProgress) => {
-        if (Number.isInteger(absoluteProgress)) {
-            setCurrentImageIndex(absoluteProgress)
+  useEffect(() => {
+    const getListingImages = async () => {
+      if (item && item.listingId) {
+        let newListingImagesArr = [];
+        const firestoreSnapshot = await firestore()
+          .collection("listings")
+          .doc(item.listingId)
+          .get();
+        if (
+          firestoreSnapshot.exists &&
+          firestoreSnapshot.data().mainImageUrl
+        ) {
+          newListingImagesArr.push(firestoreSnapshot.data().mainImageUrl);
         }
+        const storageSnapshot = await storage()
+          .ref(`listings/${item.listingId}/otherImages`)
+          .listAll();
+        for (const imageRef of storageSnapshot.items) {
+          const imageURL = await imageRef.getDownloadURL();
+          newListingImagesArr.push(imageURL);
+        }
+        setListingImages(newListingImagesArr);
+      }
     };
 
-    const styles = StyleSheet.create({
-        imagesContainer: {
-            height,
-            marginBottom: 12,
-        }, imageCounterContainer: {
-            width: 36,
-            height: 36.6,
-            alignSelf: "flex-start",
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 6,
-            borderTopEndRadius: 5,
-            borderBottomEndRadius: 5,
-            backgroundColor: `${theme.colors.background}AA`,
-        }, imageCounter: {
-            fontFamily: 'Roboto-Bold',
-            fontSize: 15,
-            color: theme.colors.accent,
-        },
-    });
+    getListingImages().then();
+  }, []);
 
-    const renderImageCounter = () => {
-        const totalImages = listingImages.length;
-        return (
-          <View style={styles.imageCounterContainer}>
-              <Text style={styles.imageCounter}>
-                  {`${currentImageIndex + 1}/${totalImages}`}
-              </Text>
-          </View>
-        );
-    };
+  function getRatingWord(count) {
+    const lastDigit = count % 10;
+    const lastTwoDigits = count % 100;
 
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+      return "оценок";
+    }
+
+    if (lastDigit === 1) {
+      return "оценка";
+    }
+
+    if (lastDigit >= 2 && lastDigit <= 4) {
+      return "оценки";
+    }
+
+    return "оценок";
+  }
+
+  const handleProgressChange = (offsetProgress, absoluteProgress) => {
+    if (Number.isInteger(absoluteProgress)) {
+      setCurrentImageIndex(absoluteProgress);
+    }
+  };
+
+  const styles = StyleSheet.create({
+    imagesContainer: {
+      height,
+    }, imageCounterContainer: {
+      width: 36,
+      height: 36.6,
+      alignSelf: "flex-start",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 6,
+      borderTopEndRadius: 5,
+      borderBottomEndRadius: 5,
+      backgroundColor: `${theme.colors.background}AA`,
+    }, imageCounter: {
+      fontFamily: "Roboto-Bold",
+      fontSize: 15,
+      color: theme.colors.accent,
+    },
+  });
+
+  const renderImageCounter = () => {
+    const totalImages = listingImages.length;
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-          <RunningText text={'hello pupkin world hello pupkin world hello pupkin world hello pupkin world'}/>
-          <View style={styles.imagesContainer}>
-              <Carousel
-                ref={carouselRef}
-                loop={false}
-                width={width}
-                height={height}
-                data={listingImages}
-                renderItem={({ item }) => (
-                  <FastImage
-                    source={{ uri: item }}
-                    style={{ width: "100%", height: "100%" }}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                )}
-                onProgressChange={handleProgressChange}
-              />
-              {renderImageCounter()}
-              <TouchableOpacity
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    padding: 6,
-                    borderTopStartRadius: 5,
-                    borderBottomStartRadius: 5,
-                    backgroundColor: `${theme.colors.background}AA`,
-                }}
-              >
-                  {likes &&
-                    <FastImage
-                      source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
-                      style={{width: 24, height: 24}} tintColor={theme.colors.accent}
-                      resizeMode={FastImage.resizeMode.contain}/>}
-                  {deleteBtn && <View><Icon type={'ionicon'} name={'trash'} size={24} color={theme.colors.accent}/></View>}
-              </TouchableOpacity>
-              {editBtn && <TouchableOpacity style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  padding: 6,
-                  borderTopEndRadius: 5,
-                  borderBottomEndRadius: 5,
-                  backgroundColor: `${theme.colors.background}AA`,
-              }}><Icon type={'ionicon'} name={'pencil'} size={24} color={theme.colors.accent}/></TouchableOpacity>}
-          </View>
-      </SafeAreaView>
+      <View style={styles.imageCounterContainer}>
+        <Text style={styles.imageCounter}>
+          {`${currentImageIndex + 1}/${totalImages}`}
+        </Text>
+      </View>
     );
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View style={styles.imagesContainer}>
+        <Carousel
+          ref={carouselRef}
+          loop={false}
+          width={width}
+          height={height}
+          data={listingImages}
+          renderItem={({ item }) => (
+            <FastImage
+              source={{ uri: item }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+          )}
+          onProgressChange={handleProgressChange}
+        />
+        {renderImageCounter()}
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            padding: 6,
+            borderTopStartRadius: 5,
+            borderBottomStartRadius: 5,
+            backgroundColor: `${theme.colors.background}AA`,
+          }}
+        >
+          {likes &&
+            <FastImage
+              source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
+              style={{ width: 24, height: 24 }} tintColor={theme.colors.accent}
+              resizeMode={FastImage.resizeMode.contain} />}
+          {deleteBtn && <View><Icon type={"ionicon"} name={"trash"} size={24} color={theme.colors.accent} /></View>}
+        </TouchableOpacity>
+        {editBtn && <TouchableOpacity style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          padding: 6,
+          borderTopEndRadius: 5,
+          borderBottomEndRadius: 5,
+          backgroundColor: `${theme.colors.background}AA`,
+        }}><Icon type={"ionicon"} name={"pencil"} size={24} color={theme.colors.accent} /></TouchableOpacity>}
+      </View>
+      <ShadowedView style={[{
+        backgroundColor: theme.colors.background,
+        borderBottomStartRadius: 15,
+        borderBottomEndRadius: 15,
+      }, shadowStyle({
+        color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
+      })]}>
+        <View style={{padding: 6,}}>
+          <View style={{ flexDirection: "row", justifyContent: "space-between",alignItems: 'center'}}>
+            <TextTicker
+              style={{fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.text }}
+              duration={10000}
+              loop
+              bounce
+              repeatSpacer={50}
+              marqueeDelay={1000}
+              numberOfLines={1}
+            >
+              {item.title}
+            </TextTicker>
+            <Text style={{
+              fontFamily: "Roboto-Bold",
+              fontSize: 18,
+              color: theme.colors.text,
+            }}>{item.price} BYN/сут</Text>
+          </View>
+          <Text style={{
+            fontFamily: "Roboto-Bold",
+            fontSize: 18,
+            color: theme.colors.text,
+          }}>{item.ratings ? <>
+            <View style={{ justifyContent: "center" }}>
+              <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
+            </View>
+            <Text numberOfLines={1} style={styles.mainCardTextMark}>
+              {"\t"}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{"\t"}
+            </Text>
+            <View style={{ justifyContent: "center" }}>
+              <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
+            </View>
+            <Text numberOfLines={1}
+                  style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
+          </> : <Text numberOfLines={1} style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>Нет оценок</Text>}</Text>
+        </View>
+      </ShadowedView>
+    </SafeAreaView>
+  );
 };
 
 export default OpenedItemCard;
