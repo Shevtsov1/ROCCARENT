@@ -6,19 +6,21 @@ import Carousel from "react-native-reanimated-carousel";
 import FastImage from "react-native-fast-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
-import { Button, Icon } from "@rneui/base";
+import { BottomSheet, Button, Icon } from "@rneui/base";
 import { AppContext } from "../../App";
 import TextTicker from "react-native-text-ticker";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
+import { handleDeleteListing, handleLikePress } from "./itemCard";
 
 const OpenedItemCard = ({ theme }) => {
 
-  const { userdata } = useContext(AppContext);
+  const { userdata, loadUserdata } = useContext(AppContext);
 
   const route = useRoute();
 
   const { item, likes, editBtn, deleteBtn } = route.params;
 
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [listingImages, setListingImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const carouselRef = useRef(null);
@@ -100,7 +102,7 @@ const OpenedItemCard = ({ theme }) => {
     }, cardBtnContainer: {
       borderRadius: 5,
     }, cardBtn: {
-      backgroundColor: theme.colors.background
+      backgroundColor: theme.colors.background,
     },
   });
 
@@ -117,6 +119,60 @@ const OpenedItemCard = ({ theme }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
+                   onBackdropPress={() => setDeleteModalOpen(false)}>
+        <View style={{ backgroundColor: theme.colors.background }}>
+          <View style={{ alignSelf: "center" }}>
+            <Text
+              style={{
+                fontFamily: "Roboto-Black",
+                fontSize: 18,
+                color: theme.colors.text,
+                marginBottom: 6,
+              }}>
+              Удалить объявление
+            </Text>
+          </View>
+          <View style={{ alignSelf: "center" }}>
+            <Text
+              style={{
+                fontFamily: "Roboto-Medium",
+                fontSize: 14,
+                color: theme.colors.text,
+                marginBottom: 6,
+              }}>
+              Вы уверены что хотите удалить объявление?
+            </Text>
+          </View>
+          <TouchableOpacity style={{
+            width: "100%",
+            height: 36,
+            backgroundColor: theme.colors.grey3,
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 6,
+          }} onPress={() => setDeleteModalOpen(false)}>
+            <Text
+              style={{
+                fontFamily: "Roboto-Bold", color: theme.colors.text, fontSize: 16,
+              }}>Отмена</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{
+            width: "100%",
+            height: 36,
+            backgroundColor: theme.colors.error,
+            alignItems: "center",
+            justifyContent: "center",
+          }} onPress={() => handleDeleteListing(item, setDeleteModalOpen, loadUserdata)}>
+            <Text
+              style={{
+                fontFamily: "Roboto-Bold",
+                color: theme.colors.accentText,
+                fontSize: 16,
+              }}>Удалить</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheet>
       <ScrollView>
         <View style={styles.imagesContainer}>
           <Carousel
@@ -144,6 +200,14 @@ const OpenedItemCard = ({ theme }) => {
               borderTopStartRadius: 5,
               borderBottomStartRadius: 5,
               backgroundColor: `${theme.colors.background}AA`,
+            }}
+            onPress={() => {
+              if (likes) {
+                handleLikePress(item, loadUserdata).then();
+              }
+              if (deleteBtn) {
+                setDeleteModalOpen(true);
+              }
             }}
           >
             {likes &&
@@ -228,7 +292,7 @@ const OpenedItemCard = ({ theme }) => {
         }, shadowStyle({
           color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
         })]}>
-          <View style={{marginBottom: 6,}}>
+          <View style={{ marginBottom: 6 }}>
             <View>
               <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>Категория:</Text>
               <Text style={{ fontFamily: "Roboto-Regular", color: theme.colors.text }}>{item.subcategory}</Text>
@@ -239,22 +303,35 @@ const OpenedItemCard = ({ theme }) => {
             </View>
           </View>
           {likes &&
-            <ShadowedView style={[{marginBottom: 6}, shadowStyle({
-              color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-            })]}>
-              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn} titleStyle={{color: theme.colors.text}} title={"Запросить аренду"} />
-            </ShadowedView>}
+            <>
+              <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
+                color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+              })]}>
+                <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                        titleStyle={{ color: theme.colors.text }} title={"В избранное"} />
+              </ShadowedView>
+              <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
+                color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+              })]}>
+                <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} />
+              </ShadowedView>
+            </>
+          }
           {editBtn &&
-            <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+            <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
               color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
             })]}>
-              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn} titleStyle={{color: theme.colors.text}} title={"Редактировать"} />
+              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                      titleStyle={{ color: theme.colors.text }} title={"Редактировать"} />
             </ShadowedView>}
           {deleteBtn &&
-            <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+            <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
               color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
             })]}>
-              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn} titleStyle={{color: theme.colors.text}} title={"Удалить"} />
+              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                      titleStyle={{ color: theme.colors.text }} title={"Удалить"}
+                      onPress={() => setDeleteModalOpen(true)} />
             </ShadowedView>}
         </ShadowedView>
       </ScrollView>

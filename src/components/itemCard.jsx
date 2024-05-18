@@ -10,6 +10,62 @@ import { AppContext } from "../../App";
 import OpenedItemCard from "./openedItemCard";
 import { useNavigation } from "@react-navigation/native";
 
+export const handleLikePress = async (item, loadUserdata) => {
+  const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
+  if (snapshot.exists) {
+    if (snapshot.data() && snapshot.data().favoriteListings) {
+      const favoriteListings = snapshot.data().favoriteListings;
+      if (favoriteListings.includes(item.listingId)) {
+        const index = favoriteListings.findIndex(listing => listing === item.listingId);
+        if (index !== -1) {
+          favoriteListings.splice(index, 1);
+        }
+        await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+      } else {
+        favoriteListings.push(item.listingId);
+        await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+      }
+    } else {
+      await firestore().collection("users").doc(auth().currentUser.uid).set({ favoriteListings: [item.listingId] });
+    }
+    loadUserdata();
+  }
+};
+
+export const handleDeleteListing = async (item, setDeleteModalOpen, loadUserdata) => {
+  const deleteListingFromListings = async () => {
+    await firestore().collection("listings").doc(item.listingId).delete();
+  };
+  const deleteListingFromStorage = async () => {
+    const folderRef = storage().ref().child(`listings/${item.listingId}`);
+    folderRef.listAll()
+      .then((res) => {
+        const deletePromises = res.items.map((itemRef) => itemRef.delete());
+        return Promise.all(deletePromises);
+      })
+      .then(() => {
+        console.log("Папка успешно удалена");
+      })
+      .catch((error) => {
+        console.error("Ошибка при удалении папки:", error);
+      });
+  };
+  const deleteListingFormUserListings = async () => {
+    const userRef = firestore().collection("users").doc(auth().currentUser.uid);
+    const userDoc = await userRef.get();
+    const listings = userDoc.data().listings;
+    const listingIdToRemove = item.listingId;
+    const updatedListings = listings.filter(listingId => listingId !== listingIdToRemove);
+    await userRef.update({ listings: updatedListings });
+  };
+
+  deleteListingFromListings().then();
+  deleteListingFromStorage().then();
+  deleteListingFormUserListings().then();
+  setDeleteModalOpen(false);
+  loadUserdata();
+};
+
 const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
 
   const navigation = useNavigation();
@@ -45,61 +101,6 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
 
     return "оценок";
   }
-
-  const handleDeleteListing = async () => {
-    const deleteListingFromListings = async () => {
-      await firestore().collection("listings").doc(item.listingId).delete();
-    };
-    const deleteListingFromStorage = async () => {
-      const folderRef = storage().ref().child(`listings/${item.listingId}`);
-      folderRef.listAll()
-        .then((res) => {
-          const deletePromises = res.items.map((itemRef) => itemRef.delete());
-          return Promise.all(deletePromises);
-        })
-        .then(() => {
-          console.log("Папка успешно удалена");
-        })
-        .catch((error) => {
-          console.error("Ошибка при удалении папки:", error);
-        });
-    };
-    const deleteListingFormUserListings = async () => {
-      const userRef = firestore().collection("users").doc(auth().currentUser.uid);
-      const userDoc = await userRef.get();
-      const listings = userDoc.data().listings;
-      const listingIdToRemove = item.listingId;
-      const updatedListings = listings.filter(listingId => listingId !== listingIdToRemove);
-      await userRef.update({ listings: updatedListings });
-    };
-
-    deleteListingFromListings().then();
-    deleteListingFromStorage().then();
-    deleteListingFormUserListings().then();
-    setDeleteModalOpen(false);
-  };
-
-  const handleLikePress = async () => {
-    const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
-    if (snapshot.exists) {
-      if (snapshot.data() && snapshot.data().favoriteListings) {
-        const favoriteListings = snapshot.data().favoriteListings;
-        if (favoriteListings.includes(item.listingId)) {
-          const index = favoriteListings.findIndex(listing => listing === item.listingId);
-          if (index !== -1) {
-            favoriteListings.splice(index, 1);
-          }
-          await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
-        } else {
-          favoriteListings.push(item.listingId);
-          await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
-        }
-      } else {
-        await firestore().collection("users").doc(auth().currentUser.uid).set({ favoriteListings: [item.listingId] });
-      }
-      loadUserdata();
-    }
-  };
 
   const styles = StyleSheet.create({
     mainCardContainer: { minWidth: cardMinWidth, width: cardWidth, height: cardHeight, borderRadius: 15 },
@@ -158,7 +159,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
         borderBottomStartRadius: 5,
         backgroundColor: `${theme.colors.background}AA`,
       }}
-      onPress={handleLikePress}
+      onPress={() => handleLikePress(item, loadUserdata)}
     >
       <FastImage
         source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
@@ -310,7 +311,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
                       backgroundColor: theme.colors.error,
                       alignItems: "center",
                       justifyContent: "center",
-                    }} onPress={handleDeleteListing}>
+                    }} onPress={() => handleDeleteListing(item, setDeleteModalOpen, loadUserdata)}>
                       <Text
                         style={{
                           fontFamily: "Roboto-Bold",
