@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { View, StyleSheet, Dimensions, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Dimensions, Text, TouchableOpacity, ScrollView } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Carousel from "react-native-reanimated-carousel";
@@ -113,6 +113,7 @@ const OpenedItemCard = ({ theme }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <ScrollView>
       <View style={styles.imagesContainer}>
         <Carousel
           ref={carouselRef}
@@ -162,6 +163,7 @@ const OpenedItemCard = ({ theme }) => {
         backgroundColor: theme.colors.background,
         borderBottomStartRadius: 15,
         borderBottomEndRadius: 15,
+        marginBottom: 12,
       }, shadowStyle({
         color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
       })]}>
@@ -184,25 +186,48 @@ const OpenedItemCard = ({ theme }) => {
               color: theme.colors.text,
             }}>{item.price} BYN/сут</Text>
           </View>
-          <Text style={{
-            fontFamily: "Roboto-Bold",
-            fontSize: 18,
-            color: theme.colors.text,
-          }}>{item.ratings ? <>
-            <View style={{ justifyContent: "center" }}>
-              <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
-            </View>
-            <Text numberOfLines={1} style={styles.mainCardTextMark}>
-              {"\t"}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{"\t"}
-            </Text>
-            <View style={{ justifyContent: "center" }}>
-              <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
-            </View>
-            <Text numberOfLines={1}
-                  style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
-          </> : <Text numberOfLines={1} style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>Нет оценок</Text>}</Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between",alignItems: 'center'}}>
+            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>{item.city}</Text>
+            <Text style={{
+              fontFamily: "Roboto-Regular",
+              color: theme.colors.text,
+            }}>{item.ratings ? <>
+              <View style={{ justifyContent: "center" }}>
+                <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
+              </View>
+              <Text numberOfLines={1} style={styles.mainCardTextMark}>
+                {"\t"}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{"\t"}
+              </Text>
+              <View style={{ justifyContent: "center" }}>
+                <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
+              </View>
+              <Text numberOfLines={1}
+                    style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
+            </> : <Text numberOfLines={1} style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.text}}>Нет оценок</Text>}</Text>
+          </View>
         </View>
       </ShadowedView>
+      <ShadowedView style={[{
+        backgroundColor: theme.colors.background,
+        borderTopStartRadius: 15,
+        borderTopEndRadius: 15,
+        borderBottomStartRadius: 15,
+        borderBottomEndRadius: 15,
+        padding: 6,
+        marginBottom: 12
+      }, shadowStyle({
+        color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
+      })]}>
+        <View>
+          <Text style={{fontFamily: 'Roboto-Medium', color: theme.colors.text}}>Категория:</Text>
+          <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>{item.subcategory}</Text>
+        </View>
+        <View>
+          <Text style={{fontFamily: 'Roboto-Medium', color: theme.colors.text}}>Описание:</Text>
+          <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>{item.description}</Text>
+        </View>
+      </ShadowedView>
+      </ScrollView>
     </SafeAreaView>
   );
 };
