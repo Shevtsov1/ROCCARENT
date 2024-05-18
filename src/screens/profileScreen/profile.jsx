@@ -497,7 +497,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
               borderTopStartRadius: 15, borderTopEndRadius: 15,
             }]}
             buttonStyle={styles.profileAppDataBtn} titleStyle={{ color: theme.colors.grey1 }}
-            onPress={() => navigation.navigate("Favorites")}>
+            onPress={() => navigation.navigate("FavoritesStack")}>
             <Text style={{
               fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,
             }}>Избранное</Text>
