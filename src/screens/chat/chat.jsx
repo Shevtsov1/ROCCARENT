@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Icon } from "@rneui/base";
 import FastImage from "react-native-fast-image";
@@ -43,6 +43,12 @@ const Chat = ({ theme, navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <View style={{height: 60, backgroundColor: theme.colors.accent, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}>
+        <Text style={{fontFamily: 'Roboto-Medium', fontSize: 18, color: theme.colors.accentText,}}>Чаты</Text>
+        <TouchableOpacity style={{position: 'absolute', right: 6,}} onPress={() => navigation.goBack()}>
+          <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, color: theme.colors.accentText}}>Назад</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <FlatList
           data={items}

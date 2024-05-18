@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "@rneui/themed";
 import { AppContext } from "../../../App";
 
-const OpenedChat = ({ theme }) => {
+const OpenedChat = ({ theme, navigation}) => {
 
   const {userdata} = useContext(AppContext);
 
@@ -16,9 +16,9 @@ const OpenedChat = ({ theme }) => {
         <View style={{height: 60, backgroundColor: theme.colors.accent, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 6}}>
           <Avatar containerStyle={{ marginEnd: 6 }} size={'medium'} rounded
                   source={userdata && userdata.photoUrl ? { uri: userdata.photoUrl } : require("../../assets/images/save.png")} />
-          <Text style={{fontFamily: 'Roboto-Medium', fontSize: 16, color: theme.colors.accentText}}>Name</Text>
-          <TouchableOpacity>
-            <Text style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.accentText}}>Назад</Text>
+          <Text style={{fontFamily: 'Roboto-Medium', fontSize: 18, color: theme.colors.accentText}}>Name</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, color: theme.colors.accentText}}>Назад</Text>
           </TouchableOpacity>
         </View>
         <ScrollView>
