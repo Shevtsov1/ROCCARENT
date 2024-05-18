@@ -70,7 +70,7 @@ const Favorites = ({ theme, navigation }) => {
         </View>
         {listingsLoading ? <LoadingScreen theme={theme} /> :
           <>
-            <View style={styles.contentContainer}>
+            <View style={[styles.contentContainer, {alignItems: 'center'}]}>
               {favoriteListings.length === 0 ?
                 <>
                   <View style={{ justifyContent: "center", alignItems: "center", padding: 12, }}>

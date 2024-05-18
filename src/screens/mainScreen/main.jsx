@@ -67,7 +67,7 @@ const Main = ({ theme }) => {
                 radius: 24,
                 offset: [0, 6],
               })]}>
-                <View style={{ width: "100%", backgroundColor: theme.colors.background, borderRadius: 15 }}>
+                <View style={{ width: "100%", backgroundColor: theme.colors.background, borderRadius: 15, alignItems: 'center' }}>
                   <CardsGrid theme={theme} items={listings} likes screen={'Main'}/>
                 </View>
               </ShadowedView>
