@@ -80,7 +80,8 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
   const cardWidth = wp(50);
   const cardHeight = cardWidth * 1.8;
   const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
-  const cardImageWidth = cardWidth;
+  const cardImageWidth = cardWidth -4;
+  const cardImageHeight = cardImageWidth * 1.3;
 
 
   function getRatingWord(count) {
@@ -119,10 +120,10 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
       height: "100%",
     }, mainCardImageContainer: {
       width: cardImageWidth,
-      height: cardImageWidth * 1.3,
+      height: cardImageHeight,
       paddingHorizontal: 2,
     },
-    mainCardImage: { width: cardImageWidth, height: cardImageWidth * 1.3, borderRadius: 15 },
+    mainCardImage: { width: cardImageWidth, height: cardImageHeight, borderRadius: 15 },
     mainCardTextContainer: {
       width: "100%",
       height: "35%",

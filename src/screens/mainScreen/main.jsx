@@ -1,40 +1,50 @@
-import React, { useEffect, useState } from "react";
-import {ScrollView, StyleSheet, View} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
 import AuthHint from "./components/authHint";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import firestore from "@react-native-firebase/firestore";
+import { Icon } from "@rneui/base";
+import { AppContext } from "../../../App";
+import LoadingScreen from "../../components/loadingScreen";
 
 const Main = ({ theme }) => {
+
+  const { loadUserdata } = useContext(AppContext);
 
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
-    loadListingList().then();
+    const load = async () => {
+      await loadUserdata();
+      await loadListingList();
+    };
+    load().then();
   }, []);
+
+  const handleReloadBtn = async () => {
+    try {
+      await loadUserdata();
+      await loadListingList();
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
+  };
 
   const loadListingList = async () => {
     try {
       let newListingsArr = [];
-      const currentUserListings = await firestore().collection('users').doc(auth().currentUser.uid).get();
       const listingsData = await firestore().collection("listings").get();
       if (listingsData) {
-        if (currentUserListings.data() && currentUserListings.data().listings) {
-          currentUserListings.data().listings.forEach(listingId => {
             listingsData.forEach(doc => {
-              if (doc.id !== listingId) {
+              if (doc.data().ownerId !== auth().currentUser.uid) {
                 newListingsArr.push(doc.data());
               }
             });
-          })
-        } else {
-          listingsData.forEach(doc => {
-            newListingsArr.push(doc.data());
-          });
-        }
-        setListings(newListingsArr);
+            setListings(newListingsArr);
       }
     } catch (error) {
       console.error("Error fetching documents: ", error);
@@ -59,19 +69,29 @@ const Main = ({ theme }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
-          {auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme} />}
-          {listings &&
-              <ShadowedView style={[{ marginBottom: 12 }, shadowStyle({
-                color: theme.colors.grey3,
-                opacity: 0.8,
-                radius: 24,
-                offset: [0, 6],
-              })]}>
-                <View style={{ width: "100%", backgroundColor: theme.colors.background, borderRadius: 15, alignItems: 'center' }}>
-                  <CardsGrid theme={theme} items={listings} likes screen={'Main'}/>
-                </View>
-              </ShadowedView>
-          }
+        <>
+          {auth().currentUser && auth().currentUser.isAnonymous && (
+            <AuthHint theme={theme} />
+          )}
+          {listings && (
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: theme.colors.background,
+                borderRadius: 15,
+                alignItems: "center",
+              }}
+            >
+              <CardsGrid
+                theme={theme}
+                items={listings}
+                likes
+                screen={"Main"}
+                reloadFunction={() => handleReloadBtn()}
+              />
+            </View>
+          )}
+        </>
       </SafeAreaView>
     </SafeAreaProvider>
   );

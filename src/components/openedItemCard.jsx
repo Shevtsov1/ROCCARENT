@@ -11,6 +11,7 @@ import { AppContext } from "../../App";
 import TextTicker from "react-native-text-ticker";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { handleDeleteListing, handleLikePress } from "./itemCard";
+import auth from "@react-native-firebase/auth";
 
 const OpenedItemCard = ({ theme }) => {
 
@@ -303,12 +304,13 @@ const OpenedItemCard = ({ theme }) => {
             </View>
           </View>
           {likes &&
+            // !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
             <>
               <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"В избранное"} />
+                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} />
               </ShadowedView>
               <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
