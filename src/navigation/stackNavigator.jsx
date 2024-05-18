@@ -19,6 +19,7 @@ import OpenedItemCard from "../components/openedItemCard";
 import Main from "../screens/mainScreen/main";
 import Catalog from "../screens/catalogScreen/catalog";
 import Favorites from "../screens/favoritesScreen/favorites";
+import OpenedChat from "../screens/chat/openedChat";
 
 const Stack = createNativeStackNavigator();
 
@@ -103,6 +104,8 @@ export const ProfileStackNavigator = ({
                 <UserListings {...props} theme={theme}/>}</Stack.Screen>
             <Stack.Screen name="Chat" options={{headerShown: false}}>{(props) =>
                 <Chat {...props} theme={theme}/>}</Stack.Screen>
+          <Stack.Screen name="OpenedChat" options={{headerShown: false}}>{(props) =>
+            <OpenedChat {...props} theme={theme}/>}</Stack.Screen>
             <Stack.Screen name="OpenedItemCard" options={{headerShown: false}}>{(props) =>
                 <OpenedItemCard {...props} theme={theme}/>}</Stack.Screen>
         </Stack.Navigator>

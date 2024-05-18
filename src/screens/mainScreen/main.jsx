@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
@@ -69,6 +69,9 @@ const Main = ({ theme }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
+        <View>
+          <Text>Header</Text>
+        </View>
         <>
           {auth().currentUser && auth().currentUser.isAnonymous && (
             <AuthHint theme={theme} />

@@ -136,7 +136,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
         const imageUrl = await storageRef.getDownloadURL();
 
         await auth().currentUser.updateProfile({
-          photoURL: imageUrl,
+          photoUrl: imageUrl,
         });
         const snapshot = await firestore().collection('users').doc(auth().currentUser.uid).get()
         if (snapshot.exists) {
