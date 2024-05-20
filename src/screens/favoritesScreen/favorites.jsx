@@ -15,28 +15,28 @@ const Favorites = ({ theme, navigation }) => {
   const [favoriteListings, setFavoriteListings] = useState([]);
 
   useEffect(() => {
-    const fetchFavoriteListings = async () => {
-      if (userdata && userdata.favoriteListings) {
-        const snapshot = await firestore().collection("listings").get();
-        const updatedUserListings = [];
-
-        snapshot.forEach(documentSnapshot => {
-          if (userdata.favoriteListings.includes(documentSnapshot.id)) {
-            updatedUserListings.push({
-              ...documentSnapshot.data(),
-            });
-          }
-        });
-
-        setFavoriteListings(updatedUserListings);
-      }
-    };
-
     if (userdata && userdata.favoriteListings) {
       fetchFavoriteListings().then();
     }
     setListingsLoading(false);
   }, [userdata && userdata.favoriteListings]);
+
+  const fetchFavoriteListings = async () => {
+    if (userdata && userdata.favoriteListings) {
+      const snapshot = await firestore().collection("listings").get();
+      const updatedUserListings = [];
+
+      snapshot.forEach(documentSnapshot => {
+        if (userdata.favoriteListings.includes(documentSnapshot.id)) {
+          updatedUserListings.push({
+            ...documentSnapshot.data(),
+          });
+        }
+      });
+
+      setFavoriteListings(updatedUserListings);
+    }
+  };
 
   const styles = StyleSheet.create({
 
@@ -93,7 +93,7 @@ const Favorites = ({ theme, navigation }) => {
                 </>
                 :
                 <View style={{alignItems: 'center'}}>
-                  <CardsGrid theme={theme} items={favoriteListings} likes screen={'Favorites'}/>
+                  <CardsGrid theme={theme} items={favoriteListings} likes screen={'Favorites'} reloadFunction={fetchFavoriteListings}/>
                 </View>
               }
             </View>
