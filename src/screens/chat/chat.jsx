@@ -16,7 +16,6 @@ const Chat = ({ theme, navigation }) => {
   const [otherUsersData, setOtherUsersData] = useState([]);
 
   useEffect(() => {
-    console.log('reload chat.jsx')
     // Fetch chats from the real-time database
     const fetchChats = async () => {
       try {

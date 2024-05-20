@@ -22,7 +22,6 @@ const OpenedChat = ({ theme, navigation, route }) => {
   const messageInputRef = useRef(null);
 
   useEffect(() => {
-    console.log('reload openedChat')
     const getChatMateData = async () => {
       const snapshot = await firestore().collection('users').doc(ownerId).get();
       if (snapshot.exists && snapshot.data().nickname && snapshot.data().photoUrl) {
