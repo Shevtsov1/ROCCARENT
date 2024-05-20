@@ -11,7 +11,7 @@ const OpenedChat = ({ theme, navigation, route }) => {
 
   const { userdata } = useContext(AppContext);
 
-  const {ownerId} = route.params;
+  const { ownerId } = route.params;
 
   const [isChatLoading, setIsChatLoading] = useState(true);
   const [isSendBtnDisabled, setSendBtnDisabled] = useState(true);
@@ -22,6 +22,7 @@ const OpenedChat = ({ theme, navigation, route }) => {
   const messageInputRef = useRef(null);
 
   useEffect(() => {
+    console.log('reload openedChat')
     const getChatMateData = async () => {
       const snapshot = await firestore().collection('users').doc(ownerId).get();
       if (snapshot.exists && snapshot.data().nickname && snapshot.data().photoUrl) {
@@ -29,44 +30,50 @@ const OpenedChat = ({ theme, navigation, route }) => {
       }
     };
     getChatMateData().then();
-    getMessages();
-    setIsChatLoading(false);
-  }, [ownerId]);
+    getMessages().then();
+  }, []);
 
-  const getMessages = () => {
-    const currentUserId = auth().currentUser.uid;
-    const chatRef = database().ref('chats');
-    const query = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+  const getMessages = async () => {
+    try {
+      const currentUserId = auth().currentUser.uid;
+      const chatRef = database().ref('chats');
+      const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+      const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
 
-    query.once('value').then((snapshot) => {
-      // Проверяем, существует ли чат, в котором текущий пользователь является первым участником
+      const [firstSnapshot, secondSnapshot] = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+
       let chatId;
+      const snapshot = firstSnapshot.exists() ? firstSnapshot : secondSnapshot;
+
       snapshot.forEach((childSnapshot) => {
         const chatData = childSnapshot.val();
-        const otherUserId = chatData.userIds[1];
-        if (otherUserId === ownerId) {
+        const userIds = chatData.userIds;
+        if (userIds.includes(currentUserId)) {
           chatId = childSnapshot.key;
-          return true; // Выходим из цикла forEach, когда находим нужный чат
+          return true;
         }
       });
 
       if (chatId) {
-        // Чат уже существует, получаем сообщения
         const messageRef = database().ref(`chats/${chatId}/messages`);
+        const messageSnapshot = await messageRef.once('value');
+        const messagesData = messageSnapshot.val();
 
-        messageRef.once('value').then((snapshot) => {
-          const messagesData = snapshot.val();
-          if (messagesData) {
-            const messagesArray = Object.values(messagesData);
-            setMessages(messagesArray);
-          }
-        }).catch((error) => {
-          console.error('Failed to get messages:', error);
-        });
+        if (messagesData) {
+          const messagesArray = Object.values(messagesData);
+
+          // Сортировка сообщений по времени (timestamp) от старых к новым
+          messagesArray.sort((a, b) => a.timestamp - b.timestamp);
+          messagesArray.reverse();
+
+          setMessages(messagesArray);
+        }
       }
-    }).catch((error) => {
+
+      setIsChatLoading(false);
+    } catch (error) {
       console.error('Failed to check chat existence:', error);
-    });
+    }
   };
 
   const verifyMessageToSend = (value) => {
@@ -83,48 +90,46 @@ const OpenedChat = ({ theme, navigation, route }) => {
     }
   };
 
-  const handleSendBtn = () => {
-    const currentUserId = auth().currentUser.uid;
-    const chatRef = database().ref('chats');
-    const query = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+  const handleSendBtn = async () => {
+    try {
+      const currentUserId = auth().currentUser.uid;
+      const chatRef = database().ref('chats');
+      const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+      const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
 
-    query.once('value').then((snapshot) => {
-      // Проверяем, существует ли чат, в котором текущий пользователь является первым участником
+      const [firstSnapshot, secondSnapshot] = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+
       let chatId;
+      const snapshot = firstSnapshot.exists() ? firstSnapshot : secondSnapshot;
+
       snapshot.forEach((childSnapshot) => {
         const chatData = childSnapshot.val();
-        const otherUserId = chatData.userIds[1];
-        if (otherUserId === ownerId) {
+        const userIds = chatData.userIds;
+        if (userIds.includes(currentUserId)) {
           chatId = childSnapshot.key;
-          return true; // Выходим из цикла forEach, когда находим нужный чат
+          return true;
         }
       });
 
       if (chatId) {
-        // Чат уже существует, отправляем сообщение
         sendMessage(chatId);
       } else {
-        // Чат не существует, создаем новый чат
         const newChatRef = chatRef.push();
         chatId = newChatRef.key;
         const chatData = {
           userIds: [currentUserId, ownerId],
         };
-        newChatRef
-          .set(chatData)
-          .then(() => {
-            sendMessage(chatId);
-          })
-          .catch((error) => {
-            console.error('Failed to create chat:', error);
-          });
+
+        await newChatRef.set(chatData);
+        sendMessage(chatId);
       }
+
       if (messageInputRef.current) {
         messageInputRef.current.blur();
       }
-    }).catch((error) => {
-      console.error('Failed to check chat existence:', error);
-    });
+    } catch (error) {
+      console.error('Failed to handle send button click:', error);
+    }
   };
 
   const sendMessage = (chatId) => {
