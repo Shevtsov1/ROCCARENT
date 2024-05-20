@@ -11,9 +11,8 @@ import { AppContext } from "../../App";
 import TextTicker from "react-native-text-ticker";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { handleDeleteListing, handleLikePress } from "./itemCard";
-import auth from "@react-native-firebase/auth";
 
-const OpenedItemCard = ({ theme }) => {
+const OpenedItemCard = ({ theme, navigation }) => {
 
   const { userdata, loadUserdata } = useContext(AppContext);
 
@@ -310,7 +309,7 @@ const OpenedItemCard = ({ theme }) => {
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} />
+                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} onPress={() => navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {ownerId: item.ownerId}})}/>
               </ShadowedView>
               <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],

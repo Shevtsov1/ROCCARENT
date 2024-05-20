@@ -45,7 +45,7 @@ const Chat = ({ theme, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{height: 60, backgroundColor: theme.colors.accent, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}>
         <Text style={{fontFamily: 'Roboto-Medium', fontSize: 18, color: theme.colors.accentText,}}>Чаты</Text>
-        <TouchableOpacity style={{position: 'absolute', right: 6,}} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={{position: 'absolute', right: 6,}} onPress={() => navigation.navigate('Profile')}>
           <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, color: theme.colors.accentText}}>Назад</Text>
         </TouchableOpacity>
       </View>
