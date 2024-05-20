@@ -176,6 +176,11 @@ const OpenedItemCard = ({ theme, navigation }) => {
       <ScrollView>
         <View style={styles.imagesContainer}>
           <Carousel
+            panGestureHandlerProps={{
+              activeOffsetX: [-10, 10],
+              activeOffsetY: [-10, 10],
+              failOffsetY: [-10, 10],
+            }}
             ref={carouselRef}
             loop={false}
             width={width}
