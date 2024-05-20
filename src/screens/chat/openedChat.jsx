@@ -35,6 +35,7 @@ const OpenedChat = ({ theme, navigation, route }) => {
 
   const getMessages = async () => {
     try {
+      setIsChatLoading(true); // Start loading
       const currentUserId = auth().currentUser.uid;
       const chatRef = database().ref('chats');
       const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
@@ -56,23 +57,23 @@ const OpenedChat = ({ theme, navigation, route }) => {
 
       if (chatId) {
         const messageRef = database().ref(`chats/${chatId}/messages`);
-        const messageSnapshot = await messageRef.once('value');
-        const messagesData = messageSnapshot.val();
 
-        if (messagesData) {
-          const messagesArray = Object.values(messagesData);
-
-          // Сортировка сообщений по времени (timestamp) от старых к новым
-          messagesArray.sort((a, b) => a.timestamp - b.timestamp);
-          messagesArray.reverse();
-
-          setMessages(messagesArray);
-        }
+        // Listen for new messages
+        messageRef.on('child_added', (snapshot) => {
+          const newMessage = snapshot.val();
+          setMessages((prevMessages) => {
+            const updatedMessages = [...prevMessages, newMessage];
+            updatedMessages.sort((a, b) => a.timestamp - b.timestamp);
+            updatedMessages.reverse();
+            return updatedMessages;
+          });
+        });
       }
 
-      setIsChatLoading(false);
+      setIsChatLoading(false); // Stop loading
     } catch (error) {
       console.error('Failed to check chat existence:', error);
+      setIsChatLoading(false); // Stop loading even on error
     }
   };
 
