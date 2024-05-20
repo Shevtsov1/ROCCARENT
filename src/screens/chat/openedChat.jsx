@@ -20,6 +20,13 @@ const OpenedChat = ({ theme, navigation, route }) => {
   const [chatMateData, setChatMateData] = useState([]);
 
   const messageInputRef = useRef(null);
+  const scrollViewRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: false });
+    }
+  }, [messages]);
 
   useEffect(() => {
     const getChatMateData = async () => {
@@ -169,7 +176,7 @@ const OpenedChat = ({ theme, navigation, route }) => {
             <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.accentText }}>Назад</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView  contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
+        <ScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
           {isChatLoading ? (<ActivityIndicator size={24} color={theme.colors.accent}/>) : (
             messages.length !== 0 ?   <View>
                     {messages.slice().reverse().map((message, index) => (
