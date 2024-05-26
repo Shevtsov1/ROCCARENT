@@ -13,12 +13,12 @@ const Chat = ({theme, navigation}) => {
     const [otherUsersData, setOtherUsersData] = useState([]);
 
     useLayoutEffect(() => {
+        // Clean up the event listener when the component unmounts
+        const chatRef = database().ref('chats');
 
-        fetchChats().then();
-
+        chatRef.on('child_added', fetchChats);
+        chatRef.on('child_removed', fetchChats);
         return () => {
-            // Clean up the event listener when the component unmounts
-            const chatRef = database().ref('chats');
             chatRef.off();
         };
     }, []);

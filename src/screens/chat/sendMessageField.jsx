@@ -4,7 +4,7 @@ import FastImage from "react-native-fast-image";
 import auth from "@react-native-firebase/auth";
 import database from "@react-native-firebase/database";
 
-const SendMessageField = ({theme, otherUserId}) => {
+const SendMessageField = ({theme, otherUserId, setFinalChatId, finalChatId, getChatId, messagesLength, getMessages}) => {
 
     const [isSendBtnDisabled, setSendBtnDisabled] = useState(true);
     const [messageToSend, setMessageToSend] = useState('');
@@ -58,7 +58,14 @@ const SendMessageField = ({theme, otherUserId}) => {
                 await newChatRef.set(chatData);
                 sendMessage(chatId);
             }
-
+            if (messagesLength === 0) {
+                getMessages();
+            }
+            if (!finalChatId) {
+                getChatId().then((chatId) => {
+                    setFinalChatId(chatId);
+                });
+            }
             if (messageInputRef.current) {
                 messageInputRef.current.blur();
             }

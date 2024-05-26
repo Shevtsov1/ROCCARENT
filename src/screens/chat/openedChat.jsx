@@ -168,9 +168,15 @@ const OpenedChat = ({theme, navigation, route}) => {
     };
 
     const handleDeleteChat = async () => {
-        const chatRef = database().ref(`chats/${chatId}`);
-        await chatRef.remove();
-        navigation.goBack();
+        if (chatId) {
+            const chatRef = database().ref(`chats/${chatId}`);
+            await chatRef.remove();
+            navigation.goBack();
+        } else {
+            const chatRef = database().ref(`chats/${finalChatId}`);
+            await chatRef.remove();
+            navigation.goBack();
+        }
     };
 
     const handleDeleteBtnPress = () => {
@@ -205,7 +211,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                         borderRadius: 5,
                         backgroundColor: theme.colors.background
                     }}>
-                        <TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}
+                        <TouchableOpacity style={{flexDirection: 'row',}}
                                           disabled={!auth().currentUser.phoneNumber} onPress={sendPhoneNumber}>
                             <Icon type={'ionicon'} name={'person-add'} size={20}
                                   color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}
@@ -216,7 +222,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                             }}>Отправить свой
                                 телефон</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}
+                        <TouchableOpacity style={{flexDirection: 'row', marginTop: 6,}}
                                           disabled={!auth().currentUser.phoneNumber}>
                             <Icon type={'ionicon'} name={'ban'} size={20}
                                   color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}
@@ -226,7 +232,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                                 color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1
                             }}>Заблокировать пользователя</Text>
                         </TouchableOpacity>
-                        {/*<TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}*/}
+                        {/*<TouchableOpacity style={{flexDirection: 'row', marginTop: 6,}}*/}
                         {/*                  disabled={!auth().currentUser.phoneNumber}>*/}
                         {/*    <Icon type={'ionicon'} name={'checkmark-circle'} size={20}*/}
                         {/*          color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}*/}
@@ -236,12 +242,12 @@ const OpenedChat = ({theme, navigation, route}) => {
                         {/*        color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1*/}
                         {/*    }}>Разблокировать пользователя</Text>*/}
                         {/*</TouchableOpacity>*/}
-                        <TouchableOpacity style={{flexDirection: 'row'}} disabled={!messages}
+                        {messages.length !== 0 && <TouchableOpacity style={{flexDirection: 'row', marginTop: 6}} disabled={messages.length === 0}
                                           onPress={handleDeleteBtnPress}>
                             <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}
                                   style={{marginEnd: 6}}/>
                             <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>}
                     </Reanimated.View>}
                 <View style={{
                     height: 60,
@@ -297,7 +303,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                         </Text>}
 
                 </View>)}
-                <SendMessageField theme={theme} otherUserId={otherUserId}/>
+                <SendMessageField theme={theme} otherUserId={otherUserId} setFinalChatId={setFinalChatId} finalChatId={finalChatId} getChatId={getChatId} messagesLength={messages.length} getMessages={getMessages}/>
             </View>
         </SafeAreaView>
     );
