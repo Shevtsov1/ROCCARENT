@@ -142,7 +142,6 @@ const Chat = ({theme, navigation}) => {
                         chatId: chat.item.chatId,
                         otherUserId: chat.item.otherUserId,
                         otherUserData: otherUserData,
-                        fetchChats: fetchChats,
                     })
                 }}
             >

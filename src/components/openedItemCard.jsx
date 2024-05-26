@@ -314,7 +314,8 @@ const OpenedItemCard = ({ theme, navigation }) => {
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} onPress={() => navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {ownerId: item.ownerId}})}/>
+                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} onPress={() => {
+                    navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId}})}}/>
               </ShadowedView>
               <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],

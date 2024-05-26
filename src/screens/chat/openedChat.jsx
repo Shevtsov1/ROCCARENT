@@ -5,26 +5,47 @@ import FastImage from "react-native-fast-image";
 import database from "@react-native-firebase/database";
 import ChatMessage from "./chatMessage";
 import SendMessageField from "./sendMessageField";
-import {Icon} from "@rneui/base";
+import {Icon, Overlay} from "@rneui/base";
 import Reanimated, {LightSpeedInRight, LightSpeedOutRight} from "react-native-reanimated";
 import auth from "@react-native-firebase/auth";
 import {AppContext} from "../../../App";
+import firestore from "@react-native-firebase/firestore";
 
 const OpenedChat = ({theme, navigation, route}) => {
     const {userdata} = useContext(AppContext);
-    const {chatId, otherUserId, otherUserData, fetchChats} = route.params;
+    const {chatId, otherUserId, otherUserData} = route.params;
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
+    const [isDeleteChatModalVisible, setDeleteChatModalVisible] = useState(false);
+    const [chatMateData, setChatMateData] = useState({})
     const [messages, setMessages] = useState([]);
+    const [finalChatId, setFinalChatId] = useState(null);
+    const [finalOtherUserPhotoUrl, setFinalOtherUserPhotoUrl] = useState(null);
 
     const [isEllipsisMenuOpened, setEllipsisMenuOpened] = useState(false);
 
     useEffect(() => {
+        if (!otherUserData) {
+            getChatMateData().then();
+            setFinalOtherUserPhotoUrl(chatMateData.photoUrl);
+        } else {
+            setFinalOtherUserPhotoUrl(otherUserData.photoUrl);
+        }
+        if (!chatId) {
+            getChatId().then((chatId) => {
+                setFinalChatId(chatId);
+            });
+        }
         getMessages().then();
     }, []);
 
     useEffect(() => {
-        const messageRef = database().ref(`chats/${chatId}/messages`);
+        let messageRef;
+        if (chatId) {
+            messageRef = database().ref(`chats/${chatId}/messages`);
+        } else {
+            messageRef = database().ref(`chats/${finalChatId}/messages`);
+        }
 
         const handleChildAdded = (snapshot) => {
             const newMessage = snapshot.val();
@@ -78,27 +99,52 @@ const OpenedChat = ({theme, navigation, route}) => {
         };
     }, []);
 
+    const getChatMateData = async () => {
+        const snapshot = await firestore().collection('users').doc(otherUserId).get();
+        if (snapshot.exists && snapshot.data().nickname && snapshot.data().photoUrl) {
+            setChatMateData({nickname: snapshot.data().nickname, photoUrl: snapshot.data().photoUrl})
+        }
+    };
+
+    const getChatId = async () => {
+        const currentUserId = auth().currentUser.uid;
+        const chatRef = database().ref('chats');
+        const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+        const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
+
+        const [firstSnapshot, secondSnapshot] = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+
+        const snapshot = firstSnapshot.exists() ? firstSnapshot : secondSnapshot;
+
+        return new Promise((resolve) => {
+            snapshot.forEach((childSnapshot) => {
+                const chatData = childSnapshot.val();
+                const userIds = chatData.userIds;
+                if (userIds.includes(otherUserId)) {
+                    resolve(childSnapshot.key);
+                }
+            });
+        });
+    };
+
     const getMessages = async () => {
         try {
             setIsChatLoading(true);
 
-            if (chatId) {
-                const messageRef = database().ref(`chats/${chatId}/messages`);
-                const chatRef = database().ref(`chats/${chatId}`);
-                const chatSnapshot = await chatRef.once('value');
-                const messageSnapshot = await messageRef.once('value');
-                const existingMessages = Object.values(messageSnapshot.val() || {});
-                if (chatSnapshot.val().deletedFor[auth().currentUser.uid]) {
-                    setMessages(existingMessages.filter(
-                        (msg) => msg.timestamp > (chatSnapshot.val().deletedFor[auth().currentUser.uid] || {timestamp: 0}).timestamp
-                    ).sort((a, b) => a.timestamp - b.timestamp).reverse());
-                    setIsInitialMessagesLoaded(true);
-                } else {
-                    setMessages(existingMessages.sort((a, b) => a.timestamp - b.timestamp).reverse());
-                    setIsInitialMessagesLoaded(true);
-                }
+            let messageRef, messageSnapshot, existingMessages;
 
+            if (chatId) {
+                messageRef = database().ref(`chats/${chatId}/messages`);
+            } else {
+                const newChatId = await getChatId();
+                messageRef = database().ref(`chats/${newChatId}/messages`);
             }
+
+            messageSnapshot = await messageRef.once('value');
+            existingMessages = Object.values(messageSnapshot.val() || {});
+            existingMessages.sort((a, b) => a.timestamp - b.timestamp).reverse();
+            setMessages(existingMessages);
+            setIsInitialMessagesLoaded(true);
 
             setIsChatLoading(false);
         } catch (error) {
@@ -158,15 +204,32 @@ const OpenedChat = ({theme, navigation, route}) => {
                         console.error('Ошибка при обновлении deletedFor:', error);
                     });
                 navigation.navigate('Chat');
-                fetchChats();
             })
             .catch((error) => {
                 console.error('Ошибка при получении данных чата:', error);
             });
     };
 
+    const handleDeleteBtnPress = () => {
+        setDeleteChatModalVisible(true);
+    }
+
     return (
         <SafeAreaView style={{flex: 1}}>
+            <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
+                     overlayStyle={{backgroundColor: theme.colors.background}}>
+                <View style={{backgroundColor: theme.colors.background}}>
+                    <Text>Вы точно хотите удалить чат?</Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <TouchableOpacity onPress={() => setDeleteChatModalVisible(false)}>
+                            <Text>Отмена</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleDeleteChat}>
+                            <Text>Удалить</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Overlay>
             <View style={{flex: 1, backgroundColor: theme.colors.background}}>
                 {isEllipsisMenuOpened &&
                     <Reanimated.View entering={LightSpeedInRight} exiting={LightSpeedOutRight} style={{
@@ -182,15 +245,36 @@ const OpenedChat = ({theme, navigation, route}) => {
                         <TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}
                                           disabled={!auth().currentUser.phoneNumber} onPress={sendPhoneNumber}>
                             <Icon type={'ionicon'} name={'person-add'} size={20}
-                                  color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}/>
+                                  color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}
+                            style={{marginEnd: 6}}/>
                             <Text style={{
                                 fontFamily: 'Roboto-Regular',
                                 color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1
                             }}>Отправить свой
                                 телефон</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleDeleteChat}>
-                            <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}/>
+                        <TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}
+                                          disabled={!auth().currentUser.phoneNumber}>
+                            <Icon type={'ionicon'} name={'ban'} size={20}
+                                  color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}
+                                  style={{marginEnd: 6}}/>
+                            <Text style={{
+                                fontFamily: 'Roboto-Regular',
+                                color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1
+                            }}>Заблокировать пользователя</Text>
+                        </TouchableOpacity>
+                        {/*<TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}*/}
+                        {/*                  disabled={!auth().currentUser.phoneNumber}>*/}
+                        {/*    <Icon type={'ionicon'} name={'checkmark-circle'} size={20}*/}
+                        {/*          color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}*/}
+                        {/*          style={{marginEnd: 6}}/>*/}
+                        {/*    <Text style={{*/}
+                        {/*        fontFamily: 'Roboto-Regular',*/}
+                        {/*        color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1*/}
+                        {/*    }}>Разблокировать пользователя</Text>*/}
+                        {/*</TouchableOpacity>*/}
+                        <TouchableOpacity style={{flexDirection: 'row'}} disabled={!messages} onPress={handleDeleteBtnPress}>
+                            <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error} style={{marginEnd: 6}}/>
                             <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
                         </TouchableOpacity>
                     </Reanimated.View>}
@@ -209,7 +293,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                         <View style={{width: 48, height: 48, marginEnd: 6}}>
                             <FastImage
                                 style={{width: "100%", height: "100%", borderRadius: 100}}
-                                source={otherUserData && otherUserData.photoUrl ? {uri: otherUserData.photoUrl} : require("../../assets/images/save.png")}
+                                source={{uri: finalOtherUserPhotoUrl}}
                                 resizeMode={FastImage.resizeMode.cover}
                             />
                         </View>
@@ -217,7 +301,11 @@ const OpenedChat = ({theme, navigation, route}) => {
                             fontFamily: "Roboto-Medium",
                             fontSize: 18,
                             color: theme.colors.accentText
-                        }}>{otherUserData && otherUserData.nickname}</Text>
+                        }}>{otherUserData
+                            ? otherUserData.nickname
+                            : chatMateData
+                                ? chatMateData.nickname
+                        : 'Нет имени'}</Text>
                     </View>
                     <TouchableOpacity onPress={() => setEllipsisMenuOpened(!isEllipsisMenuOpened)}>
                         <Icon type={'ionicon'} name={'ellipsis-vertical'} size={24} color={theme.colors.accentText}/>
