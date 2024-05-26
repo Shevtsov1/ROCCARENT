@@ -13,85 +13,6 @@ const Chat = ({theme, navigation}) => {
     const [otherUsersData, setOtherUsersData] = useState([]);
 
     useEffect(() => {
-        // Fetch chats from the real-time database
-        const fetchChats = async () => {
-            try {
-                const currentUserId = auth().currentUser.uid;
-                const chatRef = database().ref('chats');
-                const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
-                const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
-
-                const snapshots = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
-
-                const chatList = [];
-                const userIds = new Set(); // Using a Set to avoid duplicate userIds
-
-                for (const snapshot of snapshots) {
-                    snapshot.forEach((childSnapshot) => {
-                        const chatData = childSnapshot.val();
-                        const otherUserId = chatData.userIds[0] === currentUserId ? chatData.userIds[1] : chatData.userIds[0];
-                        const chatId = childSnapshot.key;
-
-                        chatList.push({chatId, otherUserId});
-                        userIds.add(otherUserId);
-                    });
-                }
-
-                // Fetch last messages for each chat
-                const chatListWithMessages = await Promise.all(chatList.map(async (chat) => {
-                    const lastMessage = await fetchLastMessage(chat.chatId);
-                    return {...chat, lastMessage};
-                }));
-
-                setChats(chatListWithMessages);
-                await fetchOtherUsersData([...userIds]);
-            } catch (error) {
-                console.error('Error fetching chats:', error);
-            }
-        };
-
-        const fetchLastMessage = async (chatId) => {
-            try {
-                const messagesRef = database().ref(`chats/${chatId}/messages`);
-                const messageSnapshot = await messagesRef
-                    .orderByChild('timestamp')
-                    .limitToLast(1)
-                    .once('value');
-
-                if (messageSnapshot.exists()) {
-                    const lastMessageKey = Object.keys(messageSnapshot.val())[0];
-                    const lastMessageData = messageSnapshot.child(lastMessageKey).val();
-                    const {content, senderId} = lastMessageData;
-                    return {content, senderId};
-                } else {
-                    return {content: null, senderId: null}; // Handle case where there are no messages
-                }
-            } catch (error) {
-                console.error('Failed to fetch last message:', error);
-                throw error;
-            }
-        };
-
-
-        const fetchOtherUsersData = async (userIds) => {
-            try {
-                const usersCollection = firestore().collection('users');
-                const usersData = [];
-
-                for (const userId of userIds) {
-                    const userDoc = await usersCollection.doc(userId).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        usersData.push(userData);
-                    }
-                }
-
-                setOtherUsersData(usersData);
-            } catch (error) {
-                console.error('Failed to fetch other users data:', error);
-            }
-        };
-
 
         fetchChats().then();
 
@@ -101,6 +22,92 @@ const Chat = ({theme, navigation}) => {
             chatRef.off();
         };
     }, []);
+
+    // Fetch chats from the real-time database
+    const fetchChats = async () => {
+        try {
+            const currentUserId = auth().currentUser.uid;
+            const chatRef = database().ref('chats');
+            const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+            const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
+
+            const snapshots = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+
+            const chatList = [];
+            const userIds = new Set(); // Using a Set to avoid duplicate userIds
+
+            for (const snapshot of snapshots) {
+                snapshot.forEach((childSnapshot) => {
+                    const chatData = childSnapshot.val();
+                    const otherUserId = chatData.userIds[0] === currentUserId ? chatData.userIds[1] : chatData.userIds[0];
+                    const chatId = childSnapshot.key;
+
+                    if (
+                        chatData &&
+                        ((chatData.deletedFor &&
+                            Array.isArray(chatData.deletedFor) &&
+                            (chatData.deletedFor[0].userId !== auth().currentUser.uid && chatData.deletedFor[1] !== auth().currentUser.uid)) || !chatData.deletedFor)
+                    ) {
+                        chatList.push({chatId, otherUserId});
+                        userIds.add(otherUserId);
+                    }
+                });
+            }
+
+            // Fetch last messages for each chat
+            const chatListWithMessages = await Promise.all(chatList.map(async (chat) => {
+                const lastMessage = await fetchLastMessage(chat.chatId);
+                return {...chat, lastMessage};
+            }));
+
+            setChats(chatListWithMessages);
+            await fetchOtherUsersData([...userIds]);
+        } catch (error) {
+            console.error('Error fetching chats:', error);
+        }
+    };
+
+    const fetchLastMessage = async (chatId) => {
+        try {
+            const messagesRef = database().ref(`chats/${chatId}/messages`);
+            const messageSnapshot = await messagesRef
+                .orderByChild('timestamp')
+                .limitToLast(1)
+                .once('value');
+
+            if (messageSnapshot.exists()) {
+                const lastMessageKey = Object.keys(messageSnapshot.val())[0];
+                const lastMessageData = messageSnapshot.child(lastMessageKey).val();
+                const {content, senderId} = lastMessageData;
+                return {content, senderId};
+            } else {
+                return {content: null, senderId: null}; // Handle case where there are no messages
+            }
+        } catch (error) {
+            console.error('Failed to fetch last message:', error);
+            throw error;
+        }
+    };
+
+
+    const fetchOtherUsersData = async (userIds) => {
+        try {
+            const usersCollection = firestore().collection('users');
+            const usersData = [];
+
+            for (const userId of userIds) {
+                const userDoc = await usersCollection.doc(userId).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    usersData.push(userData);
+                }
+            }
+
+            setOtherUsersData(usersData);
+        } catch (error) {
+            console.error('Failed to fetch other users data:', error);
+        }
+    };
 
     const ChatBtn = ({chat}) => {
         // Find the corresponding user data based on otherUserId
@@ -130,7 +137,8 @@ const Chat = ({theme, navigation}) => {
                     navigation.navigate('OpenedChat', {
                         chatId: chat.item.chatId,
                         otherUserId: chat.item.otherUserId,
-                        otherUserData: otherUserData
+                        otherUserData: otherUserData,
+                        fetchChats: fetchChats,
                     })
                 }}
             >

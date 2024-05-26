@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FastImage from "react-native-fast-image";
@@ -8,9 +8,11 @@ import SendMessageField from "./sendMessageField";
 import {Icon} from "@rneui/base";
 import Reanimated, {LightSpeedInRight, LightSpeedOutRight} from "react-native-reanimated";
 import auth from "@react-native-firebase/auth";
+import {AppContext} from "../../../App";
 
 const OpenedChat = ({theme, navigation, route}) => {
-    const {chatId, otherUserId, otherUserData} = route.params;
+    const {userdata} = useContext(AppContext);
+    const {chatId, otherUserId, otherUserData, fetchChats} = route.params;
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -105,7 +107,7 @@ const OpenedChat = ({theme, navigation, route}) => {
         const messageData = {
             senderId: auth().currentUser.uid,
             receiverId: otherUserId,
-            content: auth().currentUser.phoneNumber,
+            content: `Телефон ${userdata.nickname}\n${auth().currentUser.phoneNumber}`,
             timestamp: Date.now()
         };
         newMessageRef.set(messageData)
@@ -113,6 +115,46 @@ const OpenedChat = ({theme, navigation, route}) => {
             })
             .catch((error) => {
                 console.error('Failed to send message:', error);
+            });
+    };
+
+    const handleDeleteChat = () => {
+        const chatRef = database().ref(`chats/${chatId}`);
+        chatRef.once('value')
+            .then((snapshot) => {
+                const chatData = snapshot.val();
+                let updatedDeletedFor = [];
+
+                // Если deletedFor отсутствует, добавляем id текущего пользователя
+                if (!chatData.deletedFor) {
+                    updatedDeletedFor = {
+                        [auth().currentUser.uid]: {
+                            timestamp: Date.now()
+                        }
+                    };
+                } else {
+                    // Если deletedFor присутствует, добавляем id текущего пользователя, если его нет
+                    updatedDeletedFor = {
+                        ...chatData.deletedFor,
+                        [auth().currentUser.uid]: {
+                            timestamp: Date.now()
+                        }
+                    };
+                }
+
+                // Обновляем deletedFor в базе данных
+                chatRef.update({deletedFor: updatedDeletedFor})
+                    .then(() => {
+                        console.log('deletedFor обновлен');
+                    })
+                    .catch((error) => {
+                        console.error('Ошибка при обновлении deletedFor:', error);
+                    });
+                navigation.navigate('Chat');
+                fetchChats();
+            })
+            .catch((error) => {
+                console.error('Ошибка при получении данных чата:', error);
             });
     };
 
@@ -140,7 +182,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                             }}>Отправить свой
                                 телефон</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{flexDirection: 'row'}}>
+                        <TouchableOpacity style={{flexDirection: 'row'}} onPress={handleDeleteChat}>
                             <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}/>
                             <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
                         </TouchableOpacity>
