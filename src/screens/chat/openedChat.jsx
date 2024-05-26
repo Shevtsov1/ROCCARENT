@@ -167,43 +167,10 @@ const OpenedChat = ({theme, navigation, route}) => {
             });
     };
 
-    const handleDeleteChat = () => {
+    const handleDeleteChat = async () => {
         const chatRef = database().ref(`chats/${chatId}`);
-        chatRef.once('value')
-            .then((snapshot) => {
-                const chatData = snapshot.val();
-                let updatedDeletedFor = [];
-
-                // Если deletedFor отсутствует, добавляем id текущего пользователя
-                if (!chatData.deletedFor) {
-                    updatedDeletedFor = {
-                        [auth().currentUser.uid]: {
-                            timestamp: Date.now()
-                        }
-                    };
-                } else {
-                    // Если deletedFor присутствует, добавляем id текущего пользователя, если его нет
-                    updatedDeletedFor = {
-                        ...chatData.deletedFor,
-                        [auth().currentUser.uid]: {
-                            timestamp: Date.now()
-                        }
-                    };
-                }
-
-                // Обновляем deletedFor в базе данных
-                chatRef.update({deletedFor: updatedDeletedFor})
-                    .then(() => {
-                        console.log('deletedFor обновлен');
-                    })
-                    .catch((error) => {
-                        console.error('Ошибка при обновлении deletedFor:', error);
-                    });
-                navigation.navigate('Chat');
-            })
-            .catch((error) => {
-                console.error('Ошибка при получении данных чата:', error);
-            });
+        await chatRef.remove();
+        navigation.goBack();
     };
 
     const handleDeleteBtnPress = () => {
@@ -215,7 +182,7 @@ const OpenedChat = ({theme, navigation, route}) => {
             <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
                      overlayStyle={{backgroundColor: theme.colors.background}}>
                 <View style={{backgroundColor: theme.colors.background}}>
-                    <Text>Вы точно хотите удалить чат?</Text>
+                    <Text>Вы точно хотите безвозвратно удалить чат?</Text>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                         <TouchableOpacity onPress={() => setDeleteChatModalVisible(false)}>
                             <Text>Отмена</Text>

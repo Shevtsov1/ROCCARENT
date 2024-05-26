@@ -31,32 +31,21 @@ const Chat = ({theme, navigation}) => {
             const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
             const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
 
-            const snapshots = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+                const snapshots = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
 
-            const chatList = [];
-            const userIds = new Set(); // Using a Set to avoid duplicate userIds
+                const chatList = [];
+                const userIds = new Set(); // Using a Set to avoid duplicate userIds
 
-            for (const snapshot of snapshots) {
-                snapshot.forEach((childSnapshot) => {
-                    const chatData = childSnapshot.val();
-                    const otherUserId = chatData.userIds[0] === currentUserId ? chatData.userIds[1] : chatData.userIds[0];
-                    const chatId = childSnapshot.key;
+                for (const snapshot of snapshots) {
+                    snapshot.forEach((childSnapshot) => {
+                        const chatData = childSnapshot.val();
+                        const otherUserId = chatData.userIds[0] === currentUserId ? chatData.userIds[1] : chatData.userIds[0];
+                        const chatId = childSnapshot.key;
 
-                    let hasNewestMessages = false;
-                    if (chatData.messages) {
-                        const newestMessageTimestamp = Math.max(...Object.values(chatData.messages).map(msg => msg.timestamp));
-                        if (chatData.deletedFor && chatData.deletedFor[currentUserId] && newestMessageTimestamp > chatData.deletedFor[currentUserId].timestamp) {
-                            hasNewestMessages = true;
-                        }
-                    }
-                    if (
-                        chatData && ((chatData.deletedFor && (!chatData.deletedFor[currentUserId] || hasNewestMessages)) || !chatData.deletedFor)
-                    ) {
                         chatList.push({chatId, otherUserId});
                         userIds.add(otherUserId);
-                    }
-                });
-            }
+                    });
+                }
 
             // Fetch last messages for each chat
             const chatListWithMessages = await Promise.all(chatList.map(async (chat) => {
