@@ -6,12 +6,16 @@ import database from "@react-native-firebase/database";
 import ChatMessage from "./chatMessage";
 import SendMessageField from "./sendMessageField";
 import {Icon} from "@rneui/base";
+import Reanimated, {LightSpeedInRight, LightSpeedOutRight} from "react-native-reanimated";
+import auth from "@react-native-firebase/auth";
 
 const OpenedChat = ({theme, navigation, route}) => {
     const {chatId, otherUserId, otherUserData} = route.params;
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
     const [messages, setMessages] = useState([]);
+
+    const [isEllipsisMenuOpened, setEllipsisMenuOpened] = useState(false);
 
     useEffect(() => {
         getMessages().then();
@@ -94,9 +98,53 @@ const OpenedChat = ({theme, navigation, route}) => {
         }
     };
 
+    const sendPhoneNumber = () => {
+        // Отправка сообщения в чат
+        const messageRef = database().ref(`chats/${chatId}/messages`);
+        const newMessageRef = messageRef.push();
+        const messageData = {
+            senderId: auth().currentUser.uid,
+            receiverId: otherUserId,
+            content: auth().currentUser.phoneNumber,
+            timestamp: Date.now()
+        };
+        newMessageRef.set(messageData)
+            .then(() => {
+            })
+            .catch((error) => {
+                console.error('Failed to send message:', error);
+            });
+    };
+
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{flex: 1, backgroundColor: theme.colors.background}}>
+                {isEllipsisMenuOpened &&
+                    <Reanimated.View entering={LightSpeedInRight} exiting={LightSpeedOutRight} style={{
+                        position: 'absolute',
+                        zIndex: 1,
+                        right: 0,
+                        top: 42,
+                        padding: 12,
+                        elevation: 5,
+                        borderRadius: 5,
+                        backgroundColor: theme.colors.background
+                    }}>
+                        <TouchableOpacity style={{flexDirection: 'row', marginBottom: 6,}}
+                                          disabled={!auth().currentUser.phoneNumber} onPress={sendPhoneNumber}>
+                            <Icon type={'ionicon'} name={'person-add'} size={20}
+                                  color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}/>
+                            <Text style={{
+                                fontFamily: 'Roboto-Regular',
+                                color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1
+                            }}>Отправить свой
+                                телефон</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{flexDirection: 'row'}}>
+                            <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}/>
+                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
+                        </TouchableOpacity>
+                    </Reanimated.View>}
                 <View style={{
                     height: 60,
                     backgroundColor: theme.colors.accent,
@@ -122,7 +170,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                             color: theme.colors.accentText
                         }}>{otherUserData && otherUserData.nickname}</Text>
                     </View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => setEllipsisMenuOpened(!isEllipsisMenuOpened)}>
                         <Icon type={'ionicon'} name={'ellipsis-vertical'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
                 </View>
