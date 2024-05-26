@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useLayoutEffect, useState} from "react";
 import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Button, Icon} from "@rneui/base";
@@ -12,7 +12,7 @@ const Chat = ({theme, navigation}) => {
     const [chats, setChats] = useState([]);
     const [otherUsersData, setOtherUsersData] = useState([]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
 
         fetchChats().then();
 
@@ -42,11 +42,15 @@ const Chat = ({theme, navigation}) => {
                     const otherUserId = chatData.userIds[0] === currentUserId ? chatData.userIds[1] : chatData.userIds[0];
                     const chatId = childSnapshot.key;
 
+                    let hasNewestMessages = false;
+                    if (chatData.messages) {
+                        const newestMessageTimestamp = Math.max(...Object.values(chatData.messages).map(msg => msg.timestamp));
+                        if (chatData.deletedFor && chatData.deletedFor[currentUserId] && newestMessageTimestamp > chatData.deletedFor[currentUserId].timestamp) {
+                            hasNewestMessages = true;
+                        }
+                    }
                     if (
-                        chatData &&
-                        ((chatData.deletedFor &&
-                            Array.isArray(chatData.deletedFor) &&
-                            (chatData.deletedFor[0].userId !== auth().currentUser.uid && chatData.deletedFor[1] !== auth().currentUser.uid)) || !chatData.deletedFor)
+                        chatData && ((chatData.deletedFor && (!chatData.deletedFor[currentUserId] || hasNewestMessages)) || !chatData.deletedFor)
                     ) {
                         chatList.push({chatId, otherUserId});
                         userIds.add(otherUserId);
