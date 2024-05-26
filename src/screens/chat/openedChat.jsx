@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {FlatList, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FastImage from "react-native-fast-image";
 import database from "@react-native-firebase/database";
@@ -36,7 +36,6 @@ const OpenedChat = ({theme, navigation, route}) => {
                     msg.senderId === newMessage.senderId &&
                     msg.timestamp === newMessage.timestamp
                 )) {
-                    console.log(1)
                     const updatedMessages = [...prevMessages, newMessage];
                     updatedMessages.sort((a, b) => a.timestamp - b.timestamp);
                     updatedMessages.reverse();
@@ -85,12 +84,20 @@ const OpenedChat = ({theme, navigation, route}) => {
 
             if (chatId) {
                 const messageRef = database().ref(`chats/${chatId}/messages`);
-
-                // Load all existing messages
+                const chatRef = database().ref(`chats/${chatId}`);
+                const chatSnapshot = await chatRef.once('value');
                 const messageSnapshot = await messageRef.once('value');
                 const existingMessages = Object.values(messageSnapshot.val() || {});
-                setMessages(existingMessages.sort((a, b) => a.timestamp - b.timestamp).reverse());
-                setIsInitialMessagesLoaded(true);
+                if (chatSnapshot.val().deletedFor[auth().currentUser.uid]) {
+                    setMessages(existingMessages.filter(
+                        (msg) => msg.timestamp > (chatSnapshot.val().deletedFor[auth().currentUser.uid] || {timestamp: 0}).timestamp
+                    ).sort((a, b) => a.timestamp - b.timestamp).reverse());
+                    setIsInitialMessagesLoaded(true);
+                } else {
+                    setMessages(existingMessages.sort((a, b) => a.timestamp - b.timestamp).reverse());
+                    setIsInitialMessagesLoaded(true);
+                }
+
             }
 
             setIsChatLoading(false);
@@ -224,7 +231,9 @@ const OpenedChat = ({theme, navigation, route}) => {
                         renderItem={(item) => <ChatMessage theme={theme} message={item}/>}
                         keyExtractor={(item, index) => `${item.id}-${index}`}
                     />
-                ) : (<View style={{flex: 1}}/>)}
+                ) : (<View style={{flex: 1}}>
+                    <ActivityIndicator size={'large'} color={theme.colors.accent}/>
+                </View>)}
                 <SendMessageField theme={theme} otherUserId={otherUserId}/>
             </View>
         </SafeAreaView>
