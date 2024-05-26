@@ -20,16 +20,12 @@ const OpenedChat = ({theme, navigation, route}) => {
     const [chatMateData, setChatMateData] = useState({})
     const [messages, setMessages] = useState([]);
     const [finalChatId, setFinalChatId] = useState(null);
-    const [finalOtherUserPhotoUrl, setFinalOtherUserPhotoUrl] = useState(null);
 
     const [isEllipsisMenuOpened, setEllipsisMenuOpened] = useState(false);
 
     useEffect(() => {
         if (!otherUserData) {
             getChatMateData().then();
-            setFinalOtherUserPhotoUrl(chatMateData.photoUrl);
-        } else {
-            setFinalOtherUserPhotoUrl(otherUserData.photoUrl);
         }
         if (!chatId) {
             getChatId().then((chatId) => {
@@ -246,7 +242,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                                           disabled={!auth().currentUser.phoneNumber} onPress={sendPhoneNumber}>
                             <Icon type={'ionicon'} name={'person-add'} size={20}
                                   color={auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1}
-                            style={{marginEnd: 6}}/>
+                                  style={{marginEnd: 6}}/>
                             <Text style={{
                                 fontFamily: 'Roboto-Regular',
                                 color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1
@@ -273,8 +269,10 @@ const OpenedChat = ({theme, navigation, route}) => {
                         {/*        color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1*/}
                         {/*    }}>Разблокировать пользователя</Text>*/}
                         {/*</TouchableOpacity>*/}
-                        <TouchableOpacity style={{flexDirection: 'row'}} disabled={!messages} onPress={handleDeleteBtnPress}>
-                            <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error} style={{marginEnd: 6}}/>
+                        <TouchableOpacity style={{flexDirection: 'row'}} disabled={!messages}
+                                          onPress={handleDeleteBtnPress}>
+                            <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}
+                                  style={{marginEnd: 6}}/>
                             <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
                         </TouchableOpacity>
                     </Reanimated.View>}
@@ -290,10 +288,14 @@ const OpenedChat = ({theme, navigation, route}) => {
                         <Icon type={'ionicon'} name={'arrow-back'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <View style={{width: 48, height: 48, marginEnd: 6}}>
+                        <View style={{width: 48, height: 48, marginEnd: 6, justifyContent: 'center'}}>
                             <FastImage
                                 style={{width: "100%", height: "100%", borderRadius: 100}}
-                                source={{uri: finalOtherUserPhotoUrl}}
+                                source={otherUserData
+                                    ? {uri: otherUserData.photoUrl}
+                                    : chatMateData
+                                        ? {uri: chatMateData.photoUrl}
+                                        : require('../../assets/images/user.png')}
                                 resizeMode={FastImage.resizeMode.cover}
                             />
                         </View>
@@ -305,7 +307,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                             ? otherUserData.nickname
                             : chatMateData
                                 ? chatMateData.nickname
-                        : 'Нет имени'}</Text>
+                                : 'Нет имени'}</Text>
                     </View>
                     <TouchableOpacity onPress={() => setEllipsisMenuOpened(!isEllipsisMenuOpened)}>
                         <Icon type={'ionicon'} name={'ellipsis-vertical'} size={24} color={theme.colors.accentText}/>
@@ -316,11 +318,17 @@ const OpenedChat = ({theme, navigation, route}) => {
                         inverted
                         contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end'}}
                         data={messages}
-                        renderItem={(item) => <ChatMessage theme={theme} message={item}/>}
+                        renderItem={(item) => <ChatMessage theme={theme} message={item}
+                                                           chatId={chatId ? chatId : finalChatId}/>}
                         keyExtractor={(item, index) => `${item.id}-${index}`}
                     />
                 ) : (<View style={{flex: 1}}>
-                    <ActivityIndicator size={'large'} color={theme.colors.accent}/>
+                    {chatId || finalChatId ? <ActivityIndicator size={'large'} color={theme.colors.accent}/>
+                        :
+                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.grey1, alignSelf: 'center'}}>
+                            Нет сообщений
+                        </Text>}
+
                 </View>)}
                 <SendMessageField theme={theme} otherUserId={otherUserId}/>
             </View>

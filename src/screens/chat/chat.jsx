@@ -121,7 +121,7 @@ const Chat = ({theme, navigation}) => {
             // Other user data not available, render a loading state or placeholder
             return (
                 <View style={{height: 60, justifyContent: 'center', alignItems: 'center'}}>
-                    <ActivityIndicator size="48" color={theme.colors.accent}/>
+                    <ActivityIndicator size="large" color={theme.colors.accent}/>
                 </View>
             );
         }

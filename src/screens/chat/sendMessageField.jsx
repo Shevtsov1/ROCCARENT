@@ -12,7 +12,7 @@ const SendMessageField = ({theme, otherUserId}) => {
     const messageInputRef = useRef(null);
 
     const verifyMessageToSend = (value) => {
-        return value.length !== 0
+        return value.trim().length !== 0
     };
 
     const handleMessageToSend = (value) => {
