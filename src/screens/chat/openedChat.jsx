@@ -179,13 +179,13 @@ const OpenedChat = ({theme, navigation, route}) => {
         if (chatId) {
             const chatRef = database().ref(`chats/${chatId}`);
             await chatRef.remove();
-            navigation.navigate('Chat');
             await fetchChats();
+            navigation.navigate('Chat');
         } else {
             const chatRef = database().ref(`chats/${finalChatId}`);
             await chatRef.remove();
-            navigation.navigate('Chat');
             await fetchChats();
+            navigation.navigate('Chat');
         }
     };
 
@@ -268,8 +268,8 @@ const OpenedChat = ({theme, navigation, route}) => {
                     paddingHorizontal: 6,
                 }}>
                     <TouchableOpacity onPress={async () => {
-                        navigation.navigate('Chat')
                         await fetchChats();
+                        navigation.navigate('Chat')
                     }}>
                         <Icon type={'ionicon'} name={'arrow-back'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
