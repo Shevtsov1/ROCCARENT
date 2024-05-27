@@ -17,6 +17,7 @@ const OpenedChat = ({theme, navigation, route}) => {
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
     const [isDeleteChatModalVisible, setDeleteChatModalVisible] = useState(false);
+    const [isBlockUserModalVisible, setBlockUserModalVisible] = useState(false);
     const [chatMateData, setChatMateData] = useState({})
     const [messages, setMessages] = useState([]);
     const [finalChatId, setFinalChatId] = useState(null);
@@ -195,6 +196,20 @@ const OpenedChat = ({theme, navigation, route}) => {
 
     return (
         <SafeAreaView style={{flex: 1}}>
+            <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
+                     overlayStyle={{backgroundColor: theme.colors.background}}>
+                <View style={{backgroundColor: theme.colors.background}}>
+                    <Text>Вы точно хотите безвозвратно удалить чат?</Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <TouchableOpacity onPress={() => setDeleteChatModalVisible(false)}>
+                            <Text>Отмена</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleDeleteChat}>
+                            <Text>Удалить</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Overlay>
             <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
                      overlayStyle={{backgroundColor: theme.colors.background}}>
                 <View style={{backgroundColor: theme.colors.background}}>
