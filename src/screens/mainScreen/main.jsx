@@ -5,10 +5,10 @@ import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
 import AuthHint from "./components/authHint";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
+import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
-import { Icon } from "@rneui/base";
 import { AppContext } from "../../../App";
-import LoadingScreen from "../../components/loadingScreen";
+import {Icon} from "@rneui/themed";
 
 const Main = ({ theme }) => {
 
@@ -69,13 +69,23 @@ const Main = ({ theme }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.body}>
-        <View>
-          <Text>Header</Text>
+        <View style={{
+          height: 48,
+          backgroundColor: theme.colors.background,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 6,
+        }}>
+          <View style={{width: 26,}}>
+
+          </View>
+          <FastImage source={require('../../assets/images/logo/logo.png')} style={{width: 48, height: 48}} resizeMode={FastImage.resizeMode.contain}/>
+          <TouchableOpacity style={{alignSelf: 'center'}}>
+            <Icon type={"ionicon"} name={"chatbubbles-outline"} size={26} color={theme.colors.accent} />
+          </TouchableOpacity>
         </View>
         <>
-          {auth().currentUser && auth().currentUser.isAnonymous && (
-            <AuthHint theme={theme} />
-          )}
           {listings && (
             <View
               style={{
@@ -91,6 +101,8 @@ const Main = ({ theme }) => {
                 likes
                 screen={"Main"}
                 reloadFunction={() => handleReloadBtn()}
+                authHint
+                // deals
               />
             </View>
           )}

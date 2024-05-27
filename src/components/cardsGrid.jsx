@@ -1,8 +1,11 @@
 import React from "react";
 import ItemCard from "./itemCard";
 import { Dimensions, FlatList, RefreshControl } from "react-native";
+import auth from "@react-native-firebase/auth";
+import AuthHint from "../screens/mainScreen/components/authHint";
+import ActiveDeals from "../screens/mainScreen/components/activeDeals";
 
-const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction}) => {
+const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction, authHint, deals}) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -23,7 +26,11 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
       }
       data={items}
       ListHeaderComponent={() => (
-          headerComponent && headerComponent
+          <>
+              {deals && <ActiveDeals theme={theme}/>}
+              {authHint && auth().currentUser && !auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
+              {headerComponent && headerComponent}
+          </>
       )}
       ListFooterComponent={() => (
           footerComponent && footerComponent
