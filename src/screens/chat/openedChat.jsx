@@ -13,7 +13,7 @@ import firestore from "@react-native-firebase/firestore";
 
 const OpenedChat = ({theme, navigation, route}) => {
     const {userdata} = useContext(AppContext);
-    const {chatId, otherUserId, otherUserData} = route.params;
+    const {chatId, otherUserId, otherUserData, fetchChats} = route.params;
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
     const [isDeleteChatModalVisible, setDeleteChatModalVisible] = useState(false);
@@ -22,6 +22,14 @@ const OpenedChat = ({theme, navigation, route}) => {
     const [finalChatId, setFinalChatId] = useState(null);
 
     const [isEllipsisMenuOpened, setEllipsisMenuOpened] = useState(false);
+
+    useEffect(() => {
+        navigation.setOptions({
+            fetchChats: async () => {
+               fetchChats();
+            },
+        });
+    }, [navigation]);
 
     useEffect(() => {
         if (!otherUserData) {
@@ -171,11 +179,13 @@ const OpenedChat = ({theme, navigation, route}) => {
         if (chatId) {
             const chatRef = database().ref(`chats/${chatId}`);
             await chatRef.remove();
-            navigation.goBack();
+            navigation.navigate('Chat');
+            await fetchChats();
         } else {
             const chatRef = database().ref(`chats/${finalChatId}`);
             await chatRef.remove();
-            navigation.goBack();
+            navigation.navigate('Chat');
+            await fetchChats();
         }
     };
 
@@ -257,7 +267,10 @@ const OpenedChat = ({theme, navigation, route}) => {
                     alignItems: "center",
                     paddingHorizontal: 6,
                 }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+                    <TouchableOpacity onPress={async () => {
+                        navigation.navigate('Chat')
+                        await fetchChats();
+                    }}>
                         <Icon type={'ionicon'} name={'arrow-back'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
