@@ -21,9 +21,9 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
 
   return (
     <FlatList
-      refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.accent]}/>
-      }
+        refreshControl = {
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.accent]}/>
+        }
       data={items}
       ListHeaderComponent={() => (
           <>

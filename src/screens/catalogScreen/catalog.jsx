@@ -48,6 +48,7 @@ const Catalog = ({theme}) => {
     const [filtersModalVisible, setFiltersModalVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+    const [searchString, setSearchString] = useState('');
     const [listings, setListings] = useState([]);
 
     useEffect(() => {
@@ -60,18 +61,33 @@ const Catalog = ({theme}) => {
 
     const handleReloadBtn = async () => {
         try {
+            console.log(selectedSubcategory)
             await loadUserdata();
-            await loadListingList();
+            await loadListingList(selectedSubcategory);
         } catch (error) {
             console.log(error);
         } finally {
         }
     };
 
+    const handleSearchStringChange = (value) => {
+        setSearchString(value);
+    }
+
+    const handleSearchStringClear = () => {
+        setSearchString('')
+    }
+
     const loadListingList = async () => {
         try {
             let newListingsArr = [];
-            const listingsData = await firestore().collection("listings").get();
+            let listingsData;
+            {selectedSubcategory ?
+                listingsData = await firestore().collection("listings")
+                    .where('subcategory', '==', selectedSubcategory)
+                    .get()
+                : listingsData = await firestore().collection("listings").get();
+            }
             if (listingsData) {
                 listingsData.forEach(doc => {
                     if (doc.data().ownerId !== auth().currentUser.uid) {
@@ -140,6 +156,12 @@ const Catalog = ({theme}) => {
         /* BODY END */
     });
 
+    const ClearIcon = () => {
+        return <TouchableOpacity onPress={handleSearchStringClear}>
+            <Icon type={'ionicon'} name={'close'} color={theme.colors.accent} />
+        </TouchableOpacity>;
+    };
+
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{flexDirection: 'row', backgroundColor: theme.colors.background}}>
@@ -157,12 +179,13 @@ const Catalog = ({theme}) => {
                         borderWidth: 2,
                         backgroundColor: `${theme.colors.background}9A`
                     }}
+                    inputStyle={{fontFamily: 'Roboto-Medium', color: theme.colors.text}}
                     blurOnSubmit
                     searchIcon={<Icon type={'ionicon'} name={'search'} color={theme.colors.accent}/>}
-                    clearIcon={<Icon type={'ionicon'} name={'close'} color={theme.colors.accent}/>}
+                    clearIcon={<ClearIcon/>}
                     placeholder="Поиск"
-                    // onChangeText={updateSearch}
-                    // value={search}
+                    onChangeText={handleSearchStringChange}
+                    value={searchString}
                 />
                 <View style={{alignSelf: 'center', marginEnd: 6}}>
                     <TouchableOpacity onPress={() => handleCategoryModal(true)}>
