@@ -28,7 +28,7 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
       ListHeaderComponent={() => (
           <>
               {deals && <ActiveDeals theme={theme}/>}
-              {authHint && auth().currentUser && !auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
+              {authHint && auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
               {headerComponent && headerComponent}
           </>
       )}

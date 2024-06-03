@@ -11,6 +11,7 @@ import { AppContext } from "../../App";
 import TextTicker from "react-native-text-ticker";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { handleDeleteListing, handleLikePress } from "./itemCard";
+import auth from "@react-native-firebase/auth";
 
 const OpenedItemCard = ({ theme, navigation }) => {
 
@@ -293,7 +294,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
           borderBottomStartRadius: 15,
           borderBottomEndRadius: 15,
           padding: 6,
-          marginBottom: 12,
+          marginBottom: 24,
         }, shadowStyle({
           color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
         })]}>
@@ -310,19 +311,22 @@ const OpenedItemCard = ({ theme, navigation }) => {
           {likes &&
             // !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
             <>
-              <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
+              {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
+                  <ShadowedView style={[{marginBottom: 6}, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Чат с владельцем"} onPress={() => {
-                    navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId}})}}/>
-              </ShadowedView>
+                        titleStyle={{color: theme.colors.text}} title={"Чат с владельцем"} onPress={() => {
+                  navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId}})
+                }}/>
+              </ShadowedView>}
+              {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
               <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
                         titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} />
-              </ShadowedView>
+              </ShadowedView>}
             </>
           }
           {editBtn &&
