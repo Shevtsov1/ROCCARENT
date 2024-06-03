@@ -129,7 +129,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
         paddingHorizontal: 12,
       },
       imageContainer: {
-        paddingTop: hp(20),
+        paddingTop: hp(5),
       }, image: {
         width: 144, height: 144, alignSelf: "center",
       }, inputViewContainer: {
