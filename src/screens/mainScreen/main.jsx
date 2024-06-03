@@ -35,7 +35,7 @@ const Main = ({theme}) => {
     const loadListingList = async () => {
         try {
             let newListingsArr = [];
-            const listingsData = await firestore().collection("listings").get();
+            const listingsData = await firestore().collection("listings").limit(50).get();
             if (listingsData) {
                 listingsData.forEach(doc => {
                     if (doc.data().ownerId !== auth().currentUser.uid) {
