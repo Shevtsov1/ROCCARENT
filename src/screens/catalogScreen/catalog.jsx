@@ -85,8 +85,9 @@ const Catalog = ({theme}) => {
             {selectedSubcategory ?
                 listingsData = await firestore().collection("listings")
                     .where('subcategory', '==', selectedSubcategory)
+                    .limit(500)
                     .get()
-                : listingsData = await firestore().collection("listings").get();
+                : listingsData = await firestore().collection("listings").limit(500).get();
             }
             if (listingsData) {
                 listingsData.forEach(doc => {
@@ -122,6 +123,7 @@ const Catalog = ({theme}) => {
             let newListingsArr = [];
             const listingsData = await firestore().collection("listings")
                 .where('subcategory', '==', subcategory)
+                .limit(500)
                 .get();
             if (listingsData) {
                 listingsData.docs.forEach(doc => {
@@ -140,6 +142,21 @@ const Catalog = ({theme}) => {
     const handleUnfilter = () => {
         setSelectedCategory(null);
         setSelectedSubcategory(null);
+    }
+
+    const handleSearchByString = async () => {
+        if (searchString.trim()) {
+            const snapshot = await firestore()
+                .collection('listings')
+                .where(
+                    Filter.or(
+                        Filter.and(Filter('title', '==', 'Tim'), Filter('email', '==', 'tim@example.com')),
+                        Filter.and(Filter('user', '==', 'Dave'), Filter('email', '==', 'dave@example.com')),
+                    ),
+                )
+                .get();
+            console.log(snapshot);
+        }
     }
 
     const styles = StyleSheet.create({
@@ -184,8 +201,10 @@ const Catalog = ({theme}) => {
                     searchIcon={<Icon type={'ionicon'} name={'search'} color={theme.colors.accent}/>}
                     clearIcon={<ClearIcon/>}
                     placeholder="Поиск"
+                    clearButtonMode={"while-editing"}
                     onChangeText={handleSearchStringChange}
                     value={searchString}
+                    onSubmitEditing={handleSearchByString}
                 />
                 <View style={{alignSelf: 'center', marginEnd: 6}}>
                     <TouchableOpacity onPress={() => handleCategoryModal(true)}>
