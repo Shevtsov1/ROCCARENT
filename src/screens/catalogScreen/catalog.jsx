@@ -7,6 +7,7 @@ import {AppContext} from "../../../App";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Badge, Icon, Overlay, SearchBar} from "@rneui/base";
 import {ListItem} from "@rneui/themed";
+import {FieldPath} from "@react-native-firebase/firestore/lib/modular/FieldPath";
 
 const Catalog = ({theme}) => {
 
@@ -146,18 +147,24 @@ const Catalog = ({theme}) => {
 
     const handleSearchByString = async () => {
         if (searchString.trim()) {
-            const snapshot = await firestore()
+            const startWithQuery = firestore()
                 .collection('listings')
-                .where(
-                    Filter.or(
-                        Filter.and(Filter('title', '==', 'Tim'), Filter('email', '==', 'tim@example.com')),
-                        Filter.and(Filter('user', '==', 'Dave'), Filter('email', '==', 'dave@example.com')),
-                    ),
-                )
-                .get();
-            console.log(snapshot);
+                .where('title', '>=', searchString)
+                .where('title', '<', searchString + '\uf8ff');
+
+
+            const snapshot = await Promise.all([
+                startWithQuery.get(),
+            ]);
+
+            const newListingsArr = [];
+            snapshot[0].docs.forEach((doc) => {
+                const data = doc.data();
+                newListingsArr.push(data);
+            });
+            setListings(newListingsArr);
         }
-    }
+    };
 
     const styles = StyleSheet.create({
 
