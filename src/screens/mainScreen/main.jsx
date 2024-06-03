@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from "react-native";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
@@ -12,6 +12,7 @@ const Main = ({theme}) => {
 
     const {userdata, loadUserdata} = useContext(AppContext);
 
+    const [listingsLoading, setListingsLoading] = useState(true);
     const [listings, setListings] = useState([]);
 
     useEffect(() => {
@@ -42,10 +43,16 @@ const Main = ({theme}) => {
                         newListingsArr.push(doc.data());
                     }
                 });
+                for (let i = newListingsArr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newListingsArr[i], newListingsArr[j]] = [newListingsArr[j], newListingsArr[i]];
+                }
                 setListings(newListingsArr);
             }
         } catch (error) {
             console.error("Error fetching documents: ", error);
+        } finally {
+            setListingsLoading(false);
         }
     };
 
@@ -90,18 +97,21 @@ const Main = ({theme}) => {
                         <View
                             style={{
                                 width: "100%",
+                                height: '100%',
                                 backgroundColor: theme.colors.background,
                                 borderRadius: 15,
                                 alignItems: "center",
+                                justifyContent: listingsLoading ? "center" : "flex-start",
                             }}
                         >
-                            <CardsGrid
+                                <CardsGrid
                                 theme={theme}
                                 items={listings}
                                 likes
                                 screen={"Main"}
                                 reloadFunction={() => handleReloadBtn()}
                                 authHint
+                                listingsLoading={listingsLoading}
                                 // deals
                             />
                         </View>

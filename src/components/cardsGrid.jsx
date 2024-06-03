@@ -1,11 +1,11 @@
 import React from "react";
 import ItemCard from "./itemCard";
-import { Dimensions, FlatList, RefreshControl } from "react-native";
+import {ActivityIndicator, Dimensions, FlatList, RefreshControl, View} from "react-native";
 import auth from "@react-native-firebase/auth";
 import AuthHint from "../screens/mainScreen/components/authHint";
 import ActiveDeals from "../screens/mainScreen/components/activeDeals";
 
-const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction, authHint, deals}) => {
+const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction, authHint, deals, listingsLoading}) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -24,7 +24,7 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
         refreshControl = {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.accent]}/>
         }
-      data={items}
+      data={listingsLoading ? [1] : items}
       ListHeaderComponent={() => (
           <>
               {deals && <ActiveDeals theme={theme}/>}
@@ -38,7 +38,9 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
       numColumns={numColumns}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => (
-        <ItemCard item={item} theme={theme} likes={likes}  editBtn={editBtn} deleteBtn={deleteBtn} screen={screen}/>
+         listingsLoading ? <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+             <ActivityIndicator size={48} color={theme.colors.accent}/>
+         </View> : <ItemCard item={item} theme={theme} likes={likes}  editBtn={editBtn} deleteBtn={deleteBtn} screen={screen}/>
       )
       } />
   );

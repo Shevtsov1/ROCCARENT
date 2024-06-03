@@ -87,7 +87,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
     imagesContainer: {
       height,
     }, imageCounterContainer: {
-      width: 36,
+      width: 'auto',
       height: 36.6,
       alignSelf: "flex-start",
       alignItems: "center",
@@ -109,6 +109,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
 
   const renderImageCounter = () => {
     const totalImages = listingImages.length;
+    console.log(totalImages)
     return (
       <View style={styles.imageCounterContainer}>
         <Text style={styles.imageCounter}>
@@ -329,6 +330,12 @@ const OpenedItemCard = ({ theme, navigation }) => {
               </ShadowedView>}
             </>
           }
+          <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
+            color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+          })]}>
+            <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                    titleStyle={{ color: theme.colors.text }} title={"Назад"} onPress={() => navigation.goBack()}/>
+          </ShadowedView>
           {editBtn &&
             <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
               color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],

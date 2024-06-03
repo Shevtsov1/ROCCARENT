@@ -7,7 +7,7 @@ const AuthHint = ({theme}) => {
 
     const styles = StyleSheet.create({
         hint: {
-            height: 72,
+            height: 84,
             width: "100%",
             backgroundColor: theme.colors.background,
             borderBottomStartRadius: 15,

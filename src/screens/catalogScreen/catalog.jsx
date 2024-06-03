@@ -50,6 +50,8 @@ const Catalog = ({theme}) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedSubcategory, setSelectedSubcategory] = useState(null);
     const [searchString, setSearchString] = useState('');
+
+    const [listingsLoading, setListingsLoading] = useState(true);
     const [listings, setListings] = useState([]);
 
     useEffect(() => {
@@ -62,7 +64,6 @@ const Catalog = ({theme}) => {
 
     const handleReloadBtn = async () => {
         try {
-            console.log(selectedSubcategory)
             await loadUserdata();
             await loadListingList(selectedSubcategory);
         } catch (error) {
@@ -96,10 +97,16 @@ const Catalog = ({theme}) => {
                         newListingsArr.push(doc.data());
                     }
                 });
+                for (let i = newListingsArr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newListingsArr[i], newListingsArr[j]] = [newListingsArr[j], newListingsArr[i]];
+                }
                 setListings(newListingsArr);
             }
         } catch (error) {
             console.error("Error fetching documents: ", error);
+        } finally {
+            setListingsLoading(false);
         }
     };
 
@@ -304,6 +311,7 @@ const Catalog = ({theme}) => {
                         screen={"Main"}
                         reloadFunction={() => handleReloadBtn()}
                         authHint
+                        listingsLoading={listingsLoading}
                         // deals
                     />
                 </View>
