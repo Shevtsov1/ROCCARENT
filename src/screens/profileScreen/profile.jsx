@@ -17,6 +17,7 @@ import LoadingScreen from "../../components/loadingScreen";
 import { AppContext } from "../../../App";
 import { BottomSheet } from "@rneui/base";
 import firestore from "@react-native-firebase/firestore";
+import RNMail from "react-native-mail";
 
 const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
 
@@ -104,7 +105,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
     try {
       const fileSize = image.fileSize;
       let compressionQuality;
-      if (fileSize > 1 * 1024 && fileSize < 1024 * 1024) {
+      if (fileSize > 1024 && fileSize < 1024 * 1024) {
         compressionQuality = 100;
       } else if (fileSize >= 1024 * 1024) {
         for (let i = 20; i <= 100; i++) {
@@ -150,6 +151,21 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
     }
 
     setIsAvatarLoading(false);
+  };
+
+  const handleSupportEmailPress = () => {
+      RNMail.mail({
+        subject: 'Обращение в службу поддержки',
+        recipients: ['roccarent.help@gmail.com'],
+        body: '',
+        isHTML: true,
+      }, (error) => {
+        if (error) {
+          console.error('Ошибка при отправке письма:', error);
+        } else {
+          console.log('Письмо успешно отправлено');
+        }
+      });
   };
 
   const styles = StyleSheet.create({
@@ -475,7 +491,7 @@ const Profile = ({ theme, toggleMode, navigation, setInitializing }) => {
           <Button
             containerStyle={[styles.profileAppDataBtnContainer, { borderRadius: 15 }]}
             buttonStyle={[styles.profileAppDataBtn, { height: 96 }]} titleStyle={{ color: theme.colors.grey1 }}
-            onPress={() => navigation.navigate("Support")}>
+            onPress={handleSupportEmailPress}>
             <View style={{ flex: 1 }}>
               <Text style={{
                 fontFamily: "Roboto-Regular", color: theme.colors.text, fontSize: 16, marginStart: 12,

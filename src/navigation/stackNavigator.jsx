@@ -8,7 +8,6 @@ import auth from "@react-native-firebase/auth";
 import EditName from "../screens/profileScreen/components/editProfile/editName";
 import Settings from "../screens/profileScreen/components/settings";
 import DealArchive from "../screens/profileScreen/components/dealArchive";
-import Support from "../screens/profileScreen/components/support/support";
 import EditEmail from "../screens/profileScreen/components/editProfile/editEmail";
 import EditPassport from "../screens/profileScreen/components/editProfile/editPassport";
 import EditPhoneNumber from "../screens/profileScreen/components/editProfile/editPhoneNumber";
@@ -98,8 +97,6 @@ export const ProfileStackNavigator = ({
                 <EditPassport {...props} theme={theme}/>}</Stack.Screen>
             <Stack.Screen name="EditPhoneNumber" options={{headerShown: false}}>{(props) =>
                 <EditPhoneNumber {...props} theme={theme}/>}</Stack.Screen>
-            <Stack.Screen name="Support" options={{headerShown: false}}>{(props) =>
-                <Support {...props} theme={theme}/>}</Stack.Screen>
             <Stack.Screen name="UserListings" options={{headerShown: false}}>{(props) =>
                 <UserListings {...props} theme={theme}/>}</Stack.Screen>
             <Stack.Screen name="Chat" options={{headerShown: false}}>{(props) =>
@@ -115,8 +112,7 @@ export const ProfileStackNavigator = ({
 export const MainStackNavigator = ({user,
                                 theme,
                                 toggleMode,
-                                setInitializing,
-                                setLoadingScreenText,}) => {
+                                setInitializing}) => {
     return (
         <Stack.Navigator
             initialRouteName={"Main"}
@@ -142,8 +138,7 @@ export const MainStackNavigator = ({user,
 export const CatalogStackNavigator = ({user,
                                        theme,
                                        toggleMode,
-                                       setInitializing,
-                                       setLoadingScreenText,}) => {
+                                       setInitializing}) => {
     return (
         <Stack.Navigator
             initialRouteName={"Catalog"}
@@ -169,8 +164,7 @@ export const CatalogStackNavigator = ({user,
 export const FavoritesStackNavigator = ({user,
                                           theme,
                                           toggleMode,
-                                          setInitializing,
-                                          setLoadingScreenText,}) => {
+                                          setInitializing}) => {
     return (
         <Stack.Navigator
             initialRouteName={"Favorites"}
