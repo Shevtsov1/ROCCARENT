@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {ActivityIndicator, StyleSheet, TouchableOpacity, View} from "react-native";
+import { StyleSheet, TouchableOpacity, View} from "react-native";
 import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import CardsGrid from "../../components/cardsGrid";
 import auth from "@react-native-firebase/auth";
@@ -8,7 +8,7 @@ import firestore from "@react-native-firebase/firestore";
 import {AppContext} from "../../../App";
 import {Icon} from "@rneui/themed";
 
-const Main = ({theme}) => {
+const Main = ({theme, navigation}) => {
 
     const {userdata, loadUserdata} = useContext(AppContext);
 
@@ -88,7 +88,7 @@ const Main = ({theme}) => {
                     <FastImage source={require('../../assets/images/logo/logo.png')} style={{width: 48, height: 48}}
                                resizeMode={FastImage.resizeMode.contain}/>
                     {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData ?
-                        <TouchableOpacity style={{alignSelf: 'center'}}>
+                        <TouchableOpacity style={{alignSelf: 'center'}} onPress={() => navigation.navigate('ProfileStack', {screen: 'Chat'})}>
                             <Icon type={"ionicon"} name={"chatbubbles-outline"} size={26} color={theme.colors.accent}/>
                         </TouchableOpacity> : <View style={{width: 26,}}></View>}
                 </View>
