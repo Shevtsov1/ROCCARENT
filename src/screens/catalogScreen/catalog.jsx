@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import CardsGrid from "../../components/cardsGrid";
-import firestore from "@react-native-firebase/firestore";
+import firestore, {Filter} from "@react-native-firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import {AppContext} from "../../../App";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {Icon, Overlay, SearchBar} from "@rneui/base";
+import {Badge, Icon, Overlay, SearchBar} from "@rneui/base";
 import {ListItem} from "@rneui/themed";
 
 const Catalog = ({theme}) => {
@@ -98,12 +98,33 @@ const Catalog = ({theme}) => {
         }
     };
 
-    const handleSubcategoryPress = (subcategory) => {
+    const handleSubcategoryPress = async (subcategory) => {
         if (selectedSubcategory !== subcategory) {
             setSelectedSubcategory(subcategory);
         }
+        try {
+            let newListingsArr = [];
+            const listingsData = await firestore().collection("listings")
+                .where('subcategory', '==', subcategory)
+                .get();
+            if (listingsData) {
+                listingsData.docs.forEach(doc => {
+                    if (doc.data().ownerId !== auth().currentUser.uid) {
+                        newListingsArr.push(doc.data());
+                    }
+                });
+                setListings(newListingsArr);
+            }
+        } catch (error) {
+            console.error("Error fetching documents: ", error);
+        }
         handleCategoryModal(false);
     };
+
+    const handleUnfilter = () => {
+        setSelectedCategory(null);
+        setSelectedSubcategory(null);
+    }
 
     const styles = StyleSheet.create({
 
@@ -143,11 +164,21 @@ const Catalog = ({theme}) => {
                     // onChangeText={updateSearch}
                     // value={search}
                 />
-                <TouchableOpacity style={{alignSelf: 'center', marginEnd: 6,}}
-                                  onPress={() => handleCategoryModal(true)}>
-                    <Icon type={'ionicon'} name={'filter'} color={theme.colors.accent}/>
-                </TouchableOpacity>
-                <Overlay isVisible={filtersModalVisible} overlayStyle={{width: '100%', height: '100%', padding: 0}} onBackdropPress={() => handleCategoryModal(false)}>
+                <View style={{alignSelf: 'center', marginEnd: 6}}>
+                    <TouchableOpacity onPress={() => handleCategoryModal(true)}>
+                        <Icon type={'ionicon'} name={'filter'} color={theme.colors.accent} size={24}/>
+                    </TouchableOpacity>
+                    {selectedSubcategory && <Badge
+                        status="success"
+                        containerStyle={{position: 'absolute', bottom: 24, left: 24}}
+                    />}
+                </View>
+                {selectedSubcategory && <TouchableOpacity style={{alignSelf: 'center', marginEnd: 6,}}
+                                                          onPress={handleUnfilter}>
+                    <Icon type={'ionicon'} name={'close'} color={theme.colors.accent}/>
+                </TouchableOpacity>}
+                <Overlay isVisible={filtersModalVisible} overlayStyle={{width: '100%', height: '100%', padding: 0}}
+                         onBackdropPress={() => handleCategoryModal(false)}>
                     <ScrollView style={{backgroundColor: theme.colors.background}}>
                         <View style={{
                             height: 60,
