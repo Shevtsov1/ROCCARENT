@@ -2,8 +2,11 @@ import React from "react";
 import {StyleSheet, TouchableOpacity, View} from "react-native";
 import {Icon, Text} from "@rneui/base";
 import {ShadowedView, shadowStyle} from "react-native-fast-shadow";
+import {useNavigation} from "@react-navigation/native";
 
 const AuthHint = ({theme}) => {
+
+    const navigation = useNavigation();
 
     const styles = StyleSheet.create({
         hint: {
@@ -30,7 +33,7 @@ const AuthHint = ({theme}) => {
                 paddingVertical: 6,
                 borderRadius: 5,
                 backgroundColor: theme.colors.warning
-            }}>
+            }} onPress={() => navigation.navigate('ProfileStack', {screen: 'LogIn'})}>
                 <View style={{marginStart: 12}}>
                     <Text style={{
                         fontFamily: "Roboto-Medium",
