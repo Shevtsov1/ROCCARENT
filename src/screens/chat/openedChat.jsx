@@ -53,7 +53,7 @@ const OpenedChat = ({theme, navigation, route}) => {
             receiverId: otherUserId,
             content: `${listingId}`.trim(),
             timestamp: Date.now(),
-            rentRequestApproved: false
+            rentRequestApproved: 'no'
         };
         newMessageRef.set(messageData)
             .then(() => {
