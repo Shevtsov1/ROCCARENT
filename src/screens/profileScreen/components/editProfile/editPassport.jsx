@@ -199,7 +199,7 @@ const EditPassport = ({ theme, navigation, route }) => {
             <View>
               <View style={{ paddingHorizontal: 12, marginVertical: 12, flex: 1 }}>
                 <Text style={styles.infoText}>
-                  Для подтверждения паспорта, пожалуйста, загрузите фотографию паспорта ниже.
+                  Для подтверждения паспорта, пожалуйста, загрузите фотографию 33 стр. паспорта ниже.
                   Мы гарантируем конфиденциальность ваших данных и обеспечиваем их безопасность.
                 </Text>
                 <Text style={styles.infoText}>
