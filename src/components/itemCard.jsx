@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { StyleSheet, View, Text, Dimensions, TouchableOpacity, Modal } from "react-native";
 import { BottomSheet, Button, Icon, Overlay } from "@rneui/base";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -75,6 +75,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
   const screenWidth = Dimensions.get("window").width;
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [listingRating, setListingRating] = useState({});
 
   const cardWidth = wp(50);
   const cardHeight = cardWidth * 1.8;
@@ -82,6 +83,36 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
   const cardImageWidth = cardWidth;
   const cardImageHeight = cardImageWidth * 1.3;
 
+  useEffect(() => {
+    getListingRating().then();
+  })
+
+  const getListingRating = async () => {
+    if (item && item.listingId) {
+      let newListingRatings = {};
+      let avgMark = 0;
+      let ratingCount = 0;
+      const firestoreSnapshot = await firestore()
+          .collection("ratings")
+          .doc(item.listingId)
+          .get();
+      if (firestoreSnapshot.exists && firestoreSnapshot.data()) {
+        const ratingData = firestoreSnapshot.data();
+        ratingCount = Object.keys(ratingData).length;
+        // Вычислить сумму оценок
+        let sumOfMarks = 0;
+        for (const userId in ratingData) {
+          sumOfMarks += ratingData[userId].mark;
+        }
+        // Рассчитать среднюю оценку
+        if (ratingCount > 0) {
+          avgMark = sumOfMarks / ratingCount;
+        }
+        newListingRatings = {avgMark: avgMark, ratingCount: ratingCount};
+        setListingRating(newListingRatings);
+      }
+    }
+  };
 
   function getRatingWord(count) {
     const lastDigit = count % 10;
@@ -330,19 +361,33 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
             <Text numberOfLines={1} style={[styles.mainCardTextTitle, { opacity: 0.8 }]}>{item.city}</Text>
             <Text numberOfLines={1} style={styles.mainCardTextTitle}>{item.title}</Text>
             <View style={{ flexDirection: "row" }}>
-              {item.ratings ? <>
-                <View style={{ justifyContent: "center" }}>
-                  <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
+              {listingRating && listingRating.ratingCount ? <View style={{flexDirection: 'row'}}>
+                <View style={{justifyContent: "center", alignItems: 'center'}}>
+                  <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={16}/>
                 </View>
-                <Text numberOfLines={1} style={styles.mainCardTextMark}>
-                  {"\t"}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{"\t"}
+                <Text numberOfLines={1} style={{
+                  fontFamily: "Roboto-Regular",
+                  fontSize: 16,
+                  color: theme.colors.text,
+                }}>
+                  {"\ "}{listingRating.avgMark ? listingRating.avgMark.toFixed(1).replace(".", ",") : 0}{"\ "}
                 </Text>
-                <View style={{ justifyContent: "center" }}>
-                  <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
+                <View style={{justifyContent: "center"}}>
+                  <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8}/>
                 </View>
                 <Text numberOfLines={1}
-                      style={styles.mainCardTextRating}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
-              </> : <Text numberOfLines={1} style={styles.mainCardTextRating}>Нет оценок</Text>}
+                      style={{
+                        fontFamily: "Roboto-Regular",
+                        fontSize: 16,
+                        color: theme.colors.text,
+                      }}>{"\ "}{listingRating.ratingCount ? listingRating.ratingCount : 0} {getRatingWord(listingRating.ratingCount)}</Text>
+              </View> : <Text numberOfLines={1}
+                              style={{
+                                fontFamily: "Roboto-Regular",
+                                fontSize: 16,
+                                color: theme.colors.text
+                              }}>Нет
+                оценок</Text>}
             </View>
           </View>
         </View>
