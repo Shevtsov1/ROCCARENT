@@ -106,23 +106,25 @@ const ChatMessage = ({theme, message, chatId}) => {
                         >
                             {listingData && (
                                 <>
-                                    <View style={{width: 192, height: 192 * 1.3, alignSelf: 'center'}}>
-                                        <FastImage
-                                            source={{uri: listingData.mainImageUrl}}
-                                            style={{width: '100%', height: '100%'}}
-                                            resizeMode={FastImage.resizeMode.contain}/>
-                                    </View>
-                                    <View style={{marginVertical: 6}}>
-                                        <Text style={{fontFamily: 'Roboto-Bold', color: theme.colors.chatText}}>
-                                            {listingData.price} BYN/сут
-                                        </Text>
-                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
-                                            {listingData.title}
-                                        </Text>
-                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
-                                            {listingData.city}
-                                        </Text>
-                                    </View>
+                                    <TouchableOpacity>
+                                        <View style={{width: 192, height: 192 * 1.3, alignSelf: 'center'}}>
+                                            <FastImage
+                                                source={{uri: listingData.mainImageUrl}}
+                                                style={{width: '100%', height: '100%'}}
+                                                resizeMode={FastImage.resizeMode.cover}/>
+                                        </View>
+                                        <View style={{marginVertical: 6}}>
+                                            <Text style={{fontFamily: 'Roboto-Bold', color: theme.colors.chatText}}>
+                                                {listingData.price} BYN/сут
+                                            </Text>
+                                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
+                                                {listingData.title}
+                                            </Text>
+                                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
+                                                {listingData.city}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
                                     <ShadowedView style={[{marginBottom: 6}, shadowStyle({
                                         color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
                                     })]}>
@@ -184,7 +186,7 @@ const ChatMessage = ({theme, message, chatId}) => {
                                         <FastImage
                                             source={{uri: listingData.mainImageUrl}}
                                             style={{width: '100%', height: '100%'}}
-                                            resizeMode={FastImage.resizeMode.contain}/>
+                                            resizeMode={FastImage.resizeMode.cover}/>
                                     </View>
                                     <View style={{marginVertical: 6}}>
                                         <Text style={{fontFamily: 'Roboto-Bold', color: theme.colors.chatText}}>
