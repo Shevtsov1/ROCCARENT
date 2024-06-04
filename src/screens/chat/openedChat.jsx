@@ -283,8 +283,10 @@ const OpenedChat = ({theme, navigation, route}) => {
                     paddingHorizontal: 6,
                 }}>
                     <TouchableOpacity onPress={async () => {
-                        await fetchChats();
-                        navigation.navigate('Chat')
+                        if (fetchChats) {
+                            await fetchChats();
+                        }
+                        navigation.goBack();
                     }}>
                         <Icon type={'ionicon'} name={'arrow-back'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
