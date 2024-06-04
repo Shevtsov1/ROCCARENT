@@ -1,411 +1,498 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { View, StyleSheet, Dimensions, Text, TouchableOpacity, ScrollView } from "react-native";
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import Carousel from "react-native-reanimated-carousel";
 import FastImage from "react-native-fast-image";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRoute } from "@react-navigation/native";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {useRoute} from "@react-navigation/native";
 import {AirbnbRating, BottomSheet, Button, Icon} from "@rneui/base";
-import { AppContext } from "../../App";
+import {AppContext} from "../../App";
 import TextTicker from "react-native-text-ticker";
-import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
-import { handleDeleteListing, handleLikePress } from "./itemCard";
+import {ShadowedView, shadowStyle} from "react-native-fast-shadow";
+import {handleDeleteListing, handleLikePress} from "./itemCard";
 import auth from "@react-native-firebase/auth";
 
-const OpenedItemCard = ({ theme, navigation }) => {
+const OpenedItemCard = ({theme, navigation}) => {
 
-  const { userdata, loadUserdata } = useContext(AppContext);
+    const {userdata, loadUserdata} = useContext(AppContext);
 
-  const route = useRoute();
+    const route = useRoute();
 
-  const { item, likes, editBtn, deleteBtn } = route.params;
+    const {item, likes, editBtn, deleteBtn} = route.params;
 
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [listingImages, setListingImages] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const carouselRef = useRef(null);
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [listingImages, setListingImages] = useState([]);
+    const [listingRating, setListingRating] = useState({});
+    const [currentUserRating, setCurrentUserRating] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const carouselRef = useRef(null);
 
-  const screenWidth = Dimensions.get("window").width;
-  const width = screenWidth;
-  const height = screenWidth * 1.3;
+    const screenWidth = Dimensions.get("window").width;
+    const width = screenWidth;
+    const height = screenWidth * 1.3;
 
-  useEffect(() => {
-    const getListingImages = async () => {
-      if (item && item.listingId) {
-        let newListingImagesArr = [];
-        const firestoreSnapshot = await firestore()
-          .collection("listings")
-          .doc(item.listingId)
-          .get();
-        if (
-          firestoreSnapshot.exists &&
-          firestoreSnapshot.data().mainImageUrl
-        ) {
-          newListingImagesArr.push(firestoreSnapshot.data().mainImageUrl);
+    useEffect(() => {
+        getListingImages().then();
+        getListingRating().then();
+        getCurrentUserRating().then();
+    }, []);
+
+    const getCurrentUserRating = async () => {
+        if (item && item.listingId) {
+            let newRating;
+            const firestoreSnapshot = await firestore()
+                .collection("ratings")
+                .doc(item.listingId)
+                .get();
+            if (firestoreSnapshot.exists && firestoreSnapshot.data()) {
+                const ratingData = firestoreSnapshot.data();
+                if (ratingData[auth().currentUser.uid]) {
+                    newRating = ratingData[auth().currentUser.uid];
+                }
+                setCurrentUserRating(newRating.mark);
+            }
         }
-        const storageSnapshot = await storage()
-          .ref(`listings/${item.listingId}/otherImages`)
-          .listAll();
-        for (const imageRef of storageSnapshot.items) {
-          const imageURL = await imageRef.getDownloadURL();
-          newListingImagesArr.push(imageURL);
-        }
-        setListingImages(newListingImagesArr);
-      }
     };
 
-    getListingImages().then();
-  }, []);
+    const getListingRating = async () => {
+        if (item && item.listingId) {
+            let newListingRatings = {};
+            let avgMark = 0;
+            let ratingCount = 0;
+            const firestoreSnapshot = await firestore()
+                .collection("ratings")
+                .doc(item.listingId)
+                .get();
+            if (firestoreSnapshot.exists && firestoreSnapshot.data()) {
+                const ratingData = firestoreSnapshot.data();
+                ratingCount = Object.keys(ratingData).length;
+                // Вычислить сумму оценок
+                let sumOfMarks = 0;
+                for (const userId in ratingData) {
+                    sumOfMarks += ratingData[userId].mark;
+                }
+                // Рассчитать среднюю оценку
+                if (ratingCount > 0) {
+                    avgMark = sumOfMarks / ratingCount;
+                }
+                newListingRatings = { avgMark: avgMark, ratingCount: ratingCount };
+                setListingRating(newListingRatings);
+            }
+        }
+    };
 
-  function getRatingWord(count) {
-    const lastDigit = count % 10;
-    const lastTwoDigits = count % 100;
+    const getListingImages = async () => {
+        if (item && item.listingId) {
+            let newListingImagesArr = [];
+            const firestoreSnapshot = await firestore()
+                .collection("listings")
+                .doc(item.listingId)
+                .get();
+            if (
+                firestoreSnapshot.exists &&
+                firestoreSnapshot.data().mainImageUrl
+            ) {
+                newListingImagesArr.push(firestoreSnapshot.data().mainImageUrl);
+            }
+            const storageSnapshot = await storage()
+                .ref(`listings/${item.listingId}/otherImages`)
+                .listAll();
+            for (const imageRef of storageSnapshot.items) {
+                const imageURL = await imageRef.getDownloadURL();
+                newListingImagesArr.push(imageURL);
+            }
+            setListingImages(newListingImagesArr);
+        }
+    };
 
-    if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
-      return "оценок";
+    function getRatingWord(count) {
+        const lastDigit = count % 10;
+        const lastTwoDigits = count % 100;
+
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+            return "оценок";
+        }
+
+        if (lastDigit === 1) {
+            return "оценка";
+        }
+
+        if (lastDigit >= 2 && lastDigit <= 4) {
+            return "оценки";
+        }
+
+        return "оценок";
     }
 
-    if (lastDigit === 1) {
-      return "оценка";
+    const requestRentBtnPress = async (item, loadUserdata) => {
+        await handleLikePress(item, loadUserdata);
+        navigation.navigate('ProfileStack', {
+            screen: 'OpenedChat',
+            params: {otherUserId: item.ownerId, listingId: item.listingId, requestRent: true}
+        })
     }
 
-    if (lastDigit >= 2 && lastDigit <= 4) {
-      return "оценки";
-    }
+    const handleProgressChange = (offsetProgress, absoluteProgress) => {
+        if (Number.isInteger(absoluteProgress)) {
+            setCurrentImageIndex(absoluteProgress);
+        }
+    };
 
-    return "оценок";
-  }
-
-  const requestRentBtnPress = async (item, loadUserdata) => {
-    await handleLikePress(item, loadUserdata);
-    navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId, listingId: item.listingId, requestRent: true}})
-}
-
-  const handleProgressChange = (offsetProgress, absoluteProgress) => {
-    if (Number.isInteger(absoluteProgress)) {
-      setCurrentImageIndex(absoluteProgress);
-    }
-  };
-
-  const styles = StyleSheet.create({
-    imagesContainer: {
-      height,
-    }, imageCounterContainer: {
-      width: 'auto',
-      height: 36.6,
-      alignSelf: "flex-start",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 6,
-      borderTopEndRadius: 5,
-      borderBottomEndRadius: 5,
-      backgroundColor: `${theme.colors.background}AA`,
-    }, imageCounter: {
-      fontFamily: "Roboto-Bold",
-      fontSize: 15,
-      color: theme.colors.accent,
-    }, cardBtnContainer: {
-      borderRadius: 5,
-    }, cardBtn: {
-      backgroundColor: theme.colors.background,
-    },
-  });
-
-  const renderImageCounter = () => {
-    const totalImages = listingImages.length;
-    return (
-      <View style={styles.imageCounterContainer}>
-        <Text style={styles.imageCounter}>
-          {`${currentImageIndex + 1}/${totalImages}`}
-        </Text>
-      </View>
-    );
-  };
-
-  const handleRatingPress = async (item, rating) => {
-    try {
-      const listingDoc = await firestore().collection('listings').doc(item.listingId).get();
-
-      if (listingDoc.exists) {
-        console.log(listingDoc.data());
-
-        // Обновить рейтинг в документе листинга
-        await firestore().collection('listings').doc(item.listingId).update({
-          ratings: {
-            [auth().currentUser.uid]: {
-              mark: rating,
-            },
-          },
-        });
-        console.log('Рейтинг обновлен');
-      } else {
-        console.log('Документ листинга не найден');
-      }
-    } catch (error) {
-      console.error('Ошибка при обновлении рейтинга:', error);
-    }
-  };
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
-                   onBackdropPress={() => setDeleteModalOpen(false)}>
-        <View style={{ backgroundColor: theme.colors.background }}>
-          <View style={{ alignSelf: "center" }}>
-            <Text
-              style={{
-                fontFamily: "Roboto-Black",
-                fontSize: 18,
-                color: theme.colors.text,
-                marginBottom: 6,
-              }}>
-              Удалить объявление
-            </Text>
-          </View>
-          <View style={{ alignSelf: "center" }}>
-            <Text
-              style={{
-                fontFamily: "Roboto-Medium",
-                fontSize: 14,
-                color: theme.colors.text,
-                marginBottom: 6,
-              }}>
-              Вы уверены что хотите удалить объявление?
-            </Text>
-          </View>
-          <TouchableOpacity style={{
-            width: "100%",
-            height: 36,
-            backgroundColor: theme.colors.grey3,
+    const styles = StyleSheet.create({
+        imagesContainer: {
+            height,
+        }, imageCounterContainer: {
+            width: 'auto',
+            height: 36.6,
+            alignSelf: "flex-start",
             alignItems: "center",
             justifyContent: "center",
-            marginBottom: 6,
-          }} onPress={() => setDeleteModalOpen(false)}>
-            <Text
-              style={{
-                fontFamily: "Roboto-Bold", color: theme.colors.text, fontSize: 16,
-              }}>Отмена</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{
-            width: "100%",
-            height: 36,
-            backgroundColor: theme.colors.error,
-            alignItems: "center",
-            justifyContent: "center",
-          }} onPress={() => handleDeleteListing(item, setDeleteModalOpen, loadUserdata)}>
-            <Text
-              style={{
-                fontFamily: "Roboto-Bold",
-                color: theme.colors.accentText,
-                fontSize: 16,
-              }}>Удалить</Text>
-          </TouchableOpacity>
-        </View>
-      </BottomSheet>
-      <ScrollView>
-        <View style={styles.imagesContainer}>
-          <Carousel
-            panGestureHandlerProps={{
-              activeOffsetX: [-10, 10],
-              activeOffsetY: [-10, 10],
-              failOffsetY: [-10, 10],
-            }}
-            ref={carouselRef}
-            loop={false}
-            width={width}
-            height={height}
-            data={listingImages}
-            renderItem={({ item }) => (
-                <View  style={{ width: "100%", height: "100%"}}>
-                  <FastImage
-                      source={{ uri: item }}
-                      style={{ width: "100%", height: "100%", opacity: 0.3 }}
-                      resizeMode={FastImage.resizeMode.cover}
-                  />
-                  <FastImage
-                      source={{ uri: item }}
-                      style={{ position: 'absolute', width: "100%", height: "100%", opacity: 1}}
-                      resizeMode={FastImage.resizeMode.contain}
-                  />
-                </View>
-            )}
-            onProgressChange={handleProgressChange}
-          />
-          {renderImageCounter()}
-          <TouchableOpacity
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              padding: 6,
-              borderTopStartRadius: 5,
-              borderBottomStartRadius: 5,
-              backgroundColor: `${theme.colors.background}AA`,
-            }}
-            onPress={() => {
-              if (likes) {
-                handleLikePress(item, loadUserdata).then();
-              }
-              if (deleteBtn) {
-                setDeleteModalOpen(true);
-              }
-            }}
-          >
-            {likes &&
-              <FastImage
-                source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
-                style={{ width: 24, height: 24 }} tintColor={theme.colors.accent}
-                resizeMode={FastImage.resizeMode.contain} />}
-            {deleteBtn && <View><Icon type={"ionicon"} name={"trash"} size={24} color={theme.colors.accent} /></View>}
-          </TouchableOpacity>
-          {editBtn && <TouchableOpacity style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
             padding: 6,
             borderTopEndRadius: 5,
             borderBottomEndRadius: 5,
             backgroundColor: `${theme.colors.background}AA`,
-          }}><Icon type={"ionicon"} name={"pencil"} size={24} color={theme.colors.accent} /></TouchableOpacity>}
-        </View>
-        <ShadowedView style={[{
-          backgroundColor: theme.colors.background,
-          borderBottomStartRadius: 15,
-          borderBottomEndRadius: 15,
-          marginBottom: 12,
-        }, shadowStyle({
-          color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
-        })]}>
-          <View style={{ padding: 6 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <TextTicker
-                style={{ fontFamily: "Roboto-Medium", fontSize: 20, color: theme.colors.text }}
-                duration={10000}
-                loop
-                bounce
-                repeatSpacer={50}
-                marqueeDelay={1000}
-                numberOfLines={1}
-              >
-                {item.title}
-              </TextTicker>
-              <Text style={{
-                fontFamily: "Roboto-Bold",
-                fontSize: 20,
-                color: theme.colors.text,
-              }}>{item.price} BYN/сут</Text>
-            </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.city}</Text>
-              <Text style={{
-                fontFamily: "Roboto-Regular",
-                color: theme.colors.text,
-              }}>{item.ratings ? <>
-                <View style={{ justifyContent: "center" }}>
-                  <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14} />
-                </View>
-                <Text numberOfLines={1} style={styles.mainCardTextMark}>
-                  {"\t"}{item.mark ? item.mark.toFixed(1).replace(".", ",") : 0}{"\t"}
+        }, imageCounter: {
+            fontFamily: "Roboto-Bold",
+            fontSize: 15,
+            color: theme.colors.accent,
+        }, cardBtnContainer: {
+            borderRadius: 5,
+        }, cardBtn: {
+            backgroundColor: theme.colors.background,
+        },
+    });
+
+    const renderImageCounter = () => {
+        const totalImages = listingImages.length;
+        return (
+            <View style={styles.imageCounterContainer}>
+                <Text style={styles.imageCounter}>
+                    {`${currentImageIndex + 1}/${totalImages}`}
                 </Text>
-                <View style={{ justifyContent: "center" }}>
-                  <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8} />
+            </View>
+        );
+    };
+
+    const handleRatingPress = async (item, rating) => {
+        try {
+            const listingDoc = await firestore().collection('ratings').doc(item.listingId).get();
+
+            if (listingDoc.exists) {
+                console.log(listingDoc.data());
+
+                // Обновить рейтинг в документе листинга
+                await firestore().collection('ratings').doc(item.listingId).update({
+                    [auth().currentUser.uid]: {
+                        mark: rating,
+                        timestamp: firestore.FieldValue.serverTimestamp()
+                    }
+                });
+                console.log('Рейтинг обновлен');
+            } else {
+                await firestore().collection('ratings').doc(item.listingId).set({
+                    [auth().currentUser.uid]: {
+                        mark: rating,
+                        timestamp: firestore.FieldValue.serverTimestamp()
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка при обновлении рейтинга:', error);
+        }
+    };
+
+    return (
+        <SafeAreaView style={{flex: 1, backgroundColor: theme.colors.background}}>
+            <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
+                         onBackdropPress={() => setDeleteModalOpen(false)}>
+                <View style={{backgroundColor: theme.colors.background}}>
+                    <View style={{alignSelf: "center"}}>
+                        <Text
+                            style={{
+                                fontFamily: "Roboto-Black",
+                                fontSize: 18,
+                                color: theme.colors.text,
+                                marginBottom: 6,
+                            }}>
+                            Удалить объявление
+                        </Text>
+                    </View>
+                    <View style={{alignSelf: "center"}}>
+                        <Text
+                            style={{
+                                fontFamily: "Roboto-Medium",
+                                fontSize: 14,
+                                color: theme.colors.text,
+                                marginBottom: 6,
+                            }}>
+                            Вы уверены что хотите удалить объявление?
+                        </Text>
+                    </View>
+                    <TouchableOpacity style={{
+                        width: "100%",
+                        height: 36,
+                        backgroundColor: theme.colors.grey3,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 6,
+                    }} onPress={() => setDeleteModalOpen(false)}>
+                        <Text
+                            style={{
+                                fontFamily: "Roboto-Bold", color: theme.colors.text, fontSize: 16,
+                            }}>Отмена</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        width: "100%",
+                        height: 36,
+                        backgroundColor: theme.colors.error,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }} onPress={() => handleDeleteListing(item, setDeleteModalOpen, loadUserdata)}>
+                        <Text
+                            style={{
+                                fontFamily: "Roboto-Bold",
+                                color: theme.colors.accentText,
+                                fontSize: 16,
+                            }}>Удалить</Text>
+                    </TouchableOpacity>
                 </View>
-                <Text numberOfLines={1}
-                      style={{
-                        fontFamily: "Roboto-Regular",
-                        fontSize: 16,
-                        color: theme.colors.text,
-                      }}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
-              </> : <Text numberOfLines={1}
-                          style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>Нет
-                оценок</Text>}</Text>
-            </View>
-          </View>
-        </ShadowedView>
-        <ShadowedView style={[{
-          backgroundColor: theme.colors.background,
-          borderTopStartRadius: 15,
-          borderTopEndRadius: 15,
-          borderBottomStartRadius: 15,
-          borderBottomEndRadius: 15,
-          padding: 6,
-          marginBottom: 24,
-        }, shadowStyle({
-          color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
-        })]}>
-          <View style={{ marginBottom: 6 }}>
-            <View style={{marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View>
-                <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Категория:</Text>
-                <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.subcategory}</Text>
-              </View>
-              {likes &&
-                  !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
-                  <View>
-                    <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>Оставьте отзыв</Text>
-                    <AirbnbRating
-                        count={5}
-                        defaultRating={0}
-                        size={16}
-                        showRating={false}
-                        onFinishRating={value => handleRatingPress(item, value)}
+            </BottomSheet>
+            <ScrollView>
+                <View style={styles.imagesContainer}>
+                    <Carousel
+                        panGestureHandlerProps={{
+                            activeOffsetX: [-10, 10],
+                            activeOffsetY: [-10, 10],
+                            failOffsetY: [-10, 10],
+                        }}
+                        ref={carouselRef}
+                        loop={false}
+                        width={width}
+                        height={height}
+                        data={listingImages}
+                        renderItem={({item}) => (
+                            <View style={{width: "100%", height: "100%"}}>
+                                <FastImage
+                                    source={{uri: item}}
+                                    style={{width: "100%", height: "100%", opacity: 0.3}}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                />
+                                <FastImage
+                                    source={{uri: item}}
+                                    style={{position: 'absolute', width: "100%", height: "100%", opacity: 1}}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+                            </View>
+                        )}
+                        onProgressChange={handleProgressChange}
                     />
-                  </View>
-              }
-            </View>
-            <View>
-              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Описание:</Text>
-              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.description.trim()}</Text>
-            </View>
-          </View>
-          {likes &&
-            !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
-            <>
-              {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
-                  <ShadowedView style={[{marginBottom: 6}, shadowStyle({
-                color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-              })]}>
-                <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{color: theme.colors.text}} title={"Чат с владельцем"} onPress={() => {
-                  navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId}})
-                }}/>
-              </ShadowedView>}
-              {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
-              <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
-                color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-              })]}>
-                <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} onPress={() => requestRentBtnPress(item, loadUserdata)}
-                />
-              </ShadowedView>}
-            </>
-          }
-          <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
-            color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-          })]}>
-            <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                    titleStyle={{ color: theme.colors.text }} title={"Назад"} onPress={() => navigation.goBack()}/>
-          </ShadowedView>
-          {editBtn &&
-            <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
-              color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-            })]}>
-              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                      titleStyle={{ color: theme.colors.text }} title={"Редактировать"} />
-            </ShadowedView>}
-          {deleteBtn &&
-            <ShadowedView style={[{ marginBottom: 6 }, shadowStyle({
-              color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-            })]}>
-              <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                      titleStyle={{ color: theme.colors.text }} title={"Удалить"}
-                      onPress={() => setDeleteModalOpen(true)} />
-            </ShadowedView>}
-        </ShadowedView>
-      </ScrollView>
-    </SafeAreaView>
-  );
+                    {renderImageCounter()}
+                    <TouchableOpacity
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            right: 0,
+                            padding: 6,
+                            borderTopStartRadius: 5,
+                            borderBottomStartRadius: 5,
+                            backgroundColor: `${theme.colors.background}AA`,
+                        }}
+                        onPress={() => {
+                            if (likes) {
+                                handleLikePress(item, loadUserdata).then();
+                            }
+                            if (deleteBtn) {
+                                setDeleteModalOpen(true);
+                            }
+                        }}
+                    >
+                        {likes &&
+                            <FastImage
+                                source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
+                                style={{width: 24, height: 24}} tintColor={theme.colors.accent}
+                                resizeMode={FastImage.resizeMode.contain}/>}
+                        {deleteBtn &&
+                            <View><Icon type={"ionicon"} name={"trash"} size={24} color={theme.colors.accent}/></View>}
+                    </TouchableOpacity>
+                    {editBtn && <TouchableOpacity style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        padding: 6,
+                        borderTopEndRadius: 5,
+                        borderBottomEndRadius: 5,
+                        backgroundColor: `${theme.colors.background}AA`,
+                    }}><Icon type={"ionicon"} name={"pencil"} size={24}
+                             color={theme.colors.accent}/></TouchableOpacity>}
+                </View>
+                <ShadowedView style={[{
+                    backgroundColor: theme.colors.background,
+                    borderBottomStartRadius: 15,
+                    borderBottomEndRadius: 15,
+                    marginBottom: 12,
+                }, shadowStyle({
+                    color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
+                })]}>
+                    <View style={{padding: 6}}>
+                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                            <TextTicker
+                                style={{fontFamily: "Roboto-Medium", fontSize: 20, color: theme.colors.text}}
+                                duration={10000}
+                                loop
+                                bounce
+                                repeatSpacer={50}
+                                marqueeDelay={1000}
+                                numberOfLines={1}
+                            >
+                                {item.title}
+                            </TextTicker>
+                            <Text style={{
+                                fontFamily: "Roboto-Bold",
+                                fontSize: 20,
+                                color: theme.colors.text,
+                            }}>{item.price} BYN/сут</Text>
+                        </View>
+                        <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                            <Text style={{
+                                fontFamily: "Roboto-Regular",
+                                fontSize: 16,
+                                color: theme.colors.text
+                            }}>{item.city}</Text>
+                            <Text style={{
+                                fontFamily: "Roboto-Regular",
+                                color: theme.colors.text,
+                            }}>
+                                    {listingRating ? <>
+                                    <View style={{justifyContent: "center"}}>
+                                        <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14}/>
+                                    </View>
+                                    <Text numberOfLines={1} style={styles.mainCardTextMark}>
+                                        {"\t"}{listingRating.avgMark ? listingRating.avgMark.toFixed(1).replace(".", ",") : 0}{"\t"}
+                                    </Text>
+                                    <View style={{justifyContent: "center"}}>
+                                        <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8}/>
+                                    </View>
+                                    <Text numberOfLines={1}
+                                          style={{
+                                              fontFamily: "Roboto-Regular",
+                                              fontSize: 16,
+                                              color: theme.colors.text,
+                                          }}>{"\t"}{listingRating.ratingCount ? listingRating.ratingCount : 0} {getRatingWord(listingRating.ratingCount)}</Text>
+                                </> : <Text numberOfLines={1}
+                                            style={{fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text}}>Нет
+                                    оценок</Text>}
+                            </Text>
+                        </View>
+                    </View>
+                </ShadowedView>
+                <ShadowedView style={[{
+                    backgroundColor: theme.colors.background,
+                    borderTopStartRadius: 15,
+                    borderTopEndRadius: 15,
+                    borderBottomStartRadius: 15,
+                    borderBottomEndRadius: 15,
+                    padding: 6,
+                    marginBottom: 24,
+                }, shadowStyle({
+                    color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
+                })]}>
+                    <View style={{marginBottom: 6}}>
+                        <View style={{marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View style={{flex: 1,}}>
+                                <Text style={{
+                                    fontFamily: "Roboto-Medium",
+                                    fontSize: 16,
+                                    color: theme.colors.text
+                                }}>Категория:</Text>
+                                <Text numberOfLines={2} style={{
+                                    fontFamily: "Roboto-Regular",
+                                    fontSize: 16,
+                                    color: theme.colors.text
+                                }}>{item.subcategory}</Text>
+                            </View>
+                            {likes &&
+                                !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
+                                <View>
+                                    <Text
+                                        style={{fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text}}>Оставьте
+                                        отзыв</Text>
+                                    <AirbnbRating
+                                        count={5}
+                                        defaultRating={currentUserRating ? currentUserRating : 0}
+                                        size={16}
+                                        showRating={false}
+                                        onFinishRating={value => handleRatingPress(item, value)}
+                                    />
+                                </View>
+                            }
+                        </View>
+                        <View>
+                            <Text style={{
+                                fontFamily: "Roboto-Medium",
+                                fontSize: 16,
+                                color: theme.colors.text
+                            }}>Описание:</Text>
+                            <Text style={{
+                                fontFamily: "Roboto-Regular",
+                                fontSize: 16,
+                                color: theme.colors.text
+                            }}>{item.description.trim()}</Text>
+                        </View>
+                    </View>
+                    {likes &&
+                        !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
+                        <>
+                            {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
+                                <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                                    color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                                })]}>
+                                    <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                                            titleStyle={{color: theme.colors.text}} title={"Чат с владельцем"}
+                                            onPress={() => {
+                                                navigation.navigate('ProfileStack', {
+                                                    screen: 'OpenedChat',
+                                                    params: {otherUserId: item.ownerId}
+                                                })
+                                            }}/>
+                                </ShadowedView>}
+                            {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
+                                <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                                    color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                                })]}>
+                                    <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                                            titleStyle={{color: theme.colors.text}} title={"Запросить аренду"}
+                                            onPress={() => requestRentBtnPress(item, loadUserdata)}
+                                    />
+                                </ShadowedView>}
+                        </>
+                    }
+                    <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                        color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                    })]}>
+                        <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                                titleStyle={{color: theme.colors.text}} title={"Назад"}
+                                onPress={() => navigation.goBack()}/>
+                    </ShadowedView>
+                    {editBtn &&
+                        <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                            color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                        })]}>
+                            <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                                    titleStyle={{color: theme.colors.text}} title={"Редактировать"}/>
+                        </ShadowedView>}
+                    {deleteBtn &&
+                        <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                            color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                        })]}>
+                            <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
+                                    titleStyle={{color: theme.colors.text}} title={"Удалить"}
+                                    onPress={() => setDeleteModalOpen(true)}/>
+                        </ShadowedView>}
+                </ShadowedView>
+            </ScrollView>
+        </SafeAreaView>
+    );
 };
 
 export default OpenedItemCard;
