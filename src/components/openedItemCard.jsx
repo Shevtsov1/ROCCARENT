@@ -76,7 +76,7 @@ const OpenedItemCard = ({theme, navigation}) => {
                 if (ratingCount > 0) {
                     avgMark = sumOfMarks / ratingCount;
                 }
-                newListingRatings = { avgMark: avgMark, ratingCount: ratingCount };
+                newListingRatings = {avgMark: avgMark, ratingCount: ratingCount};
                 setListingRating(newListingRatings);
             }
         }
@@ -363,12 +363,16 @@ const OpenedItemCard = ({theme, navigation}) => {
                                 fontFamily: "Roboto-Regular",
                                 color: theme.colors.text,
                             }}>
-                                    {listingRating ? <>
-                                    <View style={{justifyContent: "center"}}>
-                                        <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={14}/>
+                                {listingRating && listingRating.ratingCount ? <View style={{flexDirection: 'row'}}>
+                                    <View style={{justifyContent: "center", alignItems: 'center'}}>
+                                        <Icon type={"ionicon"} name={"star"} color={theme.colors.accent} size={16}/>
                                     </View>
-                                    <Text numberOfLines={1} style={styles.mainCardTextMark}>
-                                        {"\t"}{listingRating.avgMark ? listingRating.avgMark.toFixed(1).replace(".", ",") : 0}{"\t"}
+                                    <Text numberOfLines={1} style={{
+                                        fontFamily: "Roboto-Regular",
+                                        fontSize: 16,
+                                        color: theme.colors.text,
+                                    }}>
+                                        {"\ "}{listingRating.avgMark ? listingRating.avgMark.toFixed(1).replace(".", ",") : 0}{"\ "}
                                     </Text>
                                     <View style={{justifyContent: "center"}}>
                                         <Icon type={"ionicon"} name={"ellipse"} color={theme.colors.grey1} size={8}/>
@@ -378,9 +382,13 @@ const OpenedItemCard = ({theme, navigation}) => {
                                               fontFamily: "Roboto-Regular",
                                               fontSize: 16,
                                               color: theme.colors.text,
-                                          }}>{"\t"}{listingRating.ratingCount ? listingRating.ratingCount : 0} {getRatingWord(listingRating.ratingCount)}</Text>
-                                </> : <Text numberOfLines={1}
-                                            style={{fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text}}>Нет
+                                          }}>{"\ "}{listingRating.ratingCount ? listingRating.ratingCount : 0} {getRatingWord(listingRating.ratingCount)}</Text>
+                                </View> : <Text numberOfLines={1}
+                                            style={{
+                                                fontFamily: "Roboto-Regular",
+                                                fontSize: 16,
+                                                color: theme.colors.text
+                                            }}>Нет
                                     оценок</Text>}
                             </Text>
                         </View>
@@ -421,6 +429,7 @@ const OpenedItemCard = ({theme, navigation}) => {
                                         count={5}
                                         defaultRating={currentUserRating ? currentUserRating : 0}
                                         size={16}
+                                        selectedColor={theme.colors.accent}
                                         showRating={false}
                                         onFinishRating={value => handleRatingPress(item, value)}
                                     />
