@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View, Text, TouchableOpacity, StyleSheet, ScrollView,
+  View, Text, TouchableOpacity, StyleSheet, ScrollView, ToastAndroid,
 } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Icon, Input } from "@rneui/themed";
@@ -68,6 +68,18 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
       setInitializing(false);
     });
   };
+
+  const handleResetPassword = async () => {
+    if (hasValidEmail) {
+      try {
+        await auth().sendPasswordResetEmail(email);
+        ToastAndroid.show('Ссылка для сброса пароля отправлена на электронную почту', 5000);
+      } catch (error) {
+        console.error('Ошибка при сбросе пароля:', error);
+        throw error;
+      }
+    }
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -265,7 +277,7 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
           <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate('LogUp')}>
             <Text style={styles.underButtonText}>Регистрация</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.underButton} >
+          <TouchableOpacity style={styles.underButton} onPress={handleResetPassword}>
             <Text style={styles.underButtonText}>Забыли пароль?</Text>
           </TouchableOpacity>
         </View>
