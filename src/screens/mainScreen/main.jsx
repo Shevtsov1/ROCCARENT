@@ -111,7 +111,7 @@ const Main = ({theme, navigation}) => {
                                 screen={"Main"}
                                 reloadFunction={() => handleReloadBtn()}
                                 authHint
-                                verifyHint
+                                verifyHint={!userdata.passportData}
                                 listingsLoading={listingsLoading}
                                 // deals
                             />

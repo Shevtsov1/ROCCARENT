@@ -216,7 +216,7 @@ const EditPassport = ({ theme, navigation, route }) => {
                 marginBottom: 12,
               }}>
                 {passportPhoto && !isCameraActive ? (
-                  <FastImage style={{ width: "100%", height: "100%" }} resizeMode={FastImage.resizeMode.cover}
+                  <FastImage style={{ width: "100%", height: "100%" }} resizeMode={FastImage.resizeMode.contain}
                              source={{ uri: passportPhoto }} />) : (
                   <Camera style={{ width: "100%", height: "100%" }} device={device} isActive={isCameraActive}
                           photo={true}
