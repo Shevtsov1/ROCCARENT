@@ -28,6 +28,7 @@ android {
     namespace "com.roccarent"
     defaultConfig {
         applicationId "com.roccarent"
+        archivesBaseName = "RoccaRent"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
