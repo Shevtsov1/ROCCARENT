@@ -878,7 +878,7 @@ const CreateAd = ({ theme, navigation }) => {
                                placeholderTextColor={theme.colors.text}
                                maxLength={50}
                                value={fieldsData.title}
-                               onChangeText={value => handleFieldsChange("title", value.trim())}
+                               onChangeText={value => handleFieldsChange("title", value)}
                                ref={titleRef}
                                onSubmitEditing={() => {
                                  descriptionRef.current.focus();
@@ -895,7 +895,7 @@ const CreateAd = ({ theme, navigation }) => {
                           <TextInput placeholder="Описание" placeholderTextColor={theme.colors.text}
                                      style={styles.listingDescriptionText} maxLength={1000} multiline
                                      value={fieldsData.description}
-                                     onChangeText={value => handleFieldsChange("description", value.trim())}
+                                     onChangeText={value => handleFieldsChange("description", value)}
                                      ref={descriptionRef}
                                      onSubmitEditing={() => {
                                        priceRef.current.focus();

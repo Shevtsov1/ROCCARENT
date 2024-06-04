@@ -25,8 +25,8 @@ export const translateAddressName = (fullAddress) => {
   }
 
   const addressParts = fullAddress.split(", ");
-  const city = addressParts.pop().trim();
-  const region = addressParts.pop().trim();
+  const city = addressParts.pop();
+  const region = addressParts.pop();
 
   let translatedRegion = null;
   let translatedCity = null;
