@@ -6,6 +6,7 @@ import firestore from "@react-native-firebase/firestore";
 import FastImage from "react-native-fast-image";
 import {ShadowedView, shadowStyle} from "react-native-fast-shadow";
 import {BottomSheet, Button} from "@rneui/base";
+import Animated, {LightSpeedInLeft, LightSpeedInRight} from "react-native-reanimated";
 
 const ChatMessage = ({theme, message, chatId}) => {
 
@@ -72,7 +73,7 @@ const ChatMessage = ({theme, message, chatId}) => {
         const listingsData = await firestore().collection("listings").where('listingId', '==', message.item.content).get();
         if (listingsData) {
             listingsData.forEach(doc => {
-                    setListingData(doc.data());
+                setListingData(doc.data());
             });
         }
     }
@@ -82,85 +83,13 @@ const ChatMessage = ({theme, message, chatId}) => {
             <BottomSheet>
 
             </BottomSheet>
-            )
+        )
     }
 
     if (message.item.rentRequestApproved) {
         if (message.item.senderId === auth().currentUser.uid) {
             return (
-                <View>
-                    <TouchableOpacity
-                        style={{
-                            flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
-                        }}
-                        onLongPress={() => message.item.senderId === auth().currentUser.uid && handleLongPress()}
-                    >
-                        <View
-                            style={{
-                                backgroundColor: message.item.senderId === auth().currentUser.uid ? 'lightblue' : 'lightgrey',
-                                borderRadius: 5,
-                                padding: 6,
-                                margin: 5,
-                            }}
-                        >
-                            {listingData && (
-                                <>
-                                    <View style={{width: 192, height: 192 * 1.3, alignSelf: 'center'}}>
-                                        <FastImage
-                                            source={{uri: listingData.mainImageUrl}}
-                                            style={{width: '100%', height: '100%'}}
-                                            resizeMode={FastImage.resizeMode.contain}/>
-                                    </View>
-                                    <View style={{marginVertical: 6}}>
-                                        <Text style={{fontFamily: 'Roboto-Bold', color: theme.colors.chatText}}>
-                                            {listingData.price} BYN/сут
-                                        </Text>
-                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
-                                            {listingData.title}
-                                        </Text>
-                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
-                                            {listingData.city}
-                                        </Text>
-                                    </View>
-                                    <ShadowedView style={[{marginBottom: 6}, shadowStyle({
-                                        color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
-                                    })]}>
-                                        <Button disabledStyle={message.item.rentRequestApproved !== 'no' && {backgroundColor: theme.colors.accent}} disabledTitleStyle={message.item.rentRequestApproved !== 'no' && {color: theme.colors.accentText}}
-                                                title={message.item.rentRequestApproved === 'no' ? 'Аренда запрошена' : 'Аренда активна' }
-                                                disabled={true}/>
-                                    </ShadowedView>
-                                </>
-                            )}
-                            <Text style={{
-                                fontFamily: 'Roboto-Regular',
-                                fontSize: 12,
-                                alignSelf: 'flex-end',
-                                color: theme.colors.greyOutline
-                            }}>
-                                {formattedTime}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                    <View style={{
-                        display: isMessageModalVisible ? 'flex' : 'none',
-                        flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
-                    }}>
-                        <TouchableOpacity style={{
-                            backgroundColor: theme.colors.background,
-                            elevation: 5,
-                            padding: 3,
-                            borderRadius: 5,
-                            marginEnd: message.item.senderId === auth().currentUser.uid && 6,
-                            marginStart: message.item.senderId !== auth().currentUser.uid && 6
-                        }} onPress={handleDeleteMessage}>
-                            <Text>Удалить</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            );
-        } else {
-            return (
-                <View>
+                <Animated.View entering={LightSpeedInRight} exiting={LightSpeedInRight}>
                     <TouchableOpacity
                         style={{
                             flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
@@ -198,10 +127,10 @@ const ChatMessage = ({theme, message, chatId}) => {
                                         color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
                                     })]}>
                                         <Button
-                                                buttonStyle={{backgroundColor: theme.colors.accent}}
-                                                titleStyle={{color: theme.colors.accentText}}
-                                                title={message.item.rentRequestApproved === 'no' ? 'Запрос аренды' : 'Аренда активна' }
-                                                disabled={message.item.rentRequestApproved !== 'no'}/>
+                                            disabledStyle={message.item.rentRequestApproved !== 'no' && {backgroundColor: theme.colors.accent}}
+                                            disabledTitleStyle={message.item.rentRequestApproved !== 'no' && {color: theme.colors.accentText}}
+                                            title={message.item.rentRequestApproved === 'no' ? 'Аренда запрошена' : 'Аренда активна'}
+                                            disabled={true}/>
                                     </ShadowedView>
                                 </>
                             )}
@@ -227,16 +156,92 @@ const ChatMessage = ({theme, message, chatId}) => {
                             marginEnd: message.item.senderId === auth().currentUser.uid && 6,
                             marginStart: message.item.senderId !== auth().currentUser.uid && 6
                         }} onPress={handleDeleteMessage}>
-                            <Text>Удалить</Text>
+                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>Удалить</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </Animated.View>
+            );
+        } else {
+            return (
+                <Animated.View entering={LightSpeedInLeft} exiting={LightSpeedInLeft}>
+                    <TouchableOpacity
+                        style={{
+                            flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
+                        }}
+                        onLongPress={() => message.item.senderId === auth().currentUser.uid && handleLongPress()}
+                    >
+                        <View
+                            style={{
+                                backgroundColor: message.item.senderId === auth().currentUser.uid ? 'lightblue' : 'lightgrey',
+                                borderRadius: 5,
+                                padding: 6,
+                                margin: 5,
+                            }}
+                        >
+                            {listingData && (
+                                <>
+                                    <View style={{width: 192, height: 192 * 1.3, alignSelf: 'center'}}>
+                                        <FastImage
+                                            source={{uri: listingData.mainImageUrl}}
+                                            style={{width: '100%', height: '100%'}}
+                                            resizeMode={FastImage.resizeMode.contain}/>
+                                    </View>
+                                    <View style={{marginVertical: 6}}>
+                                        <Text style={{fontFamily: 'Roboto-Bold', color: theme.colors.chatText}}>
+                                            {listingData.price} BYN/сут
+                                        </Text>
+                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
+                                            {listingData.title}
+                                        </Text>
+                                        <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.chatText}}>
+                                            {listingData.city}
+                                        </Text>
+                                    </View>
+                                    <ShadowedView style={[{marginBottom: 6}, shadowStyle({
+                                        color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
+                                    })]}>
+                                        <Button
+                                            buttonStyle={{backgroundColor: theme.colors.accent}}
+                                            titleStyle={{color: theme.colors.accentText}}
+                                            title={message.item.rentRequestApproved === 'no' ? 'Запрос аренды' : 'Аренда активна'}
+                                            disabled={message.item.rentRequestApproved !== 'no'}/>
+                                    </ShadowedView>
+                                </>
+                            )}
+                            <Text style={{
+                                fontFamily: 'Roboto-Regular',
+                                fontSize: 12,
+                                alignSelf: 'flex-end',
+                                color: theme.colors.greyOutline
+                            }}>
+                                {formattedTime}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    <View style={{
+                        display: isMessageModalVisible ? 'flex' : 'none',
+                        flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
+                    }}>
+                        <TouchableOpacity style={{
+                            backgroundColor: theme.colors.background,
+                            elevation: 5,
+                            padding: 3,
+                            borderRadius: 5,
+                            marginEnd: message.item.senderId === auth().currentUser.uid && 6,
+                            marginStart: message.item.senderId !== auth().currentUser.uid && 6
+                        }} onPress={handleDeleteMessage}>
+                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>Удалить</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Animated.View>
             );
         }
     }
 
     return (
-        <View>
+        <Animated.View
+            entering={message.item.senderId === auth().currentUser.uid ? LightSpeedInRight : LightSpeedInLeft}
+            exiting={message.item.senderId === auth().currentUser.uid ? LightSpeedInRight : LightSpeedInLeft}>
             <TouchableOpacity
                 style={{
                     flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
@@ -281,10 +286,10 @@ const ChatMessage = ({theme, message, chatId}) => {
                     marginEnd: message.item.senderId === auth().currentUser.uid && 6,
                     marginStart: message.item.senderId !== auth().currentUser.uid && 6
                 }} onPress={handleDeleteMessage}>
-                    <Text>Удалить</Text>
+                    <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>Удалить</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 

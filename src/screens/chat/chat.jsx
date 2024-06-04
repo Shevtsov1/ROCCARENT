@@ -49,8 +49,22 @@ const Chat = ({theme, navigation}) => {
 
             // Fetch last messages for each chat
             const chatListWithMessages = await Promise.all(chatList.map(async (chat) => {
+                let newLastMessage;
                 const lastMessage = await fetchLastMessage(chat.chatId);
-                return {...chat, lastMessage};
+                if (lastMessage && typeof lastMessage.content === 'string' && /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/.test(lastMessage.content)) {
+                    const listingsData = await firestore().collection("listings").where('listingId', '==', lastMessage.content).get();
+                    let listingTitle;
+                    if (listingsData) {
+                        listingsData.forEach(doc => {
+                           listingTitle = doc.data().title;
+                        });
+                    }
+                    newLastMessage = {content: `Запрос аренды ${listingTitle}`, senderId: lastMessage && lastMessage.senderId}
+                } else {
+                    newLastMessage = lastMessage;
+                }
+                console.log(newLastMessage)
+                return {...chat, lastMessage: newLastMessage};
             }));
 
             setChats(chatListWithMessages);

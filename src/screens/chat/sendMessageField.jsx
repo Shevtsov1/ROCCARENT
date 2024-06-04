@@ -111,6 +111,7 @@ const SendMessageField = ({theme, otherUserId, setFinalChatId, finalChatId, getC
                 borderRadius: 15,
                 paddingVertical: 0,
                 backgroundColor: theme.colors.background,
+                color: theme.colors.text
             }} value={messageToSend} ref={messageInputRef}
                        onChangeText={value => handleMessageToSend(value)}/>
             <TouchableOpacity disabled={isSendBtnDisabled} onPress={handleSendBtn}>

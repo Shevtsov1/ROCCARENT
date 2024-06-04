@@ -270,29 +270,15 @@ const OpenedChat = ({theme, navigation, route}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
-                     overlayStyle={{backgroundColor: theme.colors.background}}>
+                     overlayStyle={{backgroundColor: theme.colors.background, elevation: 0}}>
                 <View style={{backgroundColor: theme.colors.background}}>
-                    <Text>Вы точно хотите безвозвратно удалить чат?</Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={{fontFamily: 'Roboto-Medium', color: theme.colors.text}}>Вы точно хотите безвозвратно удалить чат?</Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 6,}}>
                         <TouchableOpacity onPress={() => setDeleteChatModalVisible(false)}>
-                            <Text>Отмена</Text>
+                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.text}}>Отмена</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleDeleteChat}>
-                            <Text>Удалить</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Overlay>
-            <Overlay isVisible={isDeleteChatModalVisible} onBackdropPress={() => setDeleteChatModalVisible(false)}
-                     overlayStyle={{backgroundColor: theme.colors.background}}>
-                <View style={{backgroundColor: theme.colors.background}}>
-                    <Text>Вы точно хотите безвозвратно удалить чат?</Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <TouchableOpacity onPress={() => setDeleteChatModalVisible(false)}>
-                            <Text>Отмена</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleDeleteChat}>
-                            <Text>Удалить</Text>
+                            <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -395,7 +381,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                         inverted
                         contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end'}}
                         data={messages}
-                        renderItem={(item) => <ChatMessage theme={theme} message={item}
+                        renderItem={(item) => <ChatMessage  theme={theme} message={item}
                                                            chatId={chatId ? chatId : finalChatId}/>}
                         keyExtractor={(item, index) => `${item.id}-${index}`}
                     />
