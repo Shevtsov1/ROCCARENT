@@ -109,7 +109,6 @@ const OpenedItemCard = ({ theme, navigation }) => {
 
   const renderImageCounter = () => {
     const totalImages = listingImages.length;
-    console.log(totalImages)
     return (
       <View style={styles.imageCounterContainer}>
         <Text style={styles.imageCounter}>

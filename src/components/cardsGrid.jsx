@@ -17,7 +17,7 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
   }, []);
 
   const screenWidth = Dimensions.get('window').width;
-  const numColumns = screenWidth >= 384 ? 2 : 1;
+  const numColumns = 2;
 
   return (
     <FlatList

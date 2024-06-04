@@ -76,11 +76,12 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const contentWidth = screenWidth - 24;
+  console.log(screenWidth)
+  const contentWidth = screenWidth;
   const cardWidth = wp(50);
   const cardHeight = cardWidth * 1.8;
-  const cardMinWidth = screenWidth < 384 ? contentWidth : 192;
-  const cardImageWidth = cardWidth -4;
+  const cardMinWidth = screenWidth < 384 ? cardWidth : 192;
+  const cardImageWidth = cardWidth;
   const cardImageHeight = cardImageWidth * 1.3;
 
 
