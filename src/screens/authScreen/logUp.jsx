@@ -9,6 +9,7 @@ import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FastImage from "react-native-fast-image";
 import firestore from "@react-native-firebase/firestore";
+import RNMail from "react-native-mail";
 
 const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPress, navigation }) => {
 
@@ -121,6 +122,21 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
       }
       setInitializing(false);
     };
+
+  const handleSupportEmailPress = () => {
+    RNMail.mail({
+      subject: 'Обращение в службу поддержки',
+      recipients: ['roccarent.help@gmail.com'],
+      body: '',
+      isHTML: true,
+    }, (error) => {
+      if (error) {
+        console.error('Ошибка при отправке письма:', error);
+      } else {
+        console.log('Письмо успешно отправлено');
+      }
+    });
+  };
 
     const styles = StyleSheet.create({
       container: {
@@ -430,7 +446,7 @@ const LogUp = ({ theme, setInitializing, setLoadingScreenText, onGoogleButtonPre
                 <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate("LogIn")}>
                   <Text style={styles.underButtonText}>Вход</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.underButton} onPress={() => navigation.navigate('SupportStackNavigator')}>
+                <TouchableOpacity style={styles.underButton} onPress={handleSupportEmailPress}>
                   <Text style={styles.underButtonText}>Нужна помощь?</Text>
                 </TouchableOpacity>
               </View>

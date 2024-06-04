@@ -78,6 +78,8 @@ const LogIn = ({ theme, onGoogleButtonPress, setInitializing, navigation }) => {
         console.error('Ошибка при сбросе пароля:', error);
         throw error;
       }
+    } else {
+      ToastAndroid.show('Укажите email аккаунта', 5000);
     }
   }
 
