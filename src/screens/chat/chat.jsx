@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, RefreshControl, Text, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Button, Icon} from "@rneui/base";
 import database from "@react-native-firebase/database";
@@ -102,6 +102,15 @@ const Chat = ({theme, navigation}) => {
         }
     };
 
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchChats().finally(() => {
+            setRefreshing(false);
+        });
+    }, []);
+
     const ChatBtn = ({chat}) => {
         // Find the corresponding user data based on otherUserId
         const otherUserData = otherUsersData.find(user => user.userId === chat.otherUserId);
@@ -188,6 +197,9 @@ const Chat = ({theme, navigation}) => {
             </View>
             <View style={{flex: 1, backgroundColor: theme.colors.background}}>
                 <FlatList
+                    refreshControl = {
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.colors.accent]}/>
+                    }
                     data={chats}
                     numColumns={1}
                     showsVerticalScrollIndicator={false}
