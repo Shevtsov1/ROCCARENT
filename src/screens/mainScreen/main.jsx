@@ -94,7 +94,7 @@ const Main = ({theme, navigation}) => {
                 </View>
                 <>
                     {listings && (
-                        <SafeAreaView
+                        <View
                             style={{
                                 flex: 1,
                                 width: "100%",
@@ -116,7 +116,7 @@ const Main = ({theme, navigation}) => {
                                 listingsLoading={listingsLoading}
                                 // deals
                             />
-                        </SafeAreaView>
+                        </View>
                     )}
                 </>
             </SafeAreaView>

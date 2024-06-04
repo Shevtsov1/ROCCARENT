@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
 import LoadingScreen from "../../components/loadingScreen";
 import CardsGrid from "../../components/cardsGrid";
 import { AppContext } from "../../../App";
@@ -52,7 +52,6 @@ const Favorites = ({ theme, navigation }) => {
       justifyContent: "space-between",
       alignItems: "center",
       paddingHorizontal: 12,
-      marginBottom: 12,
     }, headerMainText: {
       fontFamily: "Roboto-Medium",
       fontSize: 18,
@@ -63,14 +62,14 @@ const Favorites = ({ theme, navigation }) => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <View style={styles.body}>
         <View style={styles.header}>
           <Text style={styles.headerMainText}>Избранное</Text>
         </View>
         {listingsLoading ? <LoadingScreen theme={theme} /> :
           <>
-            <View style={[styles.contentContainer]}>
+            <View style={{flex: 1}}>
               {favoriteListings.length === 0 ?
                 <>
                   <View style={{ justifyContent: "center", alignItems: "center", padding: 12, }}>
@@ -92,7 +91,7 @@ const Favorites = ({ theme, navigation }) => {
                   </View>
                 </>
                 :
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center'}}>
                   <CardsGrid theme={theme} items={favoriteListings} likes screen={'Favorites'} reloadFunction={fetchFavoriteListings}/>
                 </View>
               }
