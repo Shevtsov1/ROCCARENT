@@ -15,33 +15,34 @@ const UserListings = ({ theme, navigation }) => {
   const [userListings, setUserListings] = useState([]);
 
   useEffect(() => {
-    const fetchUserListings = async () => {
-      const querySnapshot = await firestore().collection("listings").get();
-      const updatedUserListings = [];
-
-      querySnapshot.forEach(documentSnapshot => {
-        if (userdata && userdata.listings) {
-          userdata.listings.forEach(listing => {
-            if (documentSnapshot.id === listing) {
-              updatedUserListings.push({
-                ...documentSnapshot.data(),
-              });
-            }
-          });
-        }
-      });
-
-      updatedUserListings.sort((a, b) => {
-        const dateA = new Date(a.creationDate);
-        const dateB = new Date(b.creationDate);
-        return dateB.getTime() - dateA.getTime(); // Сортировка в порядке убывания
-      });
-
-      setUserListings(updatedUserListings);
-      setListingsLoading(false);
-    };
     fetchUserListings().then();
   }, [userdata]);
+
+  const fetchUserListings = async () => {
+    const querySnapshot = await firestore().collection("listings").get();
+    const updatedUserListings = [];
+
+    querySnapshot.forEach(documentSnapshot => {
+      if (userdata && userdata.listings) {
+        userdata.listings.forEach(listing => {
+          if (documentSnapshot.id === listing) {
+            updatedUserListings.push({
+              ...documentSnapshot.data(),
+            });
+          }
+        });
+      }
+    });
+
+    updatedUserListings.sort((a, b) => {
+      const dateA = new Date(a.creationDate);
+      const dateB = new Date(b.creationDate);
+      return dateB.getTime() - dateA.getTime(); // Сортировка в порядке убывания
+    });
+
+    setUserListings(updatedUserListings);
+    setListingsLoading(false);
+  };
 
   const styles = StyleSheet.create({
     body: {
@@ -100,7 +101,7 @@ const UserListings = ({ theme, navigation }) => {
             :
             <>
               <View style={[styles.contentContainer, {alignItems: 'center'}]}>
-                <CardsGrid theme={theme} items={userListings} editBtn deleteBtn screen={'Profile'} />
+                <CardsGrid theme={theme} items={userListings} reloadFunction={fetchUserListings} editBtn deleteBtn screen={'Profile'} />
               </View>
             </>
         }
