@@ -6,7 +6,7 @@ import Carousel from "react-native-reanimated-carousel";
 import FastImage from "react-native-fast-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRoute } from "@react-navigation/native";
-import { BottomSheet, Button, Icon } from "@rneui/base";
+import {AirbnbRating, BottomSheet, Button, Icon} from "@rneui/base";
 import { AppContext } from "../../App";
 import TextTicker from "react-native-text-ticker";
 import { ShadowedView, shadowStyle } from "react-native-fast-shadow";
@@ -123,6 +123,10 @@ const OpenedItemCard = ({ theme, navigation }) => {
     );
   };
 
+  const handleRatingPress = (rating) => {
+    console.log(rating);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <BottomSheet modalProps={{}} isVisible={isDeleteModalOpen}
@@ -193,11 +197,18 @@ const OpenedItemCard = ({ theme, navigation }) => {
             height={height}
             data={listingImages}
             renderItem={({ item }) => (
-              <FastImage
-                source={{ uri: item }}
-                style={{ width: "100%", height: "100%" }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
+                <View  style={{ width: "100%", height: "100%"}}>
+                  <FastImage
+                      source={{ uri: item }}
+                      style={{ width: "100%", height: "100%", opacity: 0.3 }}
+                      resizeMode={FastImage.resizeMode.cover}
+                  />
+                  <FastImage
+                      source={{ uri: item }}
+                      style={{ position: 'absolute', width: "100%", height: "100%", opacity: 1}}
+                      resizeMode={FastImage.resizeMode.contain}
+                  />
+                </View>
             )}
             onProgressChange={handleProgressChange}
           />
@@ -304,9 +315,24 @@ const OpenedItemCard = ({ theme, navigation }) => {
           color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
         })]}>
           <View style={{ marginBottom: 6 }}>
-            <View style={{marginBottom: 6,}}>
-              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Категория:</Text>
-              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.subcategory}</Text>
+            <View style={{marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between'}}>
+              <View>
+                <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Категория:</Text>
+                <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.subcategory}</Text>
+              </View>
+              {likes &&
+                  !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
+                  <View>
+                    <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>Оставьте отзыв</Text>
+                    <AirbnbRating
+                        count={5}
+                        defaultRating={0}
+                        size={16}
+                        showRating={false}
+                        onFinishRating={value => handleRatingPress(value)}
+                    />
+                  </View>
+              }
             </View>
             <View>
               <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Описание:</Text>
@@ -314,7 +340,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
             </View>
           </View>
           {likes &&
-            // !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
+            !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata.passportData.length !== 0 &&
             <>
               {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData &&
                   <ShadowedView style={[{marginBottom: 6}, shadowStyle({
