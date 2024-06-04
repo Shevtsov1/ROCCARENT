@@ -77,6 +77,11 @@ const OpenedItemCard = ({ theme, navigation }) => {
     return "оценок";
   }
 
+  const requestRentBtnPress = async (item, loadUserdata) => {
+    await handleLikePress(item, loadUserdata);
+    navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId, listingId: item.listingId, requestRent: true}})
+}
+
   const handleProgressChange = (offsetProgress, absoluteProgress) => {
     if (Number.isInteger(absoluteProgress)) {
       setCurrentImageIndex(absoluteProgress);
@@ -244,7 +249,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
           <View style={{ padding: 6 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <TextTicker
-                style={{ fontFamily: "Roboto-Medium", fontSize: 18, color: theme.colors.text }}
+                style={{ fontFamily: "Roboto-Medium", fontSize: 20, color: theme.colors.text }}
                 duration={10000}
                 loop
                 bounce
@@ -256,12 +261,12 @@ const OpenedItemCard = ({ theme, navigation }) => {
               </TextTicker>
               <Text style={{
                 fontFamily: "Roboto-Bold",
-                fontSize: 18,
+                fontSize: 20,
                 color: theme.colors.text,
               }}>{item.price} BYN/сут</Text>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontFamily: "Roboto-Regular", color: theme.colors.text }}>{item.city}</Text>
+              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.city}</Text>
               <Text style={{
                 fontFamily: "Roboto-Regular",
                 color: theme.colors.text,
@@ -278,11 +283,11 @@ const OpenedItemCard = ({ theme, navigation }) => {
                 <Text numberOfLines={1}
                       style={{
                         fontFamily: "Roboto-Regular",
-                        fontSize: 14,
+                        fontSize: 16,
                         color: theme.colors.text,
                       }}>{"\t"}{item.ratings ? item.ratings : 0} {getRatingWord(item.ratings)}</Text>
               </> : <Text numberOfLines={1}
-                          style={{ fontFamily: "Roboto-Regular", fontSize: 14, color: theme.colors.text }}>Нет
+                          style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>Нет
                 оценок</Text>}</Text>
             </View>
           </View>
@@ -299,13 +304,13 @@ const OpenedItemCard = ({ theme, navigation }) => {
           color: theme.colors.grey3, opacity: 0.8, radius: 24, offset: [0, 6],
         })]}>
           <View style={{ marginBottom: 6 }}>
-            <View>
-              <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>Категория:</Text>
-              <Text style={{ fontFamily: "Roboto-Regular", color: theme.colors.text }}>{item.subcategory}</Text>
+            <View style={{marginBottom: 6,}}>
+              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Категория:</Text>
+              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.subcategory}</Text>
             </View>
             <View>
-              <Text style={{ fontFamily: "Roboto-Medium", color: theme.colors.text }}>Описание:</Text>
-              <Text style={{ fontFamily: "Roboto-Regular", color: theme.colors.text }}>{item.description.trim()}</Text>
+              <Text style={{ fontFamily: "Roboto-Medium", fontSize: 16, color: theme.colors.text }}>Описание:</Text>
+              <Text style={{ fontFamily: "Roboto-Regular", fontSize: 16, color: theme.colors.text }}>{item.description.trim()}</Text>
             </View>
           </View>
           {likes &&
@@ -325,8 +330,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} onPress={() => {
-                          navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId, listingId: item.listingId, requestRent: true}})}}
+                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} onPress={() => requestRentBtnPress(item, loadUserdata)}
                 />
               </ShadowedView>}
             </>
