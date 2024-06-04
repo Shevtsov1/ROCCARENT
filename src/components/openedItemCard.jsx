@@ -325,7 +325,9 @@ const OpenedItemCard = ({ theme, navigation }) => {
                 color: theme.colors.grey3, opacity: 0.8, radius: 3, offset: [0, 0],
               })]}>
                 <Button containerStyle={styles.cardBtnContainer} buttonStyle={styles.cardBtn}
-                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} />
+                        titleStyle={{ color: theme.colors.text }} title={"Запросить аренду"} onPress={() => {
+                          navigation.navigate('ProfileStack', {screen: 'OpenedChat', params: {otherUserId: item.ownerId, listingId: item.listingId, requestRent: true}})}}
+                />
               </ShadowedView>}
             </>
           }

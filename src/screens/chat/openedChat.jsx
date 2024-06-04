@@ -13,7 +13,8 @@ import firestore from "@react-native-firebase/firestore";
 
 const OpenedChat = ({theme, navigation, route}) => {
     const {userdata} = useContext(AppContext);
-    const {chatId, otherUserId, otherUserData, fetchChats} = route.params;
+    const chatRef = database().ref('chats');
+    const {chatId, otherUserId, otherUserData, fetchChats, requestRent, listingId} = route.params;
     const [isChatLoading, setIsChatLoading] = useState(true);
     const [isInitialMessagesLoaded, setIsInitialMessagesLoaded] = useState(false);
     const [isDeleteChatModalVisible, setDeleteChatModalVisible] = useState(false);
@@ -23,14 +24,6 @@ const OpenedChat = ({theme, navigation, route}) => {
     const [finalChatId, setFinalChatId] = useState(null);
 
     const [isEllipsisMenuOpened, setEllipsisMenuOpened] = useState(false);
-
-    useEffect(() => {
-        navigation.setOptions({
-            fetchChats: async () => {
-               fetchChats();
-            },
-        });
-    }, [navigation]);
 
     useEffect(() => {
         if (!otherUserData) {
@@ -43,6 +36,82 @@ const OpenedChat = ({theme, navigation, route}) => {
         }
         getMessages().then();
     }, []);
+
+    useEffect(() => {
+        if (requestRent) {
+            console.log(chatId)
+            sendRequestRent(chatId).then();
+        }
+    }, [])
+
+    const sendRequestMessage = (chatId) => {
+        // Отправка сообщения в чат
+        const messageRef = database().ref(`chats/${chatId}/messages`);
+        const newMessageRef = messageRef.push();
+        const messageData = {
+            senderId: auth().currentUser.uid,
+            receiverId: otherUserId,
+            content: `${listingId}`.trim(),
+            timestamp: Date.now(),
+            rentRequestApproved: false
+        };
+        newMessageRef.set(messageData)
+            .then(() => {
+            })
+            .catch((error) => {
+                console.error('Failed to send message:', error);
+            });
+    };
+
+    const sendRequestRent = async (chatId) => {
+        const currentUserId = auth().currentUser.uid;
+        const chatRef = database().ref('chats');
+        const firstQuery = chatRef.orderByChild('userIds/0').equalTo(currentUserId);
+        const secondQuery = chatRef.orderByChild('userIds/1').equalTo(currentUserId);
+
+        const [firstSnapshot, secondSnapshot] = await Promise.all([firstQuery.once('value'), secondQuery.once('value')]);
+
+        let newChatId;
+        const snapshot = firstSnapshot.exists() ? firstSnapshot : secondSnapshot;
+
+        snapshot.forEach((childSnapshot) => {
+            const chatData = childSnapshot.val();
+            const userIds = chatData.userIds;
+            if (userIds.includes(currentUserId)) {
+                newChatId = childSnapshot.key;
+                return true;
+            }
+        });
+
+        if (newChatId) {
+            sendRequestMessage(newChatId);
+        } else {
+            const newChatRef = chatRef.push();
+            newChatId = newChatRef.key;
+            const chatData = {
+                userIds: [currentUserId, otherUserId],
+            };
+
+            await newChatRef.set(chatData);
+            sendRequestMessage(newChatId);
+        }
+        if (messages.length === 0) {
+            await getMessages();
+        }
+        if (!finalChatId) {
+            getChatId().then((chatId) => {
+                setFinalChatId(chatId);
+            });
+        }
+    }
+
+    useEffect(() => {
+        navigation.setOptions({
+            fetchChats: async () => {
+                fetchChats();
+            },
+        });
+    }, [navigation]);
 
     useEffect(() => {
         let messageRef;
@@ -180,12 +249,16 @@ const OpenedChat = ({theme, navigation, route}) => {
         if (chatId) {
             const chatRef = database().ref(`chats/${chatId}`);
             await chatRef.remove();
-            await fetchChats();
+            if (fetchChats) {
+                await fetchChats();
+            }
             navigation.navigate('Chat');
         } else {
             const chatRef = database().ref(`chats/${finalChatId}`);
             await chatRef.remove();
-            await fetchChats();
+            if (fetchChats) {
+                await fetchChats();
+            }
             navigation.navigate('Chat');
         }
     };
@@ -267,8 +340,9 @@ const OpenedChat = ({theme, navigation, route}) => {
                         {/*        color: auth().currentUser.phoneNumber ? theme.colors.text : theme.colors.grey1*/}
                         {/*    }}>Разблокировать пользователя</Text>*/}
                         {/*</TouchableOpacity>*/}
-                        {messages.length !== 0 && <TouchableOpacity style={{flexDirection: 'row', marginTop: 6}} disabled={messages.length === 0}
-                                          onPress={handleDeleteBtnPress}>
+                        {messages.length !== 0 && <TouchableOpacity style={{flexDirection: 'row', marginTop: 6}}
+                                                                    disabled={messages.length === 0}
+                                                                    onPress={handleDeleteBtnPress}>
                             <Icon type={'ionicon'} name={'trash'} size={20} color={theme.colors.error}
                                   style={{marginEnd: 6}}/>
                             <Text style={{fontFamily: 'Roboto-Regular', color: theme.colors.error}}>Удалить чат</Text>
@@ -286,7 +360,7 @@ const OpenedChat = ({theme, navigation, route}) => {
                         if (fetchChats) {
                             await fetchChats();
                         }
-                        navigation.goBack();
+                        navigation.navigate('Chat');
                     }}>
                         <Icon type={'ionicon'} name={'arrow-back'} size={24} color={theme.colors.accentText}/>
                     </TouchableOpacity>
@@ -328,12 +402,19 @@ const OpenedChat = ({theme, navigation, route}) => {
                 ) : (<View style={{flex: 1}}>
                     {chatId || finalChatId ? <ActivityIndicator size={'large'} color={theme.colors.accent}/>
                         :
-                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 14, color: theme.colors.grey1, alignSelf: 'center'}}>
+                        <Text style={{
+                            fontFamily: 'Roboto-Regular',
+                            fontSize: 14,
+                            color: theme.colors.grey1,
+                            alignSelf: 'center'
+                        }}>
                             Нет сообщений
                         </Text>}
 
                 </View>)}
-                <SendMessageField theme={theme} otherUserId={otherUserId} setFinalChatId={setFinalChatId} finalChatId={finalChatId} getChatId={getChatId} messagesLength={messages.length} getMessages={getMessages}/>
+                <SendMessageField theme={theme} otherUserId={otherUserId} setFinalChatId={setFinalChatId}
+                                  finalChatId={finalChatId} getChatId={getChatId} messagesLength={messages.length}
+                                  getMessages={getMessages}/>
             </View>
         </SafeAreaView>
     );
