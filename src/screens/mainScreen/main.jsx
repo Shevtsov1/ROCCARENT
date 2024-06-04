@@ -75,7 +75,7 @@ const Main = ({theme, navigation}) => {
         <SafeAreaProvider>
             <SafeAreaView style={styles.body}>
                 <View style={{
-                    height: 48,
+                    height: 60,
                     backgroundColor: theme.colors.background,
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -85,7 +85,7 @@ const Main = ({theme, navigation}) => {
                     <View style={{width: 26,}}>
 
                     </View>
-                    <FastImage source={require('../../assets/images/logo/logo.png')} style={{width: 48, height: 48}}
+                    <FastImage source={require('../../assets/images/logo/logo.png')} style={{width: 60, height: 60}}
                                resizeMode={FastImage.resizeMode.contain}/>
                     {auth().currentUser && !auth().currentUser.isAnonymous && auth().currentUser.emailVerified && userdata && userdata.passportData ?
                         <TouchableOpacity style={{alignSelf: 'center'}} onPress={() => navigation.navigate('ProfileStack', {screen: 'Chat'})}>
