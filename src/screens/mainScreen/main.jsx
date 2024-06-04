@@ -111,6 +111,7 @@ const Main = ({theme, navigation}) => {
                                 screen={"Main"}
                                 reloadFunction={() => handleReloadBtn()}
                                 authHint
+                                verifyHint
                                 listingsLoading={listingsLoading}
                                 // deals
                             />

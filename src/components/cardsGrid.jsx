@@ -4,8 +4,9 @@ import {ActivityIndicator, Dimensions, FlatList, RefreshControl, View} from "rea
 import auth from "@react-native-firebase/auth";
 import AuthHint from "../screens/mainScreen/components/authHint";
 import ActiveDeals from "../screens/mainScreen/components/activeDeals";
+import VerifyHint from "../screens/mainScreen/components/verifyHint";
 
-const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction, authHint, deals, listingsLoading}) => {
+const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, footerComponent, screen, reloadFunction, authHint, verifyHint, deals, listingsLoading}) => {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -29,6 +30,7 @@ const CardsGrid = ({ theme, items, likes, editBtn, deleteBtn, headerComponent, f
           <>
               {deals && <ActiveDeals theme={theme}/>}
               {authHint && auth().currentUser && auth().currentUser.isAnonymous && <AuthHint theme={theme}/>}
+              {verifyHint && auth().currentUser && !auth().currentUser.isAnonymous && <VerifyHint theme={theme}/>}
               {headerComponent && headerComponent}
           </>
       )}
