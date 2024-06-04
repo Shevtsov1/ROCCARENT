@@ -123,9 +123,29 @@ const OpenedItemCard = ({ theme, navigation }) => {
     );
   };
 
-  const handleRatingPress = (rating) => {
-    console.log(rating);
-  }
+  const handleRatingPress = async (item, rating) => {
+    try {
+      const listingDoc = await firestore().collection('listings').doc(item.listingId).get();
+
+      if (listingDoc.exists) {
+        console.log(listingDoc.data());
+
+        // Обновить рейтинг в документе листинга
+        await firestore().collection('listings').doc(item.listingId).update({
+          ratings: {
+            [auth().currentUser.uid]: {
+              mark: rating,
+            },
+          },
+        });
+        console.log('Рейтинг обновлен');
+      } else {
+        console.log('Документ листинга не найден');
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении рейтинга:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -329,7 +349,7 @@ const OpenedItemCard = ({ theme, navigation }) => {
                         defaultRating={0}
                         size={16}
                         showRating={false}
-                        onFinishRating={value => handleRatingPress(value)}
+                        onFinishRating={value => handleRatingPress(item, value)}
                     />
                   </View>
               }
