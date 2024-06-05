@@ -66,9 +66,9 @@ const App = React.memo(() => {
       try {
         const currentUser = auth().currentUser;
         if (!currentUser || currentUser.isAnonymous) {
-          await auth().signInAnonymously().then(async () => {
-            await firestore().collection('users').doc(auth().currentUser.uid).set({ favoriteListings: [] })
-          });
+          // await auth().signInAnonymously().then(async () => {
+          //   await firestore().collection('users').doc(auth().currentUser.uid).set({ favoriteListings: [] })
+          // });
           await onGoogleButtonPress();
         }
         await preloadImages();
@@ -120,9 +120,7 @@ const App = React.memo(() => {
   }, []);
 
   useEffect(() => {
-    if (auth().currentUser && !auth().currentUser.isAnonymous && !userdata) {
       loadUserdata().then();
-    }
   }, [auth().currentUser]);
 
   useEffect(() => {

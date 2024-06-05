@@ -247,6 +247,8 @@ const ChatMessage = ({theme, message, chatId}) => {
             <TouchableOpacity
                 style={{
                     flexDirection: message.item.senderId === auth().currentUser.uid ? 'row-reverse' : 'row',
+                    maxWidth: '80%',
+                    alignSelf: message.item.senderId === auth().currentUser.uid ? 'flex-end' : 'flex-start'
                 }}
                 onLongPress={() => message.item.senderId === auth().currentUser.uid && handleLongPress()}
             >

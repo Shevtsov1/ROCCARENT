@@ -10,25 +10,30 @@ import { AppContext } from "../../App";
 import OpenedItemCard from "./openedItemCard";
 import { useNavigation } from "@react-navigation/native";
 
-export const handleLikePress = async (item, loadUserdata) => {
-  const snapshot = await firestore().collection("users").doc(auth().currentUser.uid).get();
-  if (snapshot.exists) {
-    if (snapshot.data() && snapshot.data().favoriteListings) {
-      const favoriteListings = snapshot.data().favoriteListings;
-      if (favoriteListings.includes(item.listingId)) {
-        const index = favoriteListings.findIndex(listing => listing === item.listingId);
+export const handleLikePress = async (item, userdata, loadUserdata) => {
+  try {
+    await firestore().runTransaction(async (transaction) => {
+      const userRef = firestore().collection("users").doc(auth().currentUser.uid);
+      const snapshot = await transaction.get(userRef);
+      if (snapshot.exists) {
+        console.log(snapshot.data().favoriteListings)
+        const favoriteListings = snapshot.data().favoriteListings || [];
+        const index = favoriteListings.indexOf(item.listingId);
         if (index !== -1) {
+          userdata.favoriteListings.splice(index, 1);
           favoriteListings.splice(index, 1);
+        } else {
+          userdata.favoriteListings.push(item.listingId);
+          favoriteListings.push(item.listingId);
         }
-        await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+        await transaction.update(userRef, { favoriteListings });
       } else {
-        favoriteListings.push(item.listingId);
-        await firestore().collection("users").doc(auth().currentUser.uid).update({ favoriteListings: favoriteListings });
+        await transaction.set(userRef, { favoriteListings: [item.listingId] });
       }
-    } else {
-      await firestore().collection("users").doc(auth().currentUser.uid).set({ favoriteListings: [item.listingId] });
-    }
+    });
     loadUserdata();
+  } catch (error) {
+    console.error('Error in handleLikePress:', error);
   }
 };
 
@@ -190,7 +195,7 @@ const ItemCard = ({ theme, item, likes, editBtn, deleteBtn, screen }) => {
         borderBottomStartRadius: 5,
         backgroundColor: `${theme.colors.background}AA`,
       }}
-      onPress={() => handleLikePress(item, loadUserdata)}
+      onPress={() => handleLikePress(item, userdata, loadUserdata)}
     >
       <FastImage
         source={userdata && userdata.favoriteListings && userdata.favoriteListings.includes(item.listingId) ? require("../assets/images/save.png") : require("../assets/images/save-outline.png")}
