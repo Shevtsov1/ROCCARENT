@@ -1,0 +1,10 @@
+=== Typesense Cloud: skmhoxf8t751ywp3p ===
+
+Admin API Key:
+IGnMwLXVSGjrxQvxZ1Pc7AhXpugh2aSl
+
+Search Only API Key:
+u3TvGL0hUVBdz7UCabVCrsIVCfu6opVY
+
+Nodes:
+skmhoxf8t751ywp3p-1.a1.typesense.net [https:443]
